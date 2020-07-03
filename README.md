@@ -213,44 +213,38 @@ See also:
 
 ## Additional Configuration
 Other things that don't include migration or installation.
-<pre>
-  Add user to vboxusers group for virtualbox
-  Create Samba password for access to Samba shares on this pc
-  Create standard NFS shares and mount standard shares
-</pre>
+
+  * Add user to vboxusers group for virtualbox
+  * Create Samba password for access to Samba shares on this pc
+  * Create standard NFS shares and mount standard shares
 
 ## Custom Migration
 The custom migration actually includes a backup portion of the script that can be run before reinstalling the OS to backup configuration files and resources. All of the items on this list are put into a Migration_$USER folder and used to then restore all them as the last step of the script.
-<pre>
-  VPN configurations and certificates
-  Warzone2100sequences and save games
-  Knossos configuration (installed games are kept on ~/Games drive)
-  RawTherapee configuration
-  BricsCAD licenses, communicator, render materials
-  DosBox configuration
-  Frictional games installation
-  Thunderbird profile and configuration including installed addons
-  KiCAD configuration
-  Audacious configuration
-  VLC configuration
-  Eclipse configuration (workspace) and preferences (including workspace directory setting)
-  Kate configuration
-  Power management profile (KDE)
-  Global shortcuts (KDE)
-  Plasma settings including panel layout, notifications, theme, desktop effects
-  Login scripts (.bashrc and .profile, because sometimes they are broken after fresh install)
-</pre>
+  * VPN configurations and certificates
+  * Warzone2100sequences and save games
+  * Knossos configuration (installed games are kept on ~/Games drive)
+  * RawTherapee configuration
+  * BricsCAD licenses, communicator, render materials
+  * DosBox configuration
+  * Frictional games installation
+  * Thunderbird profile and configuration including installed addons
+  * KiCAD configuration
+  * Audacious configuration
+  * VLC configuration
+  * Eclipse configuration (workspace) and preferences (including workspace directory setting)
+  * Kate configuration
+  * Power management profile (KDE)
+  * Global shortcuts (KDE)
+  * Plasma settings including panel layout, notifications, theme, desktop effects
+  * Login scripts (.bashrc and .profile, because sometimes they are broken after fresh install)
 
 ## Manual Items 
 There are a few items that can't be done by script or I haven't looked into doing them by script. So there is a message at the end of the `fresh_install.sh` script specifying these items as a reminder to myself of what still needs to be done.
-<pre>
-  Migrate keyrings
-  Install plasma-chrome integration
-  Virtualbox extensions
-  NVidia drivers
-  Generate xorg.conf with nvidia-settings
-</pre>
-
+  * Migrate keyrings
+  * Install plasma-chrome integration
+  * Virtualbox extensions
+  * NVidia drivers
+  * Generate xorg.conf with nvidia-settings
 
 
 
