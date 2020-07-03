@@ -199,11 +199,6 @@ Some programs are best installed from their deb package
 
 ## Source
 When all else fails, I have developed a method of stepping through the process of compiling from source including the option to pull the latest source. If the latest source doesn't work then you can use the included snapshot used when the scripts were written.
-
-See also:
-  * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer)
-  * [knossos_installer](https://github.com/bcthund/knossos_installer)
-  * [qucs_installer](https://github.com/bcthund/qucs_installer)
 <pre>
   gzdoom
   knossos
@@ -211,6 +206,10 @@ See also:
   flatcam (in porogress)
   valkyrie (in progress)
 </pre>
+See also:
+  * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer)
+  * [knossos_installer](https://github.com/bcthund/knossos_installer)
+  * [qucs_installer](https://github.com/bcthund/qucs_installer)
 
 ## Additional Configuration
 Other things that don't include migration or installation.
