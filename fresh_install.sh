@@ -372,8 +372,7 @@ else
     echo "${green}==========================================================================${NC}"
     echo "${yellow}\tInstall Snap packages${NC}"
     echo "${green}--------------------------------------------------------------------------${NC}"
-    #printf "${BLUE}\tgzdoom\n\tshotcut\n\tsublime-text${NC}\n\n"
-    printf "${BLUE}\tckan\t\nshotcut\n\tsublime-text${NC}\n\n"
+    printf "${BLUE}\tckan\n\tshotcut\n\tsublime-text${NC}\n\n"
     echo -n "${CYAN}Proceed (y/n)? ${NC}"
     read answer
     echo
