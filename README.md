@@ -2,13 +2,13 @@
 ## Description
 This is a script I created for a system restore procedure during a fresh install. It was initally created for an upgrade from Ubuntu 18.04 to Kubuntu 20.04 and then modified to backup and restore from and to Kubuntu 20.04. It works in conjuction with several other scripts for installing from source and installing downloaded applications. The script can be easily modified to add and remove applications and packages as needed. You can download the applications the script was designed to work with below as well as the additional script for source installations.
 
-  * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer)
-    - [Addons](https://drive.google.com/file/d/1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g/view?usp=sharing)
-  * [knossos_installer](https://github.com/bcthund/knossos_installer)
-  * [qucs_installer](https://github.com/bcthund/qucs_installer)
+  * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer "Install from Source")
+    - [Addons](https://drive.google.com/file/d/1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g/view?usp=sharing "Download from Google Drive")
+  * [knossos_installer](https://github.com/bcthund/knossos_installer "Install from Source")
+  * [qucs_installer](https://github.com/bcthund/qucs_installer "Install from Source")
   * flatcam (in progress)
   * valkyrie (in progress)
-  * [Apps](https://drive.google.com/file/d/1wcCso1e16rusFrnEZq035Xu-wKf99ZyH/view?usp=sharing)
+  * [Apps](https://drive.google.com/file/d/1wcCso1e16rusFrnEZq035Xu-wKf99ZyH/view?usp=sharing "Download from Google Drive")
 
 ## Usage
 ```chmod +x fresh_install.sh```  
