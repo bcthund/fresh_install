@@ -218,12 +218,15 @@ See also:
   * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer)
   * [knossos_installer](https://github.com/bcthund/knossos_installer)
   * [qucs_installer](https://github.com/bcthund/qucs_installer)
+  * flatcam (in porogress)
+  * valkyrie (in progress)
 
 ## Additional Configuration
 Other things that don't include migration or installation.
 
   * Add user to vboxusers group for virtualbox
   * Create Samba password for access to Samba shares on this pc
+  * Check for libGL.so links (I had them dissapear at one point, so lets check)
   * Create standard NFS shares and mount standard shares
 
 ## Custom Migration
