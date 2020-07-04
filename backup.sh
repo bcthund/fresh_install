@@ -14,15 +14,14 @@ echo "${PURPLE}-----------------------------------------------------------------
     fi
     
 # Create Directory
-    echo -n "${BLUE}Creating directory './Migration_$USER'...${NC}"
-    cmd "mkdir ./Migration_$USER/root/"
-    cmd "mkdir ./Migration_$USER/symlinks/"
-    echo "${BLUE}DONE${NC}"
+    echo -n "${BLUE}Creating directory './Migration_$USER'${NC}\n"
+    cmd "mkdir -pv ./Migration_$USER/root/"
+    cmd "mkdir -pv ./Migration_$USER/symlinks/"
 
 # Keyring
     echo
     echo "${BLUE}Keyring${NC}"
-    cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/keyrings/ ./Migration_$USER/root/"
+    cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/kwalletd/ ./Migration_$USER/root/"
 
 # VPN
     echo
