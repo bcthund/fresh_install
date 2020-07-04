@@ -156,8 +156,9 @@ if [ "$mode" != "${mode#[Bb]}" ] ;then
     # ThunderBird
         echo
         echo "${BLUE}ThunderBird${NC}"
-        cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/profiles.ini ./Migration_$USER/root/"
-        cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/eu3c43qa.default ./Migration_$USER/root/"
+        cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/ ./Migration_$USER/root/"
+        #cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/profiles.ini ./Migration_$USER/root/"
+        #cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/eu3c43qa.default ./Migration_$USER/root/"
     
     # KiCAD
         echo
