@@ -50,7 +50,7 @@ echo
 echo "${grey}This script backs up the current configuration in preparation${NC}"
 echo "${grey}for a complete OS reinstall.${NC}"
 echo
-echo "${grey}A backup will create a '${working_dir}/Migration_$USER' folder that${NC}"
+echo "${grey}A backup will create a './Migration_$USER' folder that${NC}"
 echo "${grey}will be used for restore. If the folder already exists then${NC}"
 echo "${grey}it will be renamed with a timestamp appended.${NC}"
 echo
@@ -73,7 +73,7 @@ echo "${grey}\t- Additional Configuration${NC}"
 echo "${grey}\t\t- Add user to vboxusers${NC}"
 echo "${grey}\t\t- Create Samba password for user${NC}"
 echo "${grey}\t- Custom Migration Files${NC}"
-echo "${grey}\t\t- This section depends on the bakup in '${working_dir}/Migration_$USER'${NC}"
+echo "${grey}\t\t- This section depends on the bakup in './Migration_$USER'${NC}"
 echo
 echo "${grey}In the Custom Migration Files section you can answer (y/n/a) which${NC}"
 echo "${grey}is yes/no/all. Answering Yes will allow you to choose every migration${NC}"
@@ -85,10 +85,10 @@ echo
 echo -n "${BLUE}Do you want to (B)ackup or (R)estore? ${NC}"
 read mode
 if [ "$mode" != "${mode#[Bb]}" ] ;then
-    if [ -d "${working_dir}/Migration_$USER" ] ;then
+    if [ -d "./Migration_$USER" ] ;then
         timestamp=$(date +%s)
-        echo "${red}Error! Directory '${working_dir}/Migration_$USER' exists.${NC}"
-        echo -n "${BLUE}Moving '${working_dir}/Migration_$USER' to './Migration_${USER}_${timestamp}'...${NC}" 
+        echo "${red}Error! Directory './Migration_$USER' exists.${NC}"
+        echo -n "${BLUE}Moving './Migration_$USER' to './Migration_${USER}_${timestamp}'...${NC}" 
         cmd "mv ./Migration_${USER} ./Migration_${USER}_${timestamp}"
         echo "${BLUE}DONE${NC}"
     fi
@@ -98,15 +98,14 @@ if [ "$mode" != "${mode#[Bb]}" ] ;then
     echo "${PURPLE}\tPerforming Backup${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
     
-    echo -n "${BLUE}Creating directory '${working_dir}/Migration_$USER'...${NC}"
-    cmd "mkdir ${working_dir}/Migration_$USER"
+    echo -n "${BLUE}Creating directory './Migration_$USER'...${NC}"
+    cmd "mkdir ./Migration_$USER"
     echo "${BLUE}DONE${NC}"
     
     # Keyring
         echo
         echo "${BLUE}Keyring${NC}"
-        #cmd "mkdir -p ${working_dir}/Migration_$USER/.local/share/keyrings"
-        #~/.local/share/keyrings
+        cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/keyrings/ ./Migration_$USER/root/"
     
     # VPN
         echo
@@ -168,7 +167,7 @@ if [ "$mode" != "${mode#[Bb]}" ] ;then
     # gzdoom
         echo
         echo "${BLUE}gzdoom${NC}"
-        cmd "sudo rsync -aR --info=progress2 /home/$USER/snap/gzdoom/current/.config/gzdoom ./Migration_$USER/root/"
+        cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/gzdoom ./Migration_$USER/root/"
     
     # Audacious
         echo
@@ -554,73 +553,73 @@ else
         printf "${BLUE}VPN...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/etc/NetworkManager/system-connections/ /etc/NetworkManager/system-connections/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/etc/NetworkManager/system-connections/Mikrotik_OVPN_Karen /etc/NetworkManager/system-connections/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/etc/NetworkManager/system-connections/MSELEC /etc/NetworkManager/system-connections/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/etc/NetworkManager/system-connections/.cert /etc/NetworkManager/system-connections/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/etc/NetworkManager/system-connections/ /etc/NetworkManager/system-connections/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/etc/NetworkManager/system-connections/Mikrotik_OVPN_Karen /etc/NetworkManager/system-connections/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/etc/NetworkManager/system-connections/MSELEC /etc/NetworkManager/system-connections/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/etc/NetworkManager/system-connections/.cert /etc/NetworkManager/system-connections/"
         fi
         
         # Warzone 2100
         printf "${BLUE}Warzone2100...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/usr/share/games/warzone2100/ /usr/share/games/warzone2100/"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.warzone2100-3.2/ /home/$USER/.warzone2100-3.2/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/usr/share/games/warzone2100/ /usr/share/games/warzone2100/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.warzone2100-3.2/ /home/$USER/.warzone2100-3.2/"
         fi
         
         # Knossos
         printf "${BLUE}Knossos...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/knossos/ /home/$USER/.config/knossos/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/knossos/ /home/$USER/.config/knossos/"
         fi
         
         # RawTherapee
         printf "${BLUE}RawTherapee...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/RawTherapee/ /home/$USER/.config/RawTherapee/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/RawTherapee/ /home/$USER/.config/RawTherapee/"
         fi
         
         # BricsCAD
         printf "${BLUE}BricsCAD...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/BricsCAD/ /home/$USER/BricsCAD/"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/var/bricsys/ /var/bricsys/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/var/bricsys/BricsCAD_ShapeV18.lic /var/bricsys/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/var/bricsys/BricsCADV17.lic /var/bricsys/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/var/bricsys/BricsCADV18.lic /var/bricsys/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/var/bricsys/BricsCADV20.lic /var/bricsys/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/var/bricsys/CommunicatorV18.lic /var/bricsys/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/BricsCAD/ /home/$USER/BricsCAD/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/var/bricsys/ /var/bricsys/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/var/bricsys/BricsCAD_ShapeV18.lic /var/bricsys/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/var/bricsys/BricsCADV17.lic /var/bricsys/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/var/bricsys/BricsCADV18.lic /var/bricsys/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/var/bricsys/BricsCADV20.lic /var/bricsys/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/var/bricsys/CommunicatorV18.lic /var/bricsys/"
             
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/opt/bricsys/ /opt/bricsys/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/opt/bricsys/bricscad/v18/RenderMaterialStatic/ /opt/bricsys/bricscad/v20/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/opt/bricsys/communicator /opt/bricsys/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/opt/bricsys/ /opt/bricsys/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/opt/bricsys/bricscad/v18/RenderMaterialStatic/ /opt/bricsys/bricscad/v20/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/opt/bricsys/communicator /opt/bricsys/"
         fi
         
         # DosBox
         printf "${BLUE}DosBox...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.dosbox/ /home/$USER/.dosbox/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.dosbox/ /home/$USER/.dosbox/"
         fi
         
         # Frictional Games
         printf "${BLUE}Frictional Games...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.frictionalgames/ /home/$USER/.frictionalgames/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.frictionalgames/ /home/$USER/.frictionalgames/"
         fi
         
         # ThunderBird
         printf "${BLUE}ThunderBird...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.thunderbird/ /home/$USER/.thunderbird/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.thunderbird/ /home/$USER/.thunderbird/"
             #cmd "mkdir -p /home/$USER/.thunderbird"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.thunderbird/profiles.ini /home/$USER/.thunderbird/"
-            #cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.thunderbird/eu3c43qa.default /home/$USER/.thunderbird/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.thunderbird/profiles.ini /home/$USER/.thunderbird/"
+            #cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.thunderbird/eu3c43qa.default /home/$USER/.thunderbird/"
             #cmd "sudo chown -R $USER:$USER /home/$USER/.thunderbird"
         fi
         
@@ -628,7 +627,7 @@ else
         printf "${BLUE}KiCAD...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/kicad/ /home/$USER/.config/kicad/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/kicad/ /home/$USER/.config/kicad/"
         fi
         
         # gzdoom (handled in gzdoom.sh now)
@@ -636,38 +635,38 @@ else
         #if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         #if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         #    cmd "gzdoom -norun"
-        #    cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/snap/gzdoom/current/.config/gzdoom/ /home/$USER/snap/gzdoom/current/.config/"
+        #    cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/snap/gzdoom/current/.config/gzdoom/ /home/$USER/snap/gzdoom/current/.config/"
         #fi
         
         # Audacious
         printf "${BLUE}Audacious...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/audacious/ /home/$USER/.config/audacious/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/audacious/ /home/$USER/.config/audacious/"
         fi
         
         # VLC
         printf "${BLUE}VLC...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/vlc/ /home/$USER/.config/vlc/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/vlc/ /home/$USER/.config/vlc/"
         fi
         
         # Eclipse
         printf "${BLUE}Eclipse...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/ /home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/ /home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/"
             #cmd "mkdir -p /home/$USER/Projects/Eclipse/"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/Projects/Eclipse/.metadata/ /home/$USER/Projects/Eclipse/.metadata/"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/Projects/Eclipse/.metadata/ /home/$USER/Projects/Eclipse/.metadata/"
         fi
         
         # KATE
         printf "${BLUE}Kate...${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/katerc /home/$USER/.config/katerc"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/katesyntaxhighlightingrc /home/$USER/.config/katesyntaxhighlightingrc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/katerc /home/$USER/.config/katerc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/katesyntaxhighlightingrc /home/$USER/.config/katesyntaxhighlightingrc"
         fi
         
         # Power Management Profile (KDE) (BACKUP)
@@ -675,7 +674,7 @@ else
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.config/powermanagementprofilesrc /home/$USER/.config/powermanagementprofilesrc.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/powermanagementprofilesrc /home/$USER/.config/powermanagementprofilesrc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/powermanagementprofilesrc /home/$USER/.config/powermanagementprofilesrc"
         fi
         
         # Global Shortcuts (KDE) (BACKUP)
@@ -683,7 +682,7 @@ else
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.config/kglobalshortcutsrc /home/$USER/.config/kglobalshortcutsrc.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/kglobalshortcutsrc /home/$USER/.config/kglobalshortcutsrc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/kglobalshortcutsrc /home/$USER/.config/kglobalshortcutsrc"
         fi
         
         # Plasma Settings (Panel, Notifications, Theme, Desktop Effects) (KDE) (BACKUP)
@@ -691,16 +690,16 @@ else
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc"
             
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.config/plasmanotifyrc /home/$USER/.config/plasmanotifyrc.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/plasmanotifyrc /home/$USER/.config/plasmanotifyrc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/plasmanotifyrc /home/$USER/.config/plasmanotifyrc"
             
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.config/plasmarc /home/$USER/.config/plasmarc.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/plasmarc /home/$USER/.config/plasmarc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/plasmarc /home/$USER/.config/plasmarc"
             
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.config/kwinrc /home/$USER/.config/kwinrc.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.config/kwinrc /home/$USER/.config/kwinrc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/kwinrc /home/$USER/.config/kwinrc"
         fi
         
         # Login scripts (.bashr/.profile) (BACKUP)
@@ -708,10 +707,10 @@ else
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.bashrc /home/$USER/.bashrc.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.bashrc /home/$USER/.bashrc"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.bashrc /home/$USER/.bashrc"
             
             cmd "sudo rsync -aR --info=progress2 --delete /home/$USER/.profile /home/$USER/.profile.bak"
-            cmd "sudo rsync -aR --info=progress2 --delete ${working_dir}/Migration_$USER/root/home/$USER/.profile /home/$USER/.profile"
+            cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.profile /home/$USER/.profile"
         fi
     fi
 
