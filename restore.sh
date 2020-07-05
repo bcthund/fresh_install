@@ -80,6 +80,14 @@
         cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/kicad/ /home/$USER/.config/kicad/"
     fi
 
+# gzdoom
+    echo
+    echo "${BLUE}gzdoom${NC}"
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        cmd "sudo rsync -aR --info=progress2 ./Migration_$USER/root/home/$USER/.config/gzdoom/ /home/$USER/.config/gzdoom/"
+    fi
+    
 # Audacious
     printf "${BLUE}Audacious${NC}"
     if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi

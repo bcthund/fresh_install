@@ -72,7 +72,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
         cmd "rm -rf ./gzdoom_installer/.git"
         printf "${BLUE}Addons (Will also install pip3 and gdown)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
-            cmd "sudo apt install python3-pip"
+            cmd "sudo apt -y install python3-pip"
             cmd "pip3 install gdown"
             fileid="1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
             cmd "gdown https://drive.google.com/uc?id=${fileid}"
@@ -117,7 +117,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo "${grey}\t- Eclipse v2020-06${NC}"
     echo "${grey}\t- Plasmoids${NC}"
     echo -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
-        cmd "sudo apt install python3-pip"
+        cmd "sudo apt -y install python3-pip"
         cmd "pip3 install gdown"
         fileid="1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
         cmd "gdown https://drive.google.com/uc?id=${fileid}"
