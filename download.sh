@@ -74,7 +74,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo apt -y install python3-pip"
             cmd "pip3 install gdown"
-            fileid="1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
+            fileid="1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
             cmd "gdown https://drive.google.com/uc?id=${fileid}"
             cmd "unzip Apps.zip -d ./gzdoom_installer/" 
         fi
@@ -119,7 +119,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "sudo apt -y install python3-pip"
         cmd "pip3 install gdown"
-        fileid="1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
+        fileid="1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
         cmd "gdown https://drive.google.com/uc?id=${fileid}"
         cmd "unzip Apps.zip"
     fi
