@@ -1,4 +1,20 @@
 #!/bin/sh
+red='\033[0;31m'
+RED='\033[1;31m'
+green='\033[0;32m'
+GREEN='\033[1;32m'
+yellow='\033[0;33m'
+YELLOW='\033[1;33m'
+purple='\033[0;35m'
+PURPLE='\033[1;35m'
+white='\033[0;37m'
+WHITE='\033[1;37m'
+blue='\033[0;34m'
+BLUE='\033[1;34m'
+cyan='\033[0;36m'
+CYAN='\033[1;36m'
+NC='\033[0m'
+
 if [ "$1" != "${1#[debug]}" ] ;then
     cmd(){ echo ">> ${WHITE}$1${NC}"; }
     echo "${RED}DEBUG: Commands will be echoed to console${NC}"
@@ -12,33 +28,33 @@ echo "${grey}This script will downlaod the fresh_install files as well as${NC}"
 echo "${grey}give you the option to downlaod additional source installers${NC}"
 echo "${grey}that I have written including:${NC}"
 echo "${grey}\tFresh Install:${NC}"
-echo "${grey}\t\t- backup.sh${NC}"
-echo "${grey}\t\t- restore.sh${NC}"
-echo "${grey}\t\t- Apps:${NC}"
-echo "${grey}\t\t\t- Bricscad v20.2.08${NC}"
-echo "${grey}\t\t\t- Camotics v1.2.0${NC}"
-echo "${grey}\t\t\t- Chrome${NC}"
-echo "${grey}\t\t\t- Brother printer installer v2.2.2.1${NC}"
-echo "${grey}\t\t\t- Multisystem${NC}"
-echo "${grey}\t\t\t- NoMachine v6.11.2${NC}"
-echo "${grey}\t\t\t- Steam${NC}"
-echo "${grey}\t\t\t- Eclipse v2020-06${NC}"
-echo "${grey}\t\t\t- Plasmoids${NC}"
+echo "${grey}\t  - backup.sh${NC}"
+echo "${grey}\t  - restore.sh${NC}"
+echo "${grey}\t  - Apps:${NC}"
+echo "${grey}\t    - Bricscad v20.2.08${NC}"
+echo "${grey}\t    - Camotics v1.2.0${NC}"
+echo "${grey}\t    - Chrome${NC}"
+echo "${grey}\t    - Brother printer installer v2.2.2.1${NC}"
+echo "${grey}\t    - Multisystem${NC}"
+echo "${grey}\t    - NoMachine v6.11.2${NC}"
+echo "${grey}\t    - Steam${NC}"
+echo "${grey}\t    - Eclipse v2020-06${NC}"
+echo "${grey}\t    - Plasmoids${NC}"
 echo "${grey}\tSource Installs:${NC}"
-echo "${grey}\t- knossos${NC}"
-echo "${grey}\t- qucs${NC}"
-echo "${grey}\t- valkyrie${NC}"
-echo "${grey}\t- gzdoom${NC}"
-echo "${grey}\t\t- Addons:${NC}"
-echo "${grey}\t\t\t- High res textures${NC}"
-echo "${grey}\t\t\t- Remastered music${NC}"
-echo "${grey}\t\t\t- Brutal Doom${NC}"
-echo "${grey}\t\t\t- gzdoom.ini${NC}"
+echo "${grey}\t  - knossos${NC}"
+echo "${grey}\t  - qucs${NC}"
+echo "${grey}\t  - valkyrie${NC}"
+echo "${grey}\t  - gzdoom${NC}"
+echo "${grey}\t    - Addons:${NC}"
+echo "${grey}\t      - High res textures${NC}"
+echo "${grey}\t      - Remastered music${NC}"
+echo "${grey}\t      - Brutal Doom${NC}"
+echo "${grey}\t      - gzdoom.ini${NC}"
 #echo "${grey}\t- flatcam${NC}"
 #echo "${grey}\t\t- ${NC}"
 #echo "${grey}${NC}"
 echo
-echo -n "${BLUE}Do you want to download installs? ${NC}"
+echo -n "${BLUE}Do you want to download installs ${GREEN}(y/n)? ${NC}"
 read mode
 #cmd "mkdir -p ./tmp/"
 #cmd "cd tmp"

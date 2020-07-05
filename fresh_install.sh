@@ -289,9 +289,12 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "./Apps/eclipse-installer/eclipse-inst"
         fi
         
-        printf "${BLUE}Printer (HL-3040CN)${NC}"
-        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
-            cmd "sudo ./Apps/linux-brprinter-installer-2.2.2-1"
+        printf "${BLUE}Printer (HL-3040CN)${NC}\n"
+        printf "${YELLOW}NOTE: The install script has been modified, it did not allow directories with spaces in them and the version included here does.${NC}\n"
+        echo -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "cd ./Apps/brother/"
+            cmd "sudo ./linux-brprinter-installer-2.2.2-1"
+            cmd "cd ${working_dir}"
         fi
     fi
 
