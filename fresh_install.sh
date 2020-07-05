@@ -346,6 +346,10 @@ else
         fi
         
         # Export directory
+            echo
+            printf "${YELLOW}Erase existing exports (this will erase entire contents of the exports file)${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+                cmd "sudo truncate -s 0 /etc/exports"
+            fi
             cmd "echo '' | sudo tee -a /etc/exports"
             cmd "echo '# Exports added by fresh_install.sh' | sudo tee -a /etc/exports"
             cmd "echo '/home/$USER                ${iprange}(ro,sync,no_subtree_check,fsid=root)' | sudo tee -a /etc/exports"
@@ -373,16 +377,67 @@ else
             cmd "sudo mkdir -p /nfs/${remoteip}/${remoteuser}"
 
         # Mount shares
+            cmd "sudo mount ${remoteip}:/home/${remoteuser} /nfs/${remoteip}/${remoteuser}"
             cmd "sudo mount ${remoteip}:/home/${remoteuser}/Downloads /nfs/${remoteip}/Downloads"
-            #cmd "sudo mount ${remoteip}:/home/${remoteuser} /nfs/${remoteip}/${remoteuser}"
         
+        echo
         printf "${BLUE}Make permanant (Make sure to only do this once) ${GREEN}(y/n)?${NC}"
         read answer
         if [ "$answer" != "${answer#[Yy]}" ] ;then
+            echo
+            printf "${BLUE}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+                cmd "sed -i 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
+            fi
             cmd "echo '' | sudo tee -a /etc/fstab"
-            cmd "echo '# Mounts added by fresh_install.sh' | sudo tee -a /etc/fstab"
+            cmd "echo '#FISTD_S: Standard (do not modify)' | sudo tee -a /etc/fstab"
             cmd "echo '${remoteip}:/home/${remoteuser}           /nfs/${remoteip}/${remoteuser}   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
             cmd "echo '${remoteip}:/home/${remoteuser}/Downloads /nfs/${remoteip}/Downloads       nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+            cmd "echo '#FISTD_E' | sudo tee -a /etc/fstab"
+        fi
+    fi
+    
+    echo
+    echo -n "${BLUE}Do you want to mount Dataserver shares ${GREEN}(y/n)? ${NC}"
+    read answer
+    if [ "$answer" != "${answer#[Yy]}" ] ;then
+        printf "${BLUE}What is the IP of the target? ${NC}"
+        read remoteip
+        printf "${BLUE}What is the username of the target? ${NC}"
+        read remoteuser
+
+        # Create mount points
+            cmd "sudo mkdir -p /nfs/${remoteip}/Database"
+            cmd "sudo mkdir -p /nfs/${remoteip}/Documents"
+            cmd "sudo mkdir -p /nfs/${remoteip}/Projects"
+            cmd "sudo mkdir -p /nfs/${remoteip}/Videos"
+            cmd "sudo mkdir -p /nfs/${remoteip}/Music"
+            cmd "sudo mkdir -p /nfs/${remoteip}/Pictures"
+
+        # Mount shares
+            cmd "sudo mount ${remoteip}:/mnt/Database /nfs/${remoteip}/Database"
+            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Documents /nfs/${remoteip}/Documents"
+            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Projects /nfs/${remoteip}/Projects"
+            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Videos /nfs/${remoteip}/Videos"
+            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Music /nfs/${remoteip}/Music"
+            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Pictures /nfs/${remoteip}/Pictures"
+        
+        echo
+        printf "${BLUE}Make permanant (Make sure to only do this once) ${GREEN}(y/n)?${NC}"
+        read answer
+        if [ "$answer" != "${answer#[Yy]}" ] ;then
+            echo
+            printf "${BLUE}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+                cmd "sed -i 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
+            fi
+            cmd "echo '' | sudo tee -a /etc/fstab"
+            cmd "echo '#FIDS_S: Datasaerver (do not modify)' | sudo tee -a /etc/fstab"
+            cmd "echo '${remoteip}:/mnt/Database                 /nfs/${remoteip}/Database  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+            cmd "echo '${remoteip}:/home/${remoteuser}/Documents /nfs/${remoteip}/Documents nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+            cmd "echo '${remoteip}:/home/${remoteuser}/Projects  /nfs/${remoteip}/Projects  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+            cmd "echo '${remoteip}:/home/${remoteuser}/Videos    /nfs/${remoteip}/Videos    nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+            cmd "echo '${remoteip}:/home/${remoteuser}/Music     /nfs/${remoteip}/Music     nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+            cmd "echo '${remoteip}:/home/${remoteuser}/Pictures  /nfs/${remoteip}/Pictures  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+            cmd "echo '#FIDS_E' | sudo tee -a /etc/fstab"
         fi
     fi
     
