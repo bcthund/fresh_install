@@ -23,6 +23,8 @@ else
     echo "${RED}LIVE: Actions will be performed! Use caution.${NC}"
 fi
 
+dl(){cmd "gdown https://drive.google.com/uc?id=$1"}
+
 echo
 echo "${grey}This script will downlaod the fresh_install files as well as${NC}"
 echo "${grey}give you the option to downlaod additional source installers${NC}"
@@ -74,9 +76,8 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo apt -y install python3-pip"
             cmd "pip3 install gdown"
-            fileid="1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
-            cmd "gdown https://drive.google.com/uc?id=${fileid}"
-            cmd "unzip Addons.zip -d ./gzdoom_installer/" 
+            dl "1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
+            cmd "unzip Addons.zip -o -d ./gzdoom_installer/" 
         fi
         cmd "mv ./gzdoom_installer/* ./"
         cmd "rm -rf ./gzdoom_installer"
@@ -119,9 +120,8 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "sudo apt -y install python3-pip"
         cmd "pip3 install gdown"
-        fileid="1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
-        cmd "gdown https://drive.google.com/uc?id=${fileid}"
-        cmd "unzip Apps.zip"
+        dl "1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
+        cmd "unzip -o Apps.zip"
     fi
 
 #cmd "cd ${working_dir}"
