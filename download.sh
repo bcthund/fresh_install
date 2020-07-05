@@ -56,30 +56,36 @@ echo "${grey}\t      - gzdoom.ini${NC}"
 #echo "${grey}\t\t- ${NC}"
 #echo "${grey}${NC}"
 echo
-echo -n "${BLUE}Do you want to download installs ${GREEN}(y/n)? ${NC}"
+echo -n "${BLUE}Do you want to download installs ${GREEN}(y/n/a)? ${NC}"
 read mode
 #cmd "mkdir -p ./tmp/"
 #cmd "cd tmp"
-if [ "$mode" != "${mode#[Yy]}" ] ;then
+if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
+    if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
+
+
     printf "${BLUE}fresh install scripts (will update all scripts)${NC}"
-    echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/fresh_install.git"
-        #cmd "mv ./fresh_install/*.sh ./"
         cmd "rsync -a ./fresh_install/*.sh ./"
         cmd "rm -rf ./fresh_install"
     fi
 
     printf "${BLUE}gzdoom${NC}"
-    echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/gzdoom_installer.git"
         cmd "rm -rf ./gzdoom_installer/.git"
         cmd "rm ./gzdoom_installer/*.md"
         printf "${BLUE}Addons (Will also install pip3 and gdown)${NC}"
-        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
-            cmd "sudo apt -y install python3-pip"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo apt -qy install python3-pip"
             cmd "pip3 install gdown"
             dl "1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
             cmd "unzip -o Addons.zip -d ./gzdoom_installer/" 
+            cmd "rm Addons.zip"
         fi
         #cmd "mv ./gzdoom_installer/* ./"
         cmd "rsync -a ./gzdoom_installer/ ./"
@@ -87,7 +93,8 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     fi
     
     printf "${BLUE}knossos${NC}"
-    echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/knossos_installer.git"
         cmd "rm -rf ./knossos_installer/.git"
         cmd "rm ./knossos_installer/*.md"
@@ -97,7 +104,8 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     fi
     
     printf "${BLUE}qucs${NC}"
-    echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/qucs_installer.git"
         cmd "rm -rf ./qucs_installer/.git"
         cmd "rm ./qucs_installer/*.md"
@@ -107,7 +115,8 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     fi
     
     printf "${BLUE}valkyrie${NC}"
-    echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/valkyrie_installer.git"
         cmd "rm -rf ./valkyrie_installer/.git"
         cmd "rm ./valkyrie_installer/*.md"
@@ -126,11 +135,13 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo "${grey}\t- Steam${NC}"
     echo "${grey}\t- Eclipse v2020-06${NC}"
     echo "${grey}\t- Plasmoids${NC}"
-    echo -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
-        cmd "sudo apt -y install python3-pip"
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        cmd "sudo apt -qy install python3-pip"
         cmd "pip3 install gdown"
         dl "1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
         cmd "unzip -o Apps.zip"
+        cmd "rm Apps.zip"
     fi
 
 #cmd "cd ${working_dir}"
