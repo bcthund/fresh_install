@@ -64,7 +64,8 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     printf "${BLUE}fresh install scripts (will update all scripts)${NC}"
     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/fresh_install.git"
-        cmd "mv ./fresh_install/*.sh ./"
+        #cmd "mv ./fresh_install/*.sh ./"
+        cmd "rsync -a ./fresh_install/*.sh ./"
         cmd "rm -rf ./fresh_install"
     fi
 
@@ -81,7 +82,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
             cmd "unzip -o Addons.zip -d ./gzdoom_installer/" 
         fi
         #cmd "mv ./gzdoom_installer/* ./"
-        cmd "rsync -a ./gzdoom_installer ./"
+        cmd "rsync -a ./gzdoom_installer/ ./"
         cmd "rm -rf ./gzdoom_installer"
     fi
     
@@ -91,7 +92,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
         cmd "rm -rf ./knossos_installer/.git"
         cmd "rm ./knossos_installer/*.md"
         #cmd "mv ./knossos_installer/* ./"
-        cmd "rsync -a ./knossos_installer ./"
+        cmd "rsync -a ./knossos_installer/ ./"
         cmd "rm -rf ./knossos_installer"
     fi
     
@@ -101,7 +102,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
         cmd "rm -rf ./qucs_installer/.git"
         cmd "rm ./qucs_installer/*.md"
         #cmd "mv ./qucs_installer/* ./"
-        cmd "rsync -a ./qucs_installer ./"
+        cmd "rsync -a ./qucs_installer/ ./"
         cmd "rm -rf ./qucs_installer"
     fi
     
@@ -111,7 +112,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
         cmd "rm -rf ./valkyrie_installer/.git"
         cmd "rm ./valkyrie_installer/*.md"
         #cmd "mv ./valkyrie_installer/* ./"
-        cmd "rsync -a ./valkyrie_installer ./"
+        cmd "rsync -a ./valkyrie_installer/ ./"
         cmd "rm -rf ./valkyrie_installer"
     fi
     
