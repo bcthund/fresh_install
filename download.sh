@@ -78,7 +78,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
             cmd "sudo apt -y install python3-pip"
             cmd "pip3 install gdown"
             dl "1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
-            cmd "unzip Addons.zip -o -d ./gzdoom_installer/" 
+            cmd "unzip -o Addons.zip -d ./gzdoom_installer/" 
         fi
         #cmd "mv ./gzdoom_installer/* ./"
         cmd "rsync -a ./gzdoom_installer ./"
