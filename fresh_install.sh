@@ -251,21 +251,46 @@ else
     echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         printf "${BLUE}BricsCAD v20.2.08 (deb)${NC}\n"
-        cmd "sudo dpkg -iG ./Apps/BricsCAD-V20.2.08-1-en_US-amd64.deb"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/BricsCAD-V20.2.08-1-en_US-amd64.deb"
+        fi
+        
         printf "${BLUE}Camotics v1.2.0 (deb)${NC}\n"
-        cmd "sudo dpkg -iG ./Apps/camotics_1.2.0_amd64.deb"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/camotics_1.2.0_amd64.deb"
+        fi
+        
         printf "${BLUE}Chrome v83.0.4103 (deb)${NC}\n"
-        cmd "sudo dpkg -iG ./Apps/google-chrome-stable_current_amd64.deb"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/google-chrome-stable_current_amd64.deb"
+        fi
+        
         printf "${BLUE}No Machine v6.11.2 (deb)${NC}\n"
-        cmd "sudo dpkg -iG ./Apps/nomachine_6.11.2_1_amd64.deb"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/nomachine_6.11.2_1_amd64.deb"
+        fi
+        
         printf "${BLUE}Steam v20 (deb)${NC}\n"
-        cmd "sudo dpkg -iG ./Apps/steam_latest.deb"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/steam_latest.deb"
+        fi
+        
         printf "${BLUE}Mutisystem (sh)${NC}\n"
-        cmd "sudo chmod +x ./Apps/install-depot-multisystem.sh"
-        cmd "sudo ./Apps/install-depot-multisystem.sh"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo chmod +x ./Apps/install-depot-multisystem.sh"
+            cmd "sudo ./Apps/install-depot-multisystem.sh"
+        fi
+        
         printf "${BLUE}Eclipse v2020-06 (bin)${NC}\n"
-        cmd "sudo chmod +x ./Apps/eclipse-installer/eclipse-inst"
-        cmd "./Apps/eclipse-installer/eclipse-inst"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo chmod +x ./Apps/eclipse-installer/eclipse-inst"
+            cmd "./Apps/eclipse-installer/eclipse-inst"
+        fi
+        
+        printf "${BLUE}Printer (HL-3040CN)${NC}\n"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo ./linux-brprinter-installer-2.2.2-1"
+        fi
     fi
 
     
@@ -397,7 +422,13 @@ else
     fi
     
     echo
-    echo -n "${BLUE}Do you want to mount Dataserver shares ${GREEN}(y/n)? ${NC}"
+    echo "${BLUE}Do you want to mount Dataserver shares ${GREEN}(y/n)? ${NC}"
+    echo "${grey}\t- Database${NC}"
+    echo "${grey}\t- Documents${NC}"
+    echo "${grey}\t- Projects${NC}"
+    echo "${grey}\t- Videos${NC}"
+    echo "${grey}\t- Music${NC}"
+    echo "${grey}\t- Pictures${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         printf "${BLUE}What is the IP of the target? ${NC}"

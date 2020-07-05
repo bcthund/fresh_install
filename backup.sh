@@ -23,13 +23,19 @@ echo "${PURPLE}-----------------------------------------------------------------
     echo "${BLUE}Keyring${NC}"
     cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/kwalletd/ ./Migration_$USER/root/"
 
+# NoMachine (NX)
+    echo
+    echo "${BLUE}NoMachine (NX)${NC}"
+    cmd "sudo rsync -aR --info=progress2 /usr/NX/ ./Migration_$USER/root/"
+    
 # VPN
     echo
     echo "${BLUE}VPNs${NC}"
-    cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/Mikrotik_OVPN_Home2 ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/Mikrotik_OVPN_Karen ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/MSELEC ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/.cert ./Migration_$USER/root/"
+    cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/ ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/Mikrotik_OVPN_Home2 ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/Mikrotik_OVPN_Karen ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/MSELEC ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/.cert ./Migration_$USER/root/"
 
 # Warzone 2100
     echo
@@ -51,11 +57,12 @@ echo "${PURPLE}-----------------------------------------------------------------
     echo
     echo "${BLUE}BricsCAD${NC}"
     cmd "sudo rsync -aR --info=progress2 /home/$USER/BricsCAD ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCAD_ShapeV18.lic ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCADV17.lic ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCADV18.lic ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCADV20.lic ./Migration_$USER/root/"
-    cmd "sudo rsync -aR --info=progress2 /var/bricsys/CommunicatorV18.lic ./Migration_$USER/root/"
+    cmd "sudo rsync -aR --info=progress2 /var/bricsys/ ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCAD_ShapeV18.lic ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCADV17.lic ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCADV18.lic ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /var/bricsys/BricsCADV20.lic ./Migration_$USER/root/"
+    #cmd "sudo rsync -aR --info=progress2 /var/bricsys/CommunicatorV18.lic ./Migration_$USER/root/"
     cmd "sudo rsync -aR --info=progress2 /opt/bricsys/bricscad/v20/RenderMaterialStatic ./Migration_$USER/root/"
     cmd "sudo rsync -aR --info=progress2 /opt/bricsys/communicator ./Migration_$USER/root/"
 

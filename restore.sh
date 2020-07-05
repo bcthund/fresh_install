@@ -6,6 +6,13 @@
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/home/$USER/.local/share/kwalletd/ /home/$USER/.local/share/kwalletd/"
     fi
+
+# NoMachine (NX)
+    echo "${BLUE}NoMachine (NX)${NC}"
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/usr/NX/ /usr/NX/"
+    fi
     
 # VPN
     printf "${BLUE}VPN${NC}"
