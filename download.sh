@@ -72,6 +72,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/gzdoom_installer.git"
         cmd "rm -rf ./gzdoom_installer/.git"
+        cmd "rm ./gzdoom_installer/*.md"
         printf "${BLUE}Addons (Will also install pip3 and gdown)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo apt -y install python3-pip"
@@ -79,7 +80,8 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
             dl "1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
             cmd "unzip Addons.zip -o -d ./gzdoom_installer/" 
         fi
-        cmd "mv ./gzdoom_installer/* ./"
+        #cmd "mv ./gzdoom_installer/* ./"
+        cmd "rsync -a ./gzdoom_installer ./"
         cmd "rm -rf ./gzdoom_installer"
     fi
     
@@ -87,7 +89,9 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/knossos_installer.git"
         cmd "rm -rf ./knossos_installer/.git"
-        cmd "mv ./knossos_installer/* ./"
+        cmd "rm ./knossos_installer/*.md"
+        #cmd "mv ./knossos_installer/* ./"
+        cmd "rsync -a ./knossos_installer ./"
         cmd "rm -rf ./knossos_installer"
     fi
     
@@ -95,7 +99,9 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/qucs_installer.git"
         cmd "rm -rf ./qucs_installer/.git"
-        cmd "mv ./qucs_installer/* ./"
+        cmd "rm ./qucs_installer/*.md"
+        #cmd "mv ./qucs_installer/* ./"
+        cmd "rsync -a ./qucs_installer ./"
         cmd "rm -rf ./qucs_installer"
     fi
     
@@ -103,7 +109,9 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/valkyrie_installer.git"
         cmd "rm -rf ./valkyrie_installer/.git"
-        cmd "mv ./valkyrie_installer/* ./"
+        cmd "rm ./valkyrie_installer/*.md"
+        #cmd "mv ./valkyrie_installer/* ./"
+        cmd "rsync -a ./valkyrie_installer ./"
         cmd "rm -rf ./valkyrie_installer"
     fi
     
