@@ -23,7 +23,7 @@ else
     echo "${RED}LIVE: Actions will be performed! Use caution.${NC}"
 fi
 
-dl(){cmd "gdown https://drive.google.com/uc?id=$1"}
+dl(){ cmd "gdown https://drive.google.com/uc?id=$1"; }
 
 echo
 echo "${grey}This script will downlaod the fresh_install files as well as${NC}"
