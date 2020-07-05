@@ -61,11 +61,10 @@ read mode
 #cmd "mkdir -p ./tmp/"
 #cmd "cd tmp"
 if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
-    if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
-
+    if [ "$mode" != "${mode#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
 
     printf "${BLUE}fresh install scripts (will update all scripts)${NC}"
-    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/fresh_install.git"
         cmd "rsync -a ./fresh_install/*.sh ./"
@@ -73,13 +72,13 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     fi
 
     printf "${BLUE}gzdoom${NC}"
-    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/gzdoom_installer.git"
         cmd "rm -rf ./gzdoom_installer/.git"
         cmd "rm ./gzdoom_installer/*.md"
         printf "${BLUE}Addons (Will also install pip3 and gdown)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo apt -qy install python3-pip"
             cmd "pip3 install gdown"
@@ -93,7 +92,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     fi
     
     printf "${BLUE}knossos${NC}"
-    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/knossos_installer.git"
         cmd "rm -rf ./knossos_installer/.git"
@@ -104,7 +103,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     fi
     
     printf "${BLUE}qucs${NC}"
-    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/qucs_installer.git"
         cmd "rm -rf ./qucs_installer/.git"
@@ -115,7 +114,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     fi
     
     printf "${BLUE}valkyrie${NC}"
-    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "git clone https://github.com/bcthund/valkyrie_installer.git"
         cmd "rm -rf ./valkyrie_installer/.git"
@@ -135,7 +134,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     echo "${grey}\t- Steam${NC}"
     echo "${grey}\t- Eclipse v2020-06${NC}"
     echo "${grey}\t- Plasmoids${NC}"
-    if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; else echo; fi
+    if [ "$mode" != "${mode#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         cmd "sudo apt -qy install python3-pip"
         cmd "pip3 install gdown"
@@ -147,7 +146,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
 #cmd "cd ${working_dir}"
     
 #     printf "${BLUE}${NC}"
-#     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+#     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$mode" != "${mode#[Yy]}" ] ;then
 #         cmd ""
 #     fi
 fi
