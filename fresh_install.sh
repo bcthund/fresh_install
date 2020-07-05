@@ -298,11 +298,22 @@ else
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall from Source${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    cmd "./gzdoom.sh $1"
-    cmd "./knossos.sh $1"
-    cmd "./qucs.sh $1"
-    cmd "./valkyrie.sh $1"
-    #cmd "./flatcam.sh $1"
+    echo
+    echo "${BLUE}Do you want to install programs from source?${NC}"
+    echo "${grey}\t- gzdoom${NC}"
+    echo "${grey}\t- knossos${NC}"
+    echo "${grey}\t- qucs${NC}"
+    echo "${grey}\t- valkyrie${NC}"
+    #echo "${grey}\t- flatcam${NC}"
+    echo -n "${GREEN}Continue (y/n)? ${NC}"
+    read answer
+    if [ "$answer" != "${answer#[Yy]}" ] ;then
+        cmd "./gzdoom.sh $1"
+        cmd "./knossos.sh $1"
+        cmd "./qucs.sh $1"
+        cmd "./valkyrie.sh $1"
+        #cmd "./flatcam.sh $1"
+    fi
     
     
     echo
