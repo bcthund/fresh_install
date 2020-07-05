@@ -215,9 +215,9 @@ When all else fails, I have developed a method of stepping through the process o
   valkyrie (in progress)
 </pre>
 See also:
-  * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer)
-  * [knossos_installer](https://github.com/bcthund/knossos_installer)
-  * [qucs_installer](https://github.com/bcthund/qucs_installer)
+  * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer "Install from Source")
+  * [knossos_installer](https://github.com/bcthund/knossos_installer "Install from Source")
+  * [qucs_installer](https://github.com/bcthund/qucs_installer "Install from Source")
   * [valkyrie](https://github.com/bcthund/valkyrie_installer "Install from Source")
   * flatcam (in porogress)
 
