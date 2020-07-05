@@ -7,7 +7,7 @@ This is a script I created for a system restore procedure during a fresh install
   * [knossos_installer](https://github.com/bcthund/knossos_installer "Install from Source")
   * [qucs_installer](https://github.com/bcthund/qucs_installer "Install from Source")
   * flatcam (in progress)
-  * valkyrie (in progress)
+  * [valkyrie](https://github.com/bcthund/valkyrie_installer "Install from Source")
   * [Apps](https://drive.google.com/file/d/1wcCso1e16rusFrnEZq035Xu-wKf99ZyH/view?usp=sharing "Download from Google Drive")
 
 ## Usage
@@ -218,8 +218,8 @@ See also:
   * [gzdoom_installer](https://github.com/bcthund/gzdoom_installer)
   * [knossos_installer](https://github.com/bcthund/knossos_installer)
   * [qucs_installer](https://github.com/bcthund/qucs_installer)
+  * [valkyrie](https://github.com/bcthund/valkyrie_installer "Install from Source")
   * flatcam (in porogress)
-  * valkyrie (in progress)
 
 ## Additional Configuration
 Other things that don't include migration or installation.

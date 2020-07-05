@@ -11,7 +11,7 @@
     echo "${BLUE}NoMachine (NX)${NC}"
     if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-        cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/usr/NX/ /usr/NX/"
+        cmd "sudo rsync -aR --info=progress2 --delete ./Migration_$USER/root/usr/NX/etc/server.cfg /usr/NX/etc/server.cfg"
     fi
     
 # VPN

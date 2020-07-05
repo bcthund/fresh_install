@@ -26,7 +26,7 @@ echo "${PURPLE}-----------------------------------------------------------------
 # NoMachine (NX)
     echo
     echo "${BLUE}NoMachine (NX)${NC}"
-    cmd "sudo rsync -aR --info=progress2 /usr/NX/ ./Migration_$USER/root/"
+    cmd "sudo rsync -aR --info=progress2 /usr/NX/etc/server.cfg ./Migration_$USER/root/"
     
 # VPN
     echo

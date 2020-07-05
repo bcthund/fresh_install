@@ -245,51 +245,51 @@ else
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstal Downloaded Apps${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    printf "${grey}\tbricscad\n\tcamotics\n\tchrome\n\tnomachine\n\tmultisystem\n\teclipse${NC}\n\n"
+    printf "${grey}\tbricscad\n\tcamotics\n\tchrome\n\tnomachine\n\tmultisystem\n\teclipse\n\tBrother HL3040CN${NC}\n\n"
     echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
     echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}BricsCAD v20.2.08 (deb)${NC}\n"
+        printf "${BLUE}BricsCAD v20.2.08 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/BricsCAD-V20.2.08-1-en_US-amd64.deb"
         fi
         
-        printf "${BLUE}Camotics v1.2.0 (deb)${NC}\n"
+        printf "${BLUE}Camotics v1.2.0 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/camotics_1.2.0_amd64.deb"
         fi
         
-        printf "${BLUE}Chrome v83.0.4103 (deb)${NC}\n"
+        printf "${BLUE}Chrome v83.0.4103 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/google-chrome-stable_current_amd64.deb"
         fi
         
-        printf "${BLUE}No Machine v6.11.2 (deb)${NC}\n"
+        printf "${BLUE}No Machine v6.11.2 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/nomachine_6.11.2_1_amd64.deb"
         fi
         
-        printf "${BLUE}Steam v20 (deb)${NC}\n"
+        printf "${BLUE}Steam v20 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/steam_latest.deb"
         fi
         
-        printf "${BLUE}Mutisystem (sh)${NC}\n"
+        printf "${BLUE}Mutisystem (sh)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo chmod +x ./Apps/install-depot-multisystem.sh"
             cmd "sudo ./Apps/install-depot-multisystem.sh"
         fi
         
-        printf "${BLUE}Eclipse v2020-06 (bin)${NC}\n"
+        printf "${BLUE}Eclipse v2020-06 (bin)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo chmod +x ./Apps/eclipse-installer/eclipse-inst"
             cmd "./Apps/eclipse-installer/eclipse-inst"
         fi
         
-        printf "${BLUE}Printer (HL-3040CN)${NC}\n"
+        printf "${BLUE}Printer (HL-3040CN)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
-            cmd "sudo ./linux-brprinter-installer-2.2.2-1"
+            cmd "sudo ./Apps/linux-brprinter-installer-2.2.2-1"
         fi
     fi
 
@@ -298,11 +298,11 @@ else
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall from Source${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    cmd "./gzdoom.sh"
-    cmd "./knossos.sh"
-    cmd "./qucs.sh"
-    cmd "./valkyrie.sh"
-    #cmd "./flatcam.sh"
+    cmd "./gzdoom.sh $1"
+    cmd "./knossos.sh $1"
+    cmd "./qucs.sh $1"
+    cmd "./valkyrie.sh $1"
+    #cmd "./flatcam.sh $1"
     
     
     echo
@@ -329,6 +329,7 @@ else
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         if [ -d "/usr/lib/i386-linux-gnu" ]; then
+            # TODO: Fix && logic
             if [ -f "/usr/lib/i386-linux-gnu/libGL.so" ] && [ -f "/usr/lib/i386-linux-gnu/libGL.so.1" ] ; then
                 printf "${YELLOW}i386: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
                 cmd "ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
@@ -340,6 +341,7 @@ else
         fi
         
         if [ -d "/usr/lib/x86_64-linux-gnu" ]; then
+            # TODO: Fix && logic
             if [ -f "/usr/lib/x86_64-linux-gnu/libGL.so" ] && [ -f "/usr/lib/x86_64-linux-gnu/libGL.so.1" ] ; then
                 printf "${YELLOW}x86_64: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
                 cmd "ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
@@ -422,13 +424,14 @@ else
     fi
     
     echo
-    echo "${BLUE}Do you want to mount Dataserver shares ${GREEN}(y/n)? ${NC}"
+    echo "${BLUE}Do you want to mount Dataserver shares:${NC}"
     echo "${grey}\t- Database${NC}"
     echo "${grey}\t- Documents${NC}"
     echo "${grey}\t- Projects${NC}"
     echo "${grey}\t- Videos${NC}"
     echo "${grey}\t- Music${NC}"
     echo "${grey}\t- Pictures${NC}"
+    echo -n "${GREEN}Continue (y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         printf "${BLUE}What is the IP of the target? ${NC}"
