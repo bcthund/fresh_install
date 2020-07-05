@@ -276,6 +276,8 @@ else
     cmd "./gzdoom.sh"
     cmd "./knossos.sh"
     cmd "./qucs.sh"
+    cmd "./valkyrie.sh"
+    #cmd "./flatcam.sh"
     
     
     echo
