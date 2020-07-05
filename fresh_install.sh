@@ -82,11 +82,13 @@ echo "${grey}made for system configuration files (Plasma, Shortcuts, Power${NC}"
 echo "${grey}Management, etc).${NC}"
 #echo "${grey}${NC}"
 echo
-echo -n "${BLUE}Do you want to (B)ackup or (R)estore? ${NC}"
+echo -n "${BLUE}Do you want to (B)ackup, (R)estore, or (D)ownload installers? ${NC}"
 read mode
 if [ "$mode" != "${mode#[Bb]}" ] ;then
     cmd ". ./backup.sh"
-else
+elif [ "$mode" != "${mode#[Dd]}" ] ;then
+    cmd ". ./download.sh $1"
+elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tCreate Folder Links${NC}"
@@ -516,6 +518,8 @@ else
     echo "              - Generate xorg.conf"
     echo "              - Add Modelines"
     echo "${PURPLE}==========================================================================${NC}"
+else
+    echo "${RED}Invalid option: ${mode}"
 fi
 
 
