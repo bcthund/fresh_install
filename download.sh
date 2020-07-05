@@ -76,7 +76,7 @@ if [ "$mode" != "${mode#[Yy]}" ] ;then
             cmd "pip3 install gdown"
             fileid="1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
             cmd "gdown https://drive.google.com/uc?id=${fileid}"
-            cmd "unzip Apps.zip -d ./gzdoom_installer/" 
+            cmd "unzip Addons.zip -d ./gzdoom_installer/" 
         fi
         cmd "mv ./gzdoom_installer/* ./"
         cmd "rm -rf ./gzdoom_installer"
