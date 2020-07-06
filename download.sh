@@ -162,8 +162,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "git clone https://github.com/bcthund/fresh_install.git"
         cmd "rsync -a ./fresh_install/*.sh ./"
         cmd "rm -rf ./fresh_install"
-        if [ "$GOTOSTEP" = false ]; then cmd "./download.sh $FLAGS --restart=$mode"; fi
-        exit
+        if [ "$GOTOSTEP" = false ]; then cmd "./download.sh $FLAGS --restart=$mode"; exit; fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
