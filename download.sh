@@ -58,7 +58,8 @@ do
         --restart=*)
         RESTART=true
         mode="${arg#*=}"
-        echo "${RED}NOTE: Script restarted using downloaded version.${NC}"
+        echo "----------------------> '${arg#*=}'"
+        #echo "${RED}NOTE: Script restarted using downloaded version. ($0 $FLAGS $mode)${NC}"
         shift # Remove --restart from processing
         ;;
         *)
@@ -88,6 +89,7 @@ jumpto $start
 start:
 
 if [ "$RESTART" = true ]; then
+    echo "${RED}NOTE: Script restarted using downloaded version. ($0 $FLAGS --restart=$mode)${NC}"
     jumpto restart
 fi
 
@@ -193,7 +195,7 @@ restart:
         cmd "rm -rf ./valkyrie_installer"
     fi
     
-    printf "${BLUE}Apps (Will also install pip3 and gdown)${NC}"
+    echo "${BLUE}Apps (Will also install pip3 and gdown)${NC}"
     echo "${grey}\t- Bricscad v20.2.08${NC}"
     echo "${grey}\t- Camotics v1.2.0${NC}"
     echo "${grey}\t- Chrome${NC}"
