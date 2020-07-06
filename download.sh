@@ -18,6 +18,7 @@ NC='\033[0m'
 # Setup command
 DEBUG=false
 VERBOSE=false
+RESTART=false
 FLAGS=""
 OTHER_ARGUMENTS=""
 
@@ -34,6 +35,10 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
+        --restart)
+        RESTART=true
+        shift # Remove --restart from processing
+        ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
         shift # Remove generic argument from processing
@@ -47,6 +52,20 @@ cmd(){
 }
 
 dl(){ cmd "gdown https://drive.google.com/uc?id=$1"; }
+
+function jumpto
+{
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+
+start=${1:-"start"}
+
+if [ "$RESTART" = true ]; then
+    jumpto restart
+fi
 
 echo
 echo "${grey}This script will downlaod the fresh_install files as well as${NC}"
@@ -92,8 +111,11 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "git clone https://github.com/bcthund/fresh_install.git"
         cmd "rsync -a ./fresh_install/*.sh ./"
         cmd "rm -rf ./fresh_install"
+        cmd "./download.sh $FLAGS --restart"
+        exit
     fi
 
+restart:
     printf "${BLUE}gzdoom${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
