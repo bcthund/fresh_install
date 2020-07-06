@@ -11,15 +11,85 @@ This is a script I created for a system restore procedure during a fresh install
   * [Apps](https://drive.google.com/file/d/1wcCso1e16rusFrnEZq035Xu-wKf99ZyH/view?usp=sharing "Download from Google Drive")
 
 ## Usage
-```chmod +x fresh_install.sh```  
-<br>
-<u>**Live run:**</u>  
-This will prompt you with a series of questions and perform the actions, making changes to your filesystem.  
-```./fresh_install.sh```  
-<br>
-<u>**Debug:**</u>  
-This will prompt you with a series of questions but will not actually perform them. It will echo the command that would be run so you can do a dry run first.  
-```./fresh_install.sh debug```
+### fresh_install.sh
+<pre>
+Usage: fresh_install.sh &lt;options&gt;
+
+This script is intended to be run on an existing installation to backup some important user
+data or software settings. The script is then intended to be run on a fresh installation
+(hence the name of the script) to reinstall typical applications and restore the backups.
+
+Options:
+  -h, --help            show this help message and exit
+  -v, --verbose         print commands being run before running them
+  -d, --debug           print commands to be run but do not execute them
+  --step=STEP           jump to an install step then exit when complete
+  --continue=STEP       jump to an install step and continue to remaining steps
+
+Available STEP Options:
+                        start     same as starting without a STEP option
+                        backup    perform a system backup
+                        download  download/update install scripts, apps, source installs. Always exits
+                        symlinks  install symlinks from a system backup
+                        upgrade   perform a system upgrade, and purge apport if desired
+                        packages  install apt packages including some dependencies for other steps
+                        pip       install pip3 packages
+                        snap      install snap packages
+                        plasmoid  install plasma plasmoids
+                        downloads install downloaded applications
+                        source    install applications from source
+                        config    perform some additional configuration, not including NFS shares
+                        nfs       setup some standard NFS shares and/or attach media server shares
+                        restore   perform a system restore from a previous backup
+</pre>
+
+### downlaod.sh
+<pre>
+Usage: download.sh &lt;options&gt;
+
+Options:
+  -h, --help            show this help message and exit
+  -v, --verbose         print commands being run before running them
+  -d, --debug           print commands to be run but do not execute them
+  --step=STEP           jump to an install step then exit when complete
+  --restart=MODE        this is used to restart the script after downloading updated scripts
+                        and will skip the step asking to download updated scripts. Under normal
+                        circumstances this should not be used.
+
+Available STEP Options:
+                        start     same as starting without a STEP option
+                        update    update fresh install scripts
+                        gzdoom    download gzdoom install files
+                        knossos   download knosso install files
+                        qucs      download qucs install files
+                        valkyrie  download valkyrie install files
+                        apps      download Apps.zip and extract
+
+Available MODE Options:
+                        y  answers yes to downloading installs (all steps will be confirmed)
+                        n  answers no to downloading installs (script will simply exit)
+                        a  answers all to downloading installs (all steps will automatically execute)
+</pre>
+
+### backup.sh
+<pre>
+Usage: backup.sh &lt;options&gt;
+
+Options:
+  -h, --help            show this help message and exit
+  -v, --verbose         print commands being run before running them
+  -d, --debug           print commands to be run but do not execute them
+</pre>
+
+### restore.sh
+<pre>
+Usage: restore.sh &lt;options&gt;
+
+Options:
+  -h, --help            show this help message and exit
+  -v, --verbose         print commands being run before running them
+  -d, --debug           print commands to be run but do not execute them
+</pre>
 
 ## Drive Structure
 The drive mapping is important for backup and restore procedures, espectially the symlinks. It does not prevent the script from working in general but the symlinks should not be used if the drive structure is different. This is for reference on how the script was written, see the `Symlinks` section below for details on how the drives are used with the symlinks.<br>

@@ -60,7 +60,7 @@ do
         ;;
         -h|--help)
         echo "${WHITE}"
-        echo "Usage: fresh_install.sh <options>"
+        echo "Usage: $0 <options>"
         echo
         echo "This script is intended to be run on an existing installation to backup some important user"\
              "data or software settings. The script is then intended to be run on a fresh installation"\
