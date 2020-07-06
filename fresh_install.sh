@@ -531,20 +531,19 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     fi
     
     
-    echo
-    echo "${PURPLE}==========================================================================${NC}"
-    echo "${PURPLE}\tRestore Backup${NC}"
-    echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    printf "${grey}\tvpn settings\n\twarzone2100\n\tknossos\n\trawtherapee\n\tbricscad\n\tdosbox\n\tfrictional games\n\tthunderbird\n\tkicad\n\taudacious\n\tvlc\n\teclipse\n\tkate\n\tpower management\n\tglobal shortcuts\n\tplasma settings\n\tlogin scripts${NC}\n\n"
-    echo -n "${BLUE}Proceed? (y/n/a)? ${NC}"
-    read answer
-    echo
-    if [ "$answer" != "${answer#[AaYy]}" ] ;then
-        # Yes to All?
-        if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
-        
+#     echo
+#     echo "${PURPLE}==========================================================================${NC}"
+#     echo "${PURPLE}\tRestore Backup${NC}"
+#     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
+#     printf "${grey}\tvpn settings\n\twarzone2100\n\tknossos\n\trawtherapee\n\tbricscad\n\tdosbox\n\tfrictional games\n\tthunderbird\n\tkicad\n\taudacious\n\tvlc\n\teclipse\n\tkate\n\tpower management\n\tglobal shortcuts\n\tplasma settings\n\tlogin scripts${NC}\n\n"
+#     echo -n "${BLUE}Proceed? (y/n/a)? ${NC}"
+#     read answer
+#     echo
+#     if [ "$answer" != "${answer#[AaYy]}" ] ;then
+#         if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
+#         
         cmd ". ./restore.sh"
-    fi
+#     fi
 
     echo 
     echo "${PURPLE}==========================================================================${YELLOW}"
