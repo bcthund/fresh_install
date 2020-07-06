@@ -39,6 +39,7 @@ do
         --restart=*)
         RESTART=true
         mode="${arg#*=}"
+        echo "${RED}SCRIPT RESTARTED${NC}"
         shift # Remove --restart from processing
         ;;
         *)
