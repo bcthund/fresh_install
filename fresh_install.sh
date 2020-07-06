@@ -675,6 +675,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "              - Generate xorg.conf"
     echo "              - Add Modelines"
     echo "${PURPLE}==========================================================================${NC}"
+    
+    if [ "$GOTOSTEP" = true ] || [ "$GOTOCONTINUE" = true ]; then exit; fi
 else
     echo "${RED}Invalid option: ${mode}"
 fi

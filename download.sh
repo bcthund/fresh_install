@@ -225,4 +225,5 @@ restart:
 #     echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$mode" != "${mode#[Yy]}" ] ;then
 #         cmd ""
 #     fi
+if [ "$RESTART" = true ]; then exit; fi
 fi
