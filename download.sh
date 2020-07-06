@@ -19,6 +19,7 @@ NC='\033[0m'
 DEBUG=false
 VERBOSE=false
 RESTART=false
+#RESTARTMODE=""
 FLAGS=""
 OTHER_ARGUMENTS=""
 
@@ -35,8 +36,9 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
-        --restart)
+        --restart=*)
         RESTART=true
+        mode="${arg#*=}"
         shift # Remove --restart from processing
         ;;
         *)
@@ -113,7 +115,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "git clone https://github.com/bcthund/fresh_install.git"
         cmd "rsync -a ./fresh_install/*.sh ./"
         cmd "rm -rf ./fresh_install"
-        cmd "./download.sh $FLAGS --restart"
+        cmd "./download.sh $FLAGS --restart=$mode"
         exit
     fi
 
