@@ -388,7 +388,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ -d "/usr/lib/i386-linux-gnu" ]; then
             if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ] && [ -f "/usr/lib/i386-linux-gnu/libGL.so.1" ] ; then
                 printf "${YELLOW}i386: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
-                cmd "ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
+                cmd "sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
             else
                 printf "${RED}i386: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
             fi
@@ -399,7 +399,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ -d "/usr/lib/x86_64-linux-gnu" ]; then
             if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ] && [ -f "/usr/lib/x86_64-linux-gnu/libGL.so.1" ] ; then
                 printf "${YELLOW}x86_64: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
-                cmd "ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
+                cmd "sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
             else
                 printf "${RED}x86_64: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
             fi
@@ -414,7 +414,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         #printf "${BLUE}Creating NFS shares Downloads(rw) and $USER(ro): ${NC}\n"
         printf "${BLUE}Creating NFS shares: ${NC}\n"
-        printf "${grey}\t- /home/$USER$ (ro){NC}\n"
+        printf "${grey}\t- /home/$USER (ro){NC}\n"
         printf "${grey}\t- /home/$USER/Downloads (rw)${NC}\n"
         
         iprange="192.168.0.0/16"
