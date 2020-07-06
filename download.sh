@@ -58,8 +58,6 @@ do
         --restart=*)
         RESTART=true
         mode="${arg#*=}"
-        echo "----------------------> '${arg#*=}'"
-        #echo "${RED}NOTE: Script restarted using downloaded version. ($0 $FLAGS $mode)${NC}"
         shift # Remove --restart from processing
         ;;
         *)
