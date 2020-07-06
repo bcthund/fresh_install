@@ -348,7 +348,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${grey}\t- knossos${NC}"
     echo "${grey}\t- qucs${NC}"
     echo "${grey}\t- valkyrie${NC}"
-    echo "${grey}\t- plex media player${NC}"
+    #echo "${grey}\t- plex media player${NC}"
     #echo "${grey}\t- flatcam${NC}"
     echo -n "${GREEN}Continue (y/n)? ${NC}"
     read answer
@@ -357,7 +357,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd "./knossos.sh $1"
         cmd "./qucs.sh $1"
         cmd "./valkyrie.sh $1"
-        cmd "./plexmp.sh $1"
+        #cmd "./plexmp.sh $1"
         #cmd "./flatcam.sh $1"
     fi
     
