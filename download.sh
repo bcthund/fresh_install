@@ -165,6 +165,12 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "unzip -o Apps.zip"
         cmd "rm Apps.zip"
     fi
+    
+    echo
+    echo "${BLUE}All Done!${NC}"
+    echo "${YELLOW}Run 'fresh_install.sh' to Backup or Restore as well as install programs.${NC}"
+    echo "${YELLOW}Alternatively run 'backup.sh' to perform a system backup right now.${NC}"
+    echo "${YELLOW}Alternatively run 'restore.sh' to perform only a restore of a prvious backup.${NC}"
 
 #cmd "cd ${working_dir}"
     
