@@ -18,6 +18,9 @@ NC='\033[0m'
 # Setup command
 DEBUG=false
 VERBOSE=false
+GOTOSTEP=false
+GOTOCONTINUE=false
+GOTO=""
 RESTART=false
 #RESTARTMODE=""
 FLAGS=""
@@ -44,8 +47,20 @@ do
         echo "  -h, --help            show this help message and exit"
         echo "  -v, --verbose         print commands being run before running them"
         echo "  -d, --debug           print commands to be run but do not execute them"
+        echo "  --step=STEP           jump to an install step then exit when complete"
+        #echo "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo "  --restart=MODE        this is used to restart the script after downloading updated scripts"
-        echo "                        and will skip the step asking to download updated scripts"
+        echo "                        and will skip the step asking to download updated scripts. Under normal"
+        echo "                        circumstances this should not be used."
+        echo
+        echo "Available STEP Options:"
+        echo "                        start     same as starting without a STEP option"
+        echo "                        update    update fresh install scripts"
+        echo "                        gzdoom    download gzdoom install files"
+        echo "                        knossos   download knosso install files"
+        echo "                        qucs      download qucs install files"
+        echo "                        valkyrie  download valkyrie install files"
+        echo "                        apps      download Apps.zip and extract"
         echo
         echo "Available MODE Options:"
         echo "                        y  answers yes to downloading installs (all steps will be confirmed)"
@@ -53,6 +68,11 @@ do
         echo "                        a  answers all to downloading installs (all steps will automatically execute)"
         echo "${NC}"
         exit
+        shift # Remove from processing
+        ;;
+        --step=*)
+        GOTOSTEP=true
+        GOTO="${arg#*=}"
         shift # Remove from processing
         ;;
         --restart=*)
@@ -90,6 +110,10 @@ if [ "$RESTART" = true ]; then
     echo "${RED}NOTE: Script restarted using downloaded version. ($0 $FLAGS --restart=$mode)${NC}"
     if [ "$mode" != "${mode#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
     jumpto restart
+fi
+
+if [ "$GOTOSTEP" = true ] || [ "$GOTOCONTINUE" = true ]; then
+    jumpto $GOTO
 fi
 
 echo
@@ -130,6 +154,7 @@ read mode
 if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     if [ "$mode" != "${mode#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
 
+    update:
     printf "${BLUE}fresh install scripts (will update all scripts)${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -139,8 +164,10 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "./download.sh $FLAGS --restart=$mode"
         exit
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
-restart:
+    restart:
+    gzdoom:
     printf "${BLUE}gzdoom${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -160,7 +187,9 @@ restart:
         cmd "rsync -a ./gzdoom_installer/ ./"
         cmd "rm -rf ./gzdoom_installer"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
+    knossos:
     printf "${BLUE}knossos${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -171,7 +200,9 @@ restart:
         cmd "rsync -a ./knossos_installer/ ./"
         cmd "rm -rf ./knossos_installer"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
+    qucs:
     printf "${BLUE}qucs${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -182,7 +213,9 @@ restart:
         cmd "rsync -a ./qucs_installer/ ./"
         cmd "rm -rf ./qucs_installer"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
+    valkyrie:
     printf "${BLUE}valkyrie${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -193,7 +226,9 @@ restart:
         cmd "rsync -a ./valkyrie_installer/ ./"
         cmd "rm -rf ./valkyrie_installer"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
+    apps:
     echo "${BLUE}Apps (Will also install pip3 and gdown)${NC}"
     echo "${grey}\t- Bricscad v20.2.08${NC}"
     echo "${grey}\t- Camotics v1.2.0${NC}"
@@ -212,6 +247,7 @@ restart:
         cmd "unzip -o Apps.zip"
         cmd "rm Apps.zip"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
     echo
     echo "${BLUE}All Done!${NC}"
