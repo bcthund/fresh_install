@@ -175,7 +175,7 @@ if [ "$mode" != "${mode#[Bb]}" ] ;then
     # ==================================================================
     backup:
     eval "./backup.sh $FLAGS"
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 elif [ "$mode" != "${mode#[Dd]}" ] ;then
     # ==================================================================
     #   Run download script
@@ -183,7 +183,7 @@ elif [ "$mode" != "${mode#[Dd]}" ] ;then
     download:
     eval "./download.sh $FLAGS"
     exit
-    #if [ "$GOTOSTEP" = true ]; then exit; fi
+    #if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 elif [ "$mode" != "${mode#[Rr]}" ] ;then
     symlinks:
     echo
@@ -229,7 +229,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         # Copy all symlinks
         cmd "sudo rsync -aR --info=progress2 ./Migration_$USER/symlinks/ /"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
     upgrade:
     echo "${PURPLE}==========================================================================${NC}"
@@ -249,7 +249,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "sudo apt -y purge apport"
         fi
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
 
     packages:
@@ -267,7 +267,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
    
    
     ppa:
@@ -286,7 +286,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         #printf "${BLUE}Installing Knossos:${NC}\n"
         #cmd "sudo apt -y install knossos"              # Currently not supported
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
 
     pip:
@@ -302,7 +302,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Installing bCNC${NC}\n"
         cmd "pip3 install --no-input --upgrade bCNC"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
 
     snap:
@@ -323,7 +323,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Installing shotcut${NC}\n"; cmd "sudo snap install --classic shotcut"
         printf "${BLUE}Installing sublime-text${NC}\n"; cmd "sudo snap install --classic sublime-text"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
     
     plasmoid:
@@ -339,7 +339,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Installing places widget${NC}\n"
         cmd "plasmapkg2 -i ./Apps/places-widget-1.3.plasmoid"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
 
     downloads:
@@ -433,7 +433,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "${install_dir}/Plex_Media_Player_2.58.0.1076-38e019da_x64.AppImage"
         fi
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
     
     source:
@@ -459,7 +459,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         #eval "./plexmp.sh $FLAGS"
         #eval "./flatcam.sh $FLAGS"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     
     config:
@@ -519,7 +519,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         #    printf "${RED}x86_64: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
         #fi
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     nfs:
     # ==================================================================
@@ -655,7 +655,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "echo '#FIDS_E' | sudo tee -a /etc/fstab"
         fi
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     
     # ==================================================================
@@ -663,7 +663,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     # ==================================================================
     restore:
     eval "./restore.sh $FLAGS"
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
     echo 
     echo "${PURPLE}==========================================================================${YELLOW}"

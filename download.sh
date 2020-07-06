@@ -165,7 +165,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         if [ "$GOTOSTEP" = false ]; then cmd "./download.sh $FLAGS --restart=$mode"; fi
         exit
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
     restart:
     gzdoom:
@@ -188,7 +188,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "rsync -a ./gzdoom_installer/ ./"
         cmd "rm -rf ./gzdoom_installer"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     knossos:
     printf "${BLUE}knossos${NC}"
@@ -201,7 +201,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "rsync -a ./knossos_installer/ ./"
         cmd "rm -rf ./knossos_installer"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     qucs:
     printf "${BLUE}qucs${NC}"
@@ -214,7 +214,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "rsync -a ./qucs_installer/ ./"
         cmd "rm -rf ./qucs_installer"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     valkyrie:
     printf "${BLUE}valkyrie${NC}"
@@ -227,7 +227,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "rsync -a ./valkyrie_installer/ ./"
         cmd "rm -rf ./valkyrie_installer"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     apps:
     echo "${BLUE}Apps (Will also install pip3 and gdown)${NC}"
@@ -248,7 +248,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         cmd "unzip -o Apps.zip"
         cmd "rm Apps.zip"
     fi
-    if [ "$GOTOSTEP" = true ]; then exit; fi
+    if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
     echo
     echo "${BLUE}All Done!${NC}"
