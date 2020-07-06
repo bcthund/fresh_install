@@ -61,9 +61,6 @@ cmd(){
     if [ "$DEBUG" = false ]; then eval $1; fi;
 }
 
-cmd "echo backup.sh $FLAGS"
-exit 0
-
 echo
 echo "${PURPLE}==========================================================================${NC}"
 echo "${PURPLE}\tPerforming Backup${NC}"
