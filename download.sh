@@ -73,6 +73,7 @@ do
         --step=*)
         GOTOSTEP=true
         GOTO="${arg#*=}"
+        mode="y"
         shift # Remove from processing
         ;;
         --restart=*)
