@@ -62,6 +62,9 @@ function jumpto
 }
 
 start=${1:-"start"}
+jumpto $start
+
+start:
 
 if [ "$RESTART" = true ]; then
     jumpto restart
