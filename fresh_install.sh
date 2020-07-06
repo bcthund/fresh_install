@@ -1,5 +1,4 @@
 #!/bin/sh
-clear
 grey='\033[1;30m'
 red='\033[0;31m'
 RED='\033[1;31m'
@@ -17,18 +16,18 @@ cyan='\033[0;36m'
 CYAN='\033[1;36m'
 NC='\033[0m'
 
-echo
-echo   "${grey}grey${NC}"
-echo    "${red}red      ${RED}RED${NC}"
-echo  "${green}green    ${GREEN}GREEN${NC}"
-echo "${yellow}yellow   ${YELLOW}YELLOW${NC}"
-echo "${purple}purple   ${PURPLE}PURPLE${NC}"
-echo  "${white}white    ${WHITE}WHITE${NC}"
-echo   "${blue}blue     ${BLUE}BLUE${NC}"
-echo   "${cyan}cyan     ${CYAN}CYAN${NC}"
-echo     "${NC}NC${NC}"
-echo
-echo
+# echo
+# echo   "${grey}grey${NC}"
+# echo    "${red}red      ${RED}RED${NC}"
+# echo  "${green}green    ${GREEN}GREEN${NC}"
+# echo "${yellow}yellow   ${YELLOW}YELLOW${NC}"
+# echo "${purple}purple   ${PURPLE}PURPLE${NC}"
+# echo  "${white}white    ${WHITE}WHITE${NC}"
+# echo   "${blue}blue     ${BLUE}BLUE${NC}"
+# echo   "${cyan}cyan     ${CYAN}CYAN${NC}"
+# echo     "${NC}NC${NC}"
+# echo
+# echo
 
 # Save the working directory of the script
 working_dir=$PWD
@@ -40,6 +39,9 @@ trap ctrl_c INT
 # Setup command
 DEBUG=false
 VERBOSE=false
+GOTOSTEP=false
+GOTOCONTINUE=false
+GOTO=""
 FLAGS=""
 OTHER_ARGUMENTS=""
 
@@ -56,6 +58,50 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
+        -h|--help)
+        echo "${WHITE}"
+        echo "Usage: fresh_install.sh <options>"
+        echo
+        echo "This script is intended to be run on an existing installation to backup some important user"\
+             "data or software settings. The script is then intended to be run on a fresh installation"\
+             "(hence the name of the script) to reinstall typical applications and restore the backups."
+        echo
+        echo "Options:"
+        echo "  -h, --help            show this help message and exit"
+        echo "  -v, --verbose         print commands being run before running them"
+        echo "  -d, --debug           print commands to be run but do not execute them"
+        echo "  --step=STEP           jump to an install step then exit when complete"
+        echo "  --continue=STEP       jump to an install step and continue to remaining steps"
+        echo
+        echo "Available STEP Options:"
+        echo "                        start     same as starting without a STEP option"
+        echo "                        backup    perform a system backup"
+        echo "                        download  download/update install scripts, apps, source installs. Always exits"
+        echo "                        symlinks  install symlinks from a system backup"
+        echo "                        upgrade   perform a system upgrade, and purge apport if desired"
+        echo "                        packages  install apt packages including some dependencies for other steps"
+        echo "                        pip       install pip3 packages"
+        echo "                        snap      install snap packages"
+        echo "                        plasmoid  install plasma plasmoids"
+        echo "                        downloads install downloaded applications"
+        echo "                        source    install applications from source"
+        echo "                        config    perform some additional configuration, not including NFS shares"
+        echo "                        nfs       setup some standard NFS shares and/or attach media server shares"
+        echo "                        restore   perform a system restore from a previous backup"
+        echo "${NC}"
+        exit
+        shift # Remove from processing
+        ;;
+        --step=*)
+        GOTOSTEP=true
+        GOTO="${arg#*=}"
+        shift # Remove from processing
+        ;;
+        --continue=*)
+        GOTOCONTINUE=true
+        GOTO="${arg#*=}"
+        shift # Remove from processing
+        ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
         shift # Remove generic argument from processing
@@ -67,6 +113,20 @@ cmd(){
     if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo ">> ${WHITE}$1${NC}"; fi;
     if [ "$DEBUG" = false ]; then eval $1; fi;
 }
+
+jumpto(){
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+start=${1:-"start"}
+jumpto $start
+start:
+
+if [ "$GOTOSTEP" = true ] || [ "$GOTOCONTINUE" = true ]; then
+    jumpto $GOTO
+fi
 
 echo
 echo
@@ -83,7 +143,7 @@ echo "${grey}performes the following actions:${NC}"
 echo "${grey}\t- Create Folder Links${NC}"
 echo "${grey}\t\t- This creates links to common folders stored on a different${NC}"
 echo "${grey}\t\t  drive such as Videos, Music, Steam, etc.${NC}"
-echo "${grey}\t- Add Extra PPAs${NC}"
+#echo "${grey}\t- Add Extra PPAs${NC}"
 echo "${grey}\t- Preliminary upgrade and Purge Apport${NC}"
 echo "${grey}\t- Install Standard Packages${NC}"
 echo "${grey}\t- Install PPA Packages${NC}"
@@ -111,13 +171,19 @@ if [ "$mode" != "${mode#[Bb]}" ] ;then
     # ==================================================================
     #   Run backup script
     # ==================================================================
+    backup:
     eval "./backup.sh $FLAGS"
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 elif [ "$mode" != "${mode#[Dd]}" ] ;then
     # ==================================================================
     #   Run download script
     # ==================================================================
+    download:
     eval "./download.sh $FLAGS"
+    exit
+    #if [ "$GOTOSTEP" = true ]; then exit; fi
 elif [ "$mode" != "${mode#[Rr]}" ] ;then
+    symlinks:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tCreate Folder Links${NC}"
@@ -161,22 +227,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         # Copy all symlinks
         cmd "sudo rsync -aR --info=progress2 ./Migration_$USER/symlinks/ /"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
-    echo
-    echo "${PURPLE}==========================================================================${NC}"
-    echo "${PURPLE}\tAdd Extra PPAs${NC}"
-    echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    echo "${grey}\tx-tile${NC}"
-    echo
-    echo -n "${BLUE}Proceed? ${GREEN}(y/n)? ${NC}"
-    read answer
-    echo
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        cmd "sudo apt-add-repository -yn ppa:giuspen/ppa"
-        #cmd "sudo add-apt-repository -yn ppa:ngld/knossos"     # Currently not supported
-    fi
-
-
+    upgrade:
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tPerform dist-upgrade and purge apport (will ask)${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
@@ -194,8 +247,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "sudo apt -y purge apport"
         fi
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
 
+    packages:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall Standard Packages${NC}"
@@ -210,9 +265,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         cmd "sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
     fi
-
-
-
+    if [ "$GOTOSTEP" = true ]; then exit; fi
+   
+   
+    ppa:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall PPA Packages${NC}"
@@ -223,12 +279,15 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         printf "${BLUE}Installing x-tile${NC}\n"
+        cmd "sudo apt-add-repository -y ppa:giuspen/ppa"
         cmd "sudo apt -y install x-tile"
         #printf "${BLUE}Installing Knossos:${NC}\n"
         #cmd "sudo apt -y install knossos"              # Currently not supported
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
 
+    pip:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall PIP Packages${NC}"
@@ -241,8 +300,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Installing bCNC${NC}\n"
         cmd "pip3 install --no-input --upgrade bCNC"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
 
+    snap:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall Snap packages${NC}"
@@ -260,7 +321,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Installing shotcut${NC}\n"; cmd "sudo snap install --classic shotcut"
         printf "${BLUE}Installing sublime-text${NC}\n"; cmd "sudo snap install --classic sublime-text"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
+    
+    plasmoid:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall Plasmoids${NC}"
@@ -273,8 +337,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Installing places widget${NC}\n"
         cmd "plasmapkg2 -i ./Apps/places-widget-1.3.plasmoid"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
 
+    downloads:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstal Downloaded Apps${NC}"
@@ -365,8 +431,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "${install_dir}/Plex_Media_Player_2.58.0.1076-38e019da_x64.AppImage"
         fi
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
     
+    source:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall from Source${NC}"
@@ -389,8 +457,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         #eval "./plexmp.sh $FLAGS"
         #eval "./flatcam.sh $FLAGS"
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
     
+    config:
     echo
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tAdditional Configuration${NC}"
@@ -447,18 +517,21 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         #    printf "${RED}x86_64: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
         #fi
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
+    nfs:
     # ==================================================================
     #   Create User and Downloads NFS shares
     # ==================================================================
     echo
-    echo -n "${BLUE}Create standard NFS shares ${GREEN}(y/n)? ${NC}"
+    echo "${BLUE}Create standard NFS shares:${NC}"
+    echo "${grey}  /home/$USER (ro)${NC}"
+    echo "${grey}  /home/$USER/Downloads (rw)${NC}"
+    echo -n "${BLUE}Continue ${GREEN}(y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         #printf "${BLUE}Creating NFS shares Downloads(rw) and $USER(ro): ${NC}\n"
         printf "${BLUE}Creating NFS shares: ${NC}\n"
-        printf "${grey}\t- /home/$USER (ro){NC}\n"
-        printf "${grey}\t- /home/$USER/Downloads (rw)${NC}\n"
         
         iprange="192.168.0.0/16"
         echo
@@ -491,12 +564,15 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     #   Mount User and Downloads shares
     # ==================================================================
     echo
-    echo -n "${BLUE}Do you want to mount User(ro) and Downloads(rw) shares on another pc (you will need the IP and username) ${GREEN}(y/n)? ${NC}"
+    echo "${BLUE}Do you want to mount:${NC}"
+    echo "${grey}  /home/<user>${NC}"
+    echo "${grey}  /home/<user>/Downloads${NC}"
+    echo -n "${BLUE}shares from another pc (you will need the IP and username) ${GREEN}(y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}What is the IP of the target? ${NC}"
+        printf "${YELLOW}What is the IP of the target? ${NC}"
         read remoteip
-        printf "${BLUE}What is the username of the target? ${NC}"
+        printf "${YELLOW}What is the username of the target? ${NC}"
         read remoteuser
 
         # Create mount points
@@ -508,11 +584,11 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "sudo mount ${remoteip}:/home/${remoteuser}/Downloads /nfs/${remoteip}/Downloads"
         
         echo
-        printf "${BLUE}Make permanant (Make sure to only do this once) ${GREEN}(y/n)?${NC}"
+        printf "${BLUE}Make permanant ${GREEN}(y/n)?${NC}"
         read answer
         if [ "$answer" != "${answer#[Yy]}" ] ;then
             echo
-            printf "${BLUE}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
                 cmd "sed -i 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
             fi
             cmd "echo '' | sudo tee -a /etc/fstab"
@@ -527,19 +603,19 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     #   Create NFS shares to media server
     # ==================================================================
     echo
-    echo "${BLUE}Do you want to mount Dataserver shares:${NC}"
-    echo "${grey}\t- Database${NC}"
-    echo "${grey}\t- Documents${NC}"
-    echo "${grey}\t- Projects${NC}"
-    echo "${grey}\t- Videos${NC}"
-    echo "${grey}\t- Music${NC}"
-    echo "${grey}\t- Pictures${NC}"
+    echo "${BLUE}Do you want to mount media server shares:${NC}"
+    echo "${grey}\t- /mnt/Database${NC}"
+    echo "${grey}\t- /home/<user>/Documents${NC}"
+    echo "${grey}\t- /home/<user>/Projects${NC}"
+    echo "${grey}\t- /home/<user>/Videos${NC}"
+    echo "${grey}\t- /home/<user>/Music${NC}"
+    echo "${grey}\t- /home/<user>/Pictures${NC}"
     echo -n "${GREEN}Continue (y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}What is the IP of the target? ${NC}"
+        printf "${YELLOW}What is the IP of the target? ${NC}"
         read remoteip
-        printf "${BLUE}What is the username of the target? ${NC}"
+        printf "${YELLOW}What is the username of the target? ${NC}"
         read remoteuser
 
         # Create mount points
@@ -559,11 +635,11 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "sudo mount ${remoteip}:/home/${remoteuser}/Pictures /nfs/${remoteip}/Pictures"
         
         echo
-        printf "${BLUE}Make permanant (Make sure to only do this once) ${GREEN}(y/n)?${NC}"
+        printf "${BLUE}Make permanant ${GREEN}(y/n)?${NC}"
         read answer
         if [ "$answer" != "${answer#[Yy]}" ] ;then
             echo
-            printf "${BLUE}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
                 cmd "sed -i 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
             fi
             cmd "echo '' | sudo tee -a /etc/fstab"
@@ -577,21 +653,20 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "echo '#FIDS_E' | sudo tee -a /etc/fstab"
         fi
     fi
+    if [ "$GOTOSTEP" = true ]; then exit; fi
     
     
     # ==================================================================
     #   Restore Backup
     # ==================================================================
+    restore:
     eval "./restore.sh $FLAGS"
+    if [ "$GOTOSTEP" = true ]; then exit; fi
 
     echo 
     echo "${PURPLE}==========================================================================${YELLOW}"
     echo "Downlaod only: None, unless DEB/script section failed"
-    echo "  Source only: Qucs, FlatCAM, (Alleyoop/Valkyrie)"
-    echo "         Todo: (* = should have been done automatically)"
-    echo "          - Migrate Home Folder"
-    echo "              - Migrate Keyring .......................... (~/.local/share/keyrings)"
-    echo
+    echo "         Todo:"
     echo "          - Install Chrome-Plasma Integration"
     echo "          - VirtualBox Extensions"
     echo "          - NVidia Drivers"
