@@ -36,6 +36,30 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
+        
+        -h|--help)
+        echo "${WHITE}"
+        echo "Usage: fresh_install.sh <options>"
+        echo
+        echo "This script is intended to be run on an existing installation to backup some important user"\
+             "data or software settings. The script is then intended to be run on a fresh installation"\
+             "(hence the name of the script) to reinstall typical applications and restore the backups."
+        echo
+        echo "Options:"
+        echo "  -h, --help            show this help message and exit"
+        echo "  -v, --verbose         print commands being run before running them"
+        echo "  -d, --debug           print commands to be run but do not execute them"
+        echo "  --restart=MODE        this is used to restart the script after downloading updated scripts"
+        echo "                        and will skip the step asking to download updated scripts"
+        echo
+        echo "Available MODE Options:"
+        echo "                        y  answers yes to downloading installs (all steps will be confirmed)"
+        echo "                        n  answers no to downloading installs (script will simply exit)"
+        echo "                        a  answers all to downloading installs (all steps will automatically execute)"
+        echo "${NC}"
+        exit
+        shift # Remove from processing
+        ;;
         --restart=*)
         RESTART=true
         mode="${arg#*=}"
@@ -62,10 +86,8 @@ jumpto(){
     eval "$cmd"
     exit
 }
-
 start=${1:-"start"}
 jumpto $start
-
 start:
 
 if [ "$RESTART" = true ]; then
