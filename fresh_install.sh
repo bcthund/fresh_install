@@ -41,7 +41,7 @@ if [ "$1" != "${1#[debug]}" ] ;then
     cmd(){ echo ">> ${WHITE}$1${NC}"; }
     echo "${RED}DEBUG: Commands will be echoed to console${NC}"
 else
-    cmd(){ eval $1; }
+    cmd(){ echo ">> ${WHITE}$1${NC}"; eval $1; }
     echo "${RED}LIVE: Actions will be performed! Use caution.${NC}"
 fi
 
@@ -218,7 +218,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstall Snap packages${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    printf "${grey}\tckan\n\tshotcut\n\tsublime-text${NC}\n\n"
+    printf "${grey}\tckan${NC}\n"
+    printf "${grey}\tshotcut${NC}\n"
+    printf "${grey}\tsublime-text${NC}\n"
+    echo
     echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
     echo
@@ -247,54 +250,90 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tInstal Downloaded Apps${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    printf "${grey}\tbricscad\n\tcamotics\n\tchrome\n\tnomachine\n\tmultisystem\n\teclipse\n\tBrother HL3040CN${NC}\n\n"
+    printf "${grey}\t- bricscad${NC}\n"
+    printf "${grey}\t- camotics${NC}\n"
+    printf "${grey}\t- chrome${NC}\n"
+    printf "${grey}\t- nomachine${NC}\n"
+    printf "${grey}\t- multisystem${NC}\n"
+    printf "${grey}\t- eclipse${NC}\n"
+    printf "${grey}\t- Brother HL3040CN${NC}\n"
+    printf "${grey}\t- Plex Media Player${NC}\n"
+
     echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
     echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
+        echo
         printf "${BLUE}BricsCAD v20.2.08 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/BricsCAD-V20.2.08-1-en_US-amd64.deb"
         fi
         
+        echo
         printf "${BLUE}Camotics v1.2.0 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/camotics_1.2.0_amd64.deb"
         fi
         
+        echo
         printf "${BLUE}Chrome v83.0.4103 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/google-chrome-stable_current_amd64.deb"
         fi
         
+        echo
         printf "${BLUE}No Machine v6.11.2 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/nomachine_6.11.2_1_amd64.deb"
         fi
         
+        echo
         printf "${BLUE}Steam v20 (deb)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/steam_latest.deb"
         fi
         
+        echo
         printf "${BLUE}Mutisystem (sh)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo chmod +x ./Apps/install-depot-multisystem.sh"
             cmd "sudo ./Apps/install-depot-multisystem.sh"
         fi
         
+        echo
         printf "${BLUE}Eclipse v2020-06 (bin)${NC}"
         echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo chmod +x ./Apps/eclipse-installer/eclipse-inst"
             cmd "./Apps/eclipse-installer/eclipse-inst"
         fi
         
+        echo
         printf "${BLUE}Printer (HL-3040CN)${NC}\n"
         printf "${YELLOW}NOTE: The install script has been modified, it did not allow directories with spaces in them and the version included here does.${NC}\n"
         echo -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "cd ./Apps/brother/"
             cmd "sudo ./linux-brprinter-installer-2.2.2-1"
-            cmd "cd ${working_dir}"
+            cmd "cd '${working_dir}'"
+        fi
+        
+        echo
+        printf "${BLUE}Plex Media Player v2.58.0 (AppImage)${NC}"
+        echo -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            install_dir="/home/$USER/Programs/PlexMP"
+            echo
+            printf "${BLUE}Where do you want to install to:${NC}\n"
+            printf "${YELLOW}  1) ~/Programs/PlexMP/ (default)${NC}\n"
+            printf "${YELLOW}  2) Other (user write permission assumed)${NC}\n"
+            echo -n "${GREEN}Option? ${NC}"; read answer; if [ "$answer" != "${answer#[2]}" ] ;then
+                printf "${BLUE}Directory: ${NC}"
+                read install_dir
+            fi
+            echo
+            printf "${YELLOW}Select YES when asked if you want to integrate, close after it has started.${NC}"
+            echo
+            cmd "mkdir -pv ${install_dir}"
+            cmd "rsync -a ./Apps/Plex_Media_Player_2.58.0.1076-38e019da_x64.AppImage ${install_dir}/"
+            cmd "${install_dir}/Plex_Media_Player_2.58.0.1076-38e019da_x64.AppImage"
         fi
     fi
 
@@ -309,6 +348,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${grey}\t- knossos${NC}"
     echo "${grey}\t- qucs${NC}"
     echo "${grey}\t- valkyrie${NC}"
+    echo "${grey}\t- plex media player${NC}"
     #echo "${grey}\t- flatcam${NC}"
     echo -n "${GREEN}Continue (y/n)? ${NC}"
     read answer
@@ -317,6 +357,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd "./knossos.sh $1"
         cmd "./qucs.sh $1"
         cmd "./valkyrie.sh $1"
+        cmd "./plexmp.sh $1"
         #cmd "./flatcam.sh $1"
     fi
     
@@ -345,24 +386,22 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         if [ -d "/usr/lib/i386-linux-gnu" ]; then
-            # TODO: Fix && logic
-            if [ -f "/usr/lib/i386-linux-gnu/libGL.so" ] && [ -f "/usr/lib/i386-linux-gnu/libGL.so.1" ] ; then
+            if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ] && [ -f "/usr/lib/i386-linux-gnu/libGL.so.1" ] ; then
                 printf "${YELLOW}i386: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
                 cmd "ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
             else
-                printf "${RED}i386: Failed! Both 'libGL.so' and 'libGL.so.1' don't exist, I don't know what to link to.${NC}\n"
+                printf "${RED}i386: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
             fi
         else
             printf "${RED}i386: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
         fi
         
         if [ -d "/usr/lib/x86_64-linux-gnu" ]; then
-            # TODO: Fix && logic
-            if [ -f "/usr/lib/x86_64-linux-gnu/libGL.so" ] && [ -f "/usr/lib/x86_64-linux-gnu/libGL.so.1" ] ; then
+            if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ] && [ -f "/usr/lib/x86_64-linux-gnu/libGL.so.1" ] ; then
                 printf "${YELLOW}x86_64: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
                 cmd "ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
             else
-                printf "${RED}x86_64: Failed! Both 'libGL.so' and 'libGL.so.1' don't exist, I don't know what to link to.${NC}\n"
+                printf "${RED}x86_64: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
             fi
         else
             printf "${RED}x86_64: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
