@@ -90,6 +90,7 @@ start:
 
 if [ "$RESTART" = true ]; then
     echo "${RED}NOTE: Script restarted using downloaded version. ($0 $FLAGS --restart=$mode)${NC}"
+    if [ "$mode" != "${mode#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
     jumpto restart
 fi
 
