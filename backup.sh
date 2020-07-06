@@ -35,8 +35,22 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
+        -h|--help)
+        echo "${WHITE}"
+        echo "Usage: $0.sh <options>"
+        echo
+        echo "Options:"
+        echo "  -h, --help            show this help message and exit"
+        echo "  -v, --verbose         print commands being run before running them"
+        echo "  -d, --debug           print commands to be run but do not execute them"
+        echo "${NC}"
+        exit
+        shift # Remove from processing
+        ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
+        echo "${RED}Unknown argument: $1${NC}"
+        exit
         shift # Remove generic argument from processing
         ;;
     esac

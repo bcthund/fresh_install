@@ -36,14 +36,9 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
-        
         -h|--help)
         echo "${WHITE}"
-        echo "Usage: fresh_install.sh <options>"
-        echo
-        echo "This script is intended to be run on an existing installation to backup some important user"\
-             "data or software settings. The script is then intended to be run on a fresh installation"\
-             "(hence the name of the script) to reinstall typical applications and restore the backups."
+        echo "Usage: $0 <options>"
         echo
         echo "Options:"
         echo "  -h, --help            show this help message and exit"
@@ -68,6 +63,8 @@ do
         ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
+        echo "${RED}Unknown argument: $1${NC}"
+        exit
         shift # Remove generic argument from processing
         ;;
     esac

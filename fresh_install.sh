@@ -104,6 +104,8 @@ do
         ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
+        echo "${RED}Unknown argument: $1${NC}"
+        exit
         shift # Remove generic argument from processing
         ;;
     esac
