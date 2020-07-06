@@ -53,8 +53,7 @@ cmd(){
 
 dl(){ cmd "gdown https://drive.google.com/uc?id=$1"; }
 
-function jumpto
-{
+jumpto(){
     label=$1
     cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
     eval "$cmd"
