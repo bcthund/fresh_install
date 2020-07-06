@@ -16,18 +16,45 @@ cyan='\033[0;36m'
 CYAN='\033[1;36m'
 NC='\033[0m'
 
-if [ "$1" != "${1#[debug]}" ] ;then
-    cmd(){ echo ">> ${WHITE}$1${NC}"; }
-    #echo "${RED}DEBUG: Commands will be echoed to console${NC}"
-else
-    cmd(){ echo ">> ${WHITE}$1${NC}"; eval $1; }
-    #echo "${RED}LIVE: Actions will be performed! Use caution.${NC}"
-fi
+# Setup command
+DEBUG=false
+VERBOSE=false
+FLAGS=""
+OTHER_ARGUMENTS=""
+
+for arg in "$@"
+do
+    case $arg in
+        -d|--debug)
+        DEBUG=true
+        FLAGS="$FLAGS-d "
+        shift # Remove --debug from processing
+        ;;
+        -v|--verbose)
+        VERBOSE=true
+        FLAGS="$FLAGS-v "
+        shift # Remove --verbose from processing
+        ;;
+        *)
+        OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
+        shift # Remove generic argument from processing
+        ;;
+    esac
+done
+
+cmd(){
+    if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo ">> ${WHITE}$1${NC}"; fi;
+    if [ "$DEBUG" = false ]; then eval $1; fi;
+}
+
+cmd "echo backup.sh $FLAGS"
+exit 0
 
 echo
 echo "${PURPLE}==========================================================================${NC}"
 echo "${PURPLE}\tPerforming Backup${NC}"
 echo "${PURPLE}--------------------------------------------------------------------------${NC}"
+echo "${grey}\tuser application menu entries${NC}"
 echo "${grey}\tkeyring${NC}"
 echo "${grey}\tnomachine${NC}"
 echo "${grey}\tvpn settings${NC}"
@@ -69,10 +96,18 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "mkdir -pv ./Migration_$USER/root/"
             cmd "mkdir -pv ./Migration_$USER/symlinks/"
 
+        # User app menu entries
+            echo
+            echo "${BLUE}Menu Entries${NC}"
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+                cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/applications/ ./Migration_$USER/root/"
+            fi
+            
         # Keyring
             echo
             echo "${BLUE}Keyring${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/kwalletd/ ./Migration_$USER/root/"
             fi
@@ -80,7 +115,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # NoMachine (NX)
             echo
             echo "${BLUE}NoMachine (NX)${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /usr/NX/etc/server.cfg ./Migration_$USER/root/"
             fi
@@ -88,7 +123,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # VPN
             echo
             echo "${BLUE}VPNs${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/ ./Migration_$USER/root/"
             fi
@@ -96,7 +131,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Warzone 2100
             echo
             echo "${BLUE}Warzone 2100${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /usr/share/games/warzone2100/sequences.wz ./Migration_$USER/root/"
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.warzone2100-3.2 ./Migration_$USER/root/"
@@ -105,7 +140,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Knossos
             echo
             echo "${BLUE}Knossos${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/knossos ./Migration_$USER/root/"
             fi
@@ -113,7 +148,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # RawTherapee
             echo
             echo "${BLUE}RawTherapee${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/RawTherapee ./Migration_$USER/root/"
             fi
@@ -121,7 +156,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # BricsCAD
             echo
             echo "${BLUE}BricsCAD${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/BricsCAD ./Migration_$USER/root/"
                 cmd "sudo rsync -aR --info=progress2 /var/bricsys/ ./Migration_$USER/root/"
@@ -132,7 +167,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # DosBox
             echo
             echo "${BLUE}DosBox${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.dosbox ./Migration_$USER/root/"
             fi
@@ -140,7 +175,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Frictional Games
             echo
             echo "${BLUE}Frictional Games${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.frictionalgames ./Migration_$USER/root/"
             fi
@@ -148,7 +183,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # ThunderBird
             echo
             echo "${BLUE}ThunderBird${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/ ./Migration_$USER/root/"
             fi
@@ -156,7 +191,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # KiCAD
             echo
             echo "${BLUE}KiCAD${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kicad ./Migration_$USER/root/"
             fi
@@ -164,7 +199,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # gzdoom
             echo
             echo "${BLUE}gzdoom${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/gzdoom ./Migration_$USER/root/"
             fi
@@ -172,7 +207,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Audacious
             echo
             echo "${BLUE}Audacious${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/audacious ./Migration_$USER/root/"
             fi
@@ -180,7 +215,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # VLC
             echo
             echo "${BLUE}VLC${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/vlc ./Migration_$USER/root/"
             fi
@@ -188,7 +223,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Eclipse
             echo
             echo "${BLUE}Eclipse${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/org.eclipse.ui.ide.prefs ./Migration_$USER/root/"
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/Projects/Eclipse/.metadata ./Migration_$USER/root/"
@@ -197,7 +232,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # KATE
             echo
             echo "${BLUE}KAte${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katerc ./Migration_$USER/root/"
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katesyntaxhighlightingrc ./Migration_$USER/root/"
@@ -206,7 +241,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Power Management Profile (KDE) (BACKUP)
             echo
             echo "${BLUE}Power Management${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/powermanagementprofilesrc ./Migration_$USER/root/"
             fi
@@ -214,7 +249,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Global Shortcuts (KDE) (BACKUP)
             echo
             echo "${BLUE}Global Shortcuts${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kglobalshortcutsrc ./Migration_$USER/root/"
             fi
@@ -222,7 +257,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Plasma Settings (Panel, Notifications, Theme, Desktop Effects) (KDE) (BACKUP)
             echo
             echo "${BLUE}Plasma Settings${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc ./Migration_$USER/root/"
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasmanotifyrc ./Migration_$USER/root/"
@@ -233,7 +268,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # Login scripts (.bashr/.profile) (BACKUP)
             echo
             echo "${BLUE}Login Scripts${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.bashrc ./Migration_$USER/root/"
                 cmd "sudo rsync -aR --info=progress2 /home/$USER/.profile ./Migration_$USER/root/"
@@ -242,7 +277,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         # symlinks (predetermined list)
             echo
             echo "${BLUE}Symlinks${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 cp_if_link(){ [ ! -L "$1" ] || cmd "rsync -aR --info=progress2 $1 ./Migration_$USER/symlinks/"; }
                 cp_if_link /home/$USER/Documents

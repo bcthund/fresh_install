@@ -15,13 +15,36 @@ cyan='\033[0;36m'
 CYAN='\033[1;36m'
 NC='\033[0m'
 
-if [ "$1" != "${1#[debug]}" ] ;then
-    cmd(){ echo ">> ${WHITE}$1${NC}"; }
-    echo "${RED}DEBUG: Commands will be echoed to console${NC}"
-else
-    cmd(){ eval $1; }
-    echo "${RED}LIVE: Actions will be performed! Use caution.${NC}"
-fi
+# Setup command
+DEBUG=false
+VERBOSE=false
+FLAGS=""
+OTHER_ARGUMENTS=""
+
+for arg in "$@"
+do
+    case $arg in
+        -d|--debug)
+        DEBUG=true
+        FLAGS="$FLAGS-d "
+        shift # Remove --debug from processing
+        ;;
+        -v|--verbose)
+        VERBOSE=true
+        FLAGS="$FLAGS-v "
+        shift # Remove --verbose from processing
+        ;;
+        *)
+        OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
+        shift # Remove generic argument from processing
+        ;;
+    esac
+done
+
+cmd(){
+    if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo ">> ${WHITE}$1${NC}"; fi;
+    if [ "$DEBUG" = false ]; then eval $1; fi;
+}
 
 dl(){ cmd "gdown https://drive.google.com/uc?id=$1"; }
 

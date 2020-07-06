@@ -37,13 +37,36 @@ working_dir=$PWD
 ctrl_c() { echo; echo; exit 0; }
 trap ctrl_c INT
 
-if [ "$1" != "${1#[debug]}" ] ;then
-    cmd(){ echo ">> ${WHITE}$1${NC}"; }
-    echo "${RED}DEBUG: Commands will be echoed to console${NC}"
-else
-    cmd(){ echo ">> ${WHITE}$1${NC}"; eval $1; }
-    echo "${RED}LIVE: Actions will be performed! Use caution.${NC}"
-fi
+# Setup command
+DEBUG=false
+VERBOSE=false
+FLAGS=""
+OTHER_ARGUMENTS=""
+
+for arg in "$@"
+do
+    case $arg in
+        -d|--debug)
+        DEBUG=true
+        FLAGS="$FLAGS-d "
+        shift # Remove --debug from processing
+        ;;
+        -v|--verbose)
+        VERBOSE=true
+        FLAGS="$FLAGS-v "
+        shift # Remove --verbose from processing
+        ;;
+        *)
+        OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
+        shift # Remove generic argument from processing
+        ;;
+    esac
+done
+
+cmd(){
+    if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo ">> ${WHITE}$1${NC}"; fi;
+    if [ "$DEBUG" = false ]; then eval $1; fi;
+}
 
 echo
 echo
@@ -85,9 +108,15 @@ echo
 echo -n "${BLUE}Do you want to (B)ackup, (R)estore, or (D)ownload installers? ${NC}"
 read mode
 if [ "$mode" != "${mode#[Bb]}" ] ;then
-    cmd ". ./backup.sh"
+    # ==================================================================
+    #   Run backup script
+    # ==================================================================
+    eval "./backup.sh $FLAGS"
 elif [ "$mode" != "${mode#[Dd]}" ] ;then
-    cmd ". ./download.sh $1"
+    # ==================================================================
+    #   Run download script
+    # ==================================================================
+    eval "./download.sh $FLAGS"
 elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo
     echo "${PURPLE}==========================================================================${NC}"
@@ -353,12 +382,12 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -n "${GREEN}Continue (y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        cmd "./gzdoom.sh $1"
-        cmd "./knossos.sh $1"
-        cmd "./qucs.sh $1"
-        cmd "./valkyrie.sh $1"
-        #cmd "./plexmp.sh $1"
-        #cmd "./flatcam.sh $1"
+        eval "./gzdoom.sh $FLAGS"
+        eval "./knossos.sh $FLAGS"
+        eval "./qucs.sh $FLAGS"
+        eval "./valkyrie.sh $FLAGS"
+        #eval "./plexmp.sh $FLAGS"
+        #eval "./flatcam.sh $FLAGS"
     fi
     
     
@@ -366,6 +395,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tAdditional Configuration${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
+    # ==================================================================
+    #   Add user to vboxusers (should give USB permission)
+    # ==================================================================
     echo -n "${BLUE}Add user to vboxusers ${GREEN}(y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
@@ -373,6 +405,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd "sudo usermod -a -G vboxusers $USER"
     fi
     
+    # ==================================================================
+    #   Set Samba share password
+    # ==================================================================
     echo
     echo -n "${BLUE}Set samba password ${GREEN}(y/n)? ${NC}"
     read answer
@@ -381,33 +416,41 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd "sudo smbpasswd -a $USER"
     fi
     
+    # ==================================================================
+    #   Ensure libGL.so exists
+    # ==================================================================
     echo
     echo -n "${BLUE}Check for libGL.so links ${GREEN}(y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        if [ -d "/usr/lib/i386-linux-gnu" ]; then
-            if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ] && [ -f "/usr/lib/i386-linux-gnu/libGL.so.1" ] ; then
-                printf "${YELLOW}i386: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
+        # Just do it, if it exists then it will fail and who cares
+        #if [ -d "/usr/lib/i386-linux-gnu" ]; then
+        #    if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ] && [ -f "/usr/lib/i386-linux-gnu/libGL.so.1" ] ; then
+        #        printf "${YELLOW}i386: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
                 cmd "sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
-            else
-                printf "${RED}i386: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
-            fi
-        else
-            printf "${RED}i386: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
-        fi
+        #    else
+        #        printf "${RED}i386: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
+        #    fi
+        #else
+        #    printf "${RED}i386: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
+        #fi
         
-        if [ -d "/usr/lib/x86_64-linux-gnu" ]; then
-            if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ] && [ -f "/usr/lib/x86_64-linux-gnu/libGL.so.1" ] ; then
-                printf "${YELLOW}x86_64: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
+        # Just do it, if it exists then it will fail and who cares
+        #if [ -d "/usr/lib/x86_64-linux-gnu" ]; then
+        #    if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ] && [ -f "/usr/lib/x86_64-linux-gnu/libGL.so.1" ] ; then
+        #        printf "${YELLOW}x86_64: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
                 cmd "sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
-            else
-                printf "${RED}x86_64: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
-            fi
-        else
-            printf "${RED}x86_64: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
-        fi
+        #    else
+        #        printf "${RED}x86_64: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
+        #    fi
+        #else
+        #    printf "${RED}x86_64: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
+        #fi
     fi
     
+    # ==================================================================
+    #   Create User and Downloads NFS shares
+    # ==================================================================
     echo
     echo -n "${BLUE}Create standard NFS shares ${GREEN}(y/n)? ${NC}"
     read answer
@@ -444,7 +487,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "sudo ufw allow from ${iprange} to any port nfs"
     fi
 
-    
+    # ==================================================================
+    #   Mount User and Downloads shares
+    # ==================================================================
     echo
     echo -n "${BLUE}Do you want to mount User(ro) and Downloads(rw) shares on another pc (you will need the IP and username) ${GREEN}(y/n)? ${NC}"
     read answer
@@ -478,6 +523,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         fi
     fi
     
+    # ==================================================================
+    #   Create NFS shares to media server
+    # ==================================================================
     echo
     echo "${BLUE}Do you want to mount Dataserver shares:${NC}"
     echo "${grey}\t- Database${NC}"
@@ -531,19 +579,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     fi
     
     
-#     echo
-#     echo "${PURPLE}==========================================================================${NC}"
-#     echo "${PURPLE}\tRestore Backup${NC}"
-#     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-#     printf "${grey}\tvpn settings\n\twarzone2100\n\tknossos\n\trawtherapee\n\tbricscad\n\tdosbox\n\tfrictional games\n\tthunderbird\n\tkicad\n\taudacious\n\tvlc\n\teclipse\n\tkate\n\tpower management\n\tglobal shortcuts\n\tplasma settings\n\tlogin scripts${NC}\n\n"
-#     echo -n "${BLUE}Proceed? (y/n/a)? ${NC}"
-#     read answer
-#     echo
-#     if [ "$answer" != "${answer#[AaYy]}" ] ;then
-#         if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
-#         
-        cmd ". ./restore.sh"
-#     fi
+    # ==================================================================
+    #   Restore Backup
+    # ==================================================================
+    eval "./restore.sh $FLAGS"
 
     echo 
     echo "${PURPLE}==========================================================================${YELLOW}"
