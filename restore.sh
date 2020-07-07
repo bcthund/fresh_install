@@ -1,20 +1,21 @@
-#!/bin/sh
-grey='\033[1;30m'
-red='\033[0;31m'
-RED='\033[1;31m'
-green='\033[0;32m'
-GREEN='\033[1;32m'
-yellow='\033[0;33m'
-YELLOW='\033[1;33m'
-purple='\033[0;35m'
-PURPLE='\033[1;35m'
-white='\033[0;37m'
-WHITE='\033[1;37m'
-blue='\033[0;34m'
-BLUE='\033[1;34m'
-cyan='\033[0;36m'
-CYAN='\033[1;36m'
-NC='\033[0m'
+#!/bin/bash
+grey='\e[37;0m'
+GREY='\e[37;1m'
+red='\e[31;0m'
+RED='\e[31;1m'
+green='\e[32;0m'
+GREEN='\e[32;1m'
+yellow='\e[33;0m'
+YELLOW='\e[33;1m'
+purple='\e[35;0m'
+PURPLE='\e[35;1m'
+white='\e[37;0m'
+WHITE='\e[37;1m'
+blue='\e[34;0m'
+BLUE='\e[34;1m'
+cyan='\e[36;0m'
+CYAN='\e[36;1m'
+NC='\e[39;0m'
 
 # Setup command
 DEBUG=false
@@ -36,20 +37,20 @@ do
         shift # Remove --verbose from processing
         ;;
         -h|--help)
-        echo "${WHITE}"
-        echo "Usage: $0.sh <options>"
-        echo
-        echo "Options:"
-        echo "  -h, --help            show this help message and exit"
-        echo "  -v, --verbose         print commands being run before running them"
-        echo "  -d, --debug           print commands to be run but do not execute them"
-        echo "${NC}"
+        echo -e "${WHITE}"
+        echo -e "Usage: $0.sh <options>"
+        echo -e
+        echo -e "Options:"
+        echo -e "  -h, --help            show this help message and exit"
+        echo -e "  -v, --verbose         print commands being run before running them"
+        echo -e "  -d, --debug           print commands to be run but do not execute them"
+        echo -e "${NC}"
         exit
         shift # Remove from processing
         ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
-        echo "${RED}Unknown argument: $1${NC}"
+        echo -e "${RED}Unknown argument: $1${NC}"
         exit
         shift # Remove generic argument from processing
         ;;
@@ -57,51 +58,51 @@ do
 done
 
 cmd(){
-    if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo ">> ${WHITE}$1${NC}"; fi;
+    if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo -e ">> ${WHITE}$1${NC}"; fi;
     if [ "$DEBUG" = false ]; then eval $1; fi;
 }
 
-echo
-echo "${PURPLE}==========================================================================${NC}"
-echo "${PURPLE}\tRestore Backup${NC}"
-echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-echo "${grey}\tkeyring${NC}"
-echo "${grey}\tnomachine${NC}"
-echo "${grey}\tvpn settings${NC}"
-echo "${grey}\twarzone2100${NC}"
-echo "${grey}\tknossos${NC}"
-echo "${grey}\trawtherapee${NC}"
-echo "${grey}\tbricscad${NC}"
-echo "${grey}\tdosbox${NC}"
-echo "${grey}\tfrictional games${NC}"
-echo "${grey}\tthunderbird${NC}"
-echo "${grey}\tkicad${NC}"
-echo "${grey}\tgzdoom${NC}"
-echo "${grey}\taudacious${NC}"
-echo "${grey}\tvlc${NC}"
-echo "${grey}\teclipse${NC}"
-echo "${grey}\tkate${NC}"
-echo "${grey}\tpower management${NC}"
-echo "${grey}\tglobal shortcuts${NC}"
-echo "${grey}\tplasma settings${NC}"
-echo "${grey}\tlogin scripts${NC}"
-echo -n "${BLUE}Proceed? (y/n/a)? ${NC}"
+echo -e
+echo -e "${PURPLE}==========================================================================${NC}"
+echo -e "${PURPLE}\tRestore Backup${NC}"
+echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+echo -e "${grey}\tkeyring${NC}"
+echo -e "${grey}\tnomachine${NC}"
+echo -e "${grey}\tvpn settings${NC}"
+echo -e "${grey}\twarzone2100${NC}"
+echo -e "${grey}\tknossos${NC}"
+echo -e "${grey}\trawtherapee${NC}"
+echo -e "${grey}\tbricscad${NC}"
+echo -e "${grey}\tdosbox${NC}"
+echo -e "${grey}\tfrictional games${NC}"
+echo -e "${grey}\tthunderbird${NC}"
+echo -e "${grey}\tkicad${NC}"
+echo -e "${grey}\tgzdoom${NC}"
+echo -e "${grey}\taudacious${NC}"
+echo -e "${grey}\tvlc${NC}"
+echo -e "${grey}\teclipse${NC}"
+echo -e "${grey}\tkate${NC}"
+echo -e "${grey}\tpower management${NC}"
+echo -e "${grey}\tglobal shortcuts${NC}"
+echo -e "${grey}\tplasma settings${NC}"
+echo -e "${grey}\tlogin scripts${NC}"
+echo -e -n "${BLUE}Proceed? (y/n/a)? ${NC}"
 read answer
-echo
+echo -e
 if [ "$answer" != "${answer#[AaYy]}" ] ;then
     # Yes to All?
     if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
 
     # User app menu entries
-        echo
-        echo "${BLUE}Menu Entries${NC}"
+        echo -e
+        echo -e "${BLUE}Menu Entries${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.local/share/applications/ /home/$USER/.local/share/applications/"
         fi
     
     # Keyring
-        echo
+        echo -e
         printf "${BLUE}Keyring${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -109,7 +110,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # NoMachine (NX)
-        echo
+        echo -e
         printf "${BLUE}NoMachine (NX)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -118,7 +119,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
         
     # VPN
-        echo
+        echo -e
         printf "${BLUE}VPN${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -126,7 +127,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Warzone 2100
-        echo
+        echo -e
         printf "${BLUE}Warzone2100${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -135,7 +136,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Knossos
-        echo
+        echo -e
         printf "${BLUE}Knossos${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -143,7 +144,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # RawTherapee
-        echo
+        echo -e
         printf "${BLUE}RawTherapee${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -151,7 +152,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # BricsCAD
-        echo
+        echo -e
         printf "${BLUE}BricsCAD${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -161,7 +162,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # DosBox
-        echo
+        echo -e
         printf "${BLUE}DosBox${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -169,7 +170,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Frictional Games
-        echo
+        echo -e
         printf "${BLUE}Frictional Games${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -177,7 +178,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # ThunderBird
-        echo
+        echo -e
         printf "${BLUE}ThunderBird${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -185,7 +186,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # KiCAD
-        echo
+        echo -e
         printf "${BLUE}KiCAD${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -193,7 +194,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # gzdoom
-        echo
+        echo -e
         printf "${BLUE}gzdoom${NC}\n"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -201,7 +202,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
         
     # Audacious
-        echo
+        echo -e
         printf "${BLUE}Audacious${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -209,7 +210,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # VLC
-        echo
+        echo -e
         printf "${BLUE}VLC${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -217,7 +218,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Eclipse
-        echo
+        echo -e
         printf "${BLUE}Eclipse${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -229,7 +230,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # KATE
-        echo
+        echo -e
         printf "${BLUE}Kate${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -238,7 +239,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Power Management Profile (KDE) (BACKUP)
-        echo
+        echo -e
         printf "${BLUE}Power Management (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -247,7 +248,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Global Shortcuts (KDE) (BACKUP)
-        echo
+        echo -e
         printf "${BLUE}Global Shortcuts (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -256,7 +257,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Plasma Settings (Panel, Notifications, Theme, Desktop Effects) (KDE) (BACKUP)
-        echo
+        echo -e
         printf "${BLUE}Plasma Settings (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
@@ -274,7 +275,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
 
     # Login scripts (.bashr/.profile) (BACKUP)
-        echo
+        echo -e
         printf "${BLUE}Login Scripts (.bashrc/.profile)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
