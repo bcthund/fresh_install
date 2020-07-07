@@ -235,12 +235,13 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${PURPLE}==========================================================================${NC}"
     echo "${PURPLE}\tPerform dist-upgrade and purge apport (will ask)${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
-    echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
-    read answer
-    echo
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        cmd "sudo apt update"
-        cmd "sudo apt -y dist-upgrade"
+    echo -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo;
+    cmd_string="sudo apt update && sudo apt -y dist-upgrade"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string"
+        #cmd "sudo apt update"
+        #cmd "sudo apt -y dist-upgrade"
         echo
         echo -n "${BLUE}Purge Apport ${GREEN}(y/n)? ${NC}"
         read answer
@@ -261,12 +262,20 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${grey}* Answer yes again to apt if it successfully prepares to install packeges.${NC}"
     echo "${grey}* Take caution, if apt has errors then abort the script with ctrl+c and resolve errors manually.${NC}"
     echo
-    echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
+    echo -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"
     read answer
     echo
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        cmd "sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
-        cmd "sudo dpkg-reconfigure libdvd-pkg"
+    cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
+    cmd_string2="sudo dpkg-reconfigure libdvd-pkg"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then
+        read -p "${yellow}Edit command 1/2: ${NC}" -e -i $cmd_string1 cmd_string1
+        read -p "${yellow}Edit command 2/2: ${NC}" -e -i $cmd_string2 cmd_string2
+    fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string1"
+        cmd "$cmd_string2"
+        #cmd "sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common && sudo dpkg-reconfigure libdvd-pkg"
+        #cmd "sudo dpkg-reconfigure libdvd-pkg"
     fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
    
@@ -279,13 +288,18 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     printf "${grey}\tx-tile${NC}\n\n"
     echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
-    echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}Installing x-tile${NC}\n"
-        cmd "sudo apt-add-repository -y ppa:giuspen/ppa"
-        cmd "sudo apt -y install x-tile"
-        #printf "${BLUE}Installing Knossos:${NC}\n"
-        #cmd "sudo apt -y install knossos"              # Currently not supported
+        echo
+        printf "${BLUE}Installing x-tile ${GREEN}(y/n/e)? ${NC}"; read answer; echo
+        cmd_string="sudo apt-add-repository -y ppa:giuspen/ppa && sudo apt -y install x-tile"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string"
+            #cmd "sudo apt-add-repository -y ppa:giuspen/ppa"
+            #cmd "sudo apt -y install x-tile"
+            #printf "${BLUE}Installing Knossos:${NC}\n"
+            #cmd "sudo apt -y install knossos"              # Currently not supported
+        fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -298,10 +312,15 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     printf "${grey}\tbCNC${NC}\n\n"
     echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
-    echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}Installing bCNC${NC}\n"
-        cmd "pip3 install --no-input --upgrade bCNC"
+        echo
+        printf "${BLUE}Installing bCNC ${GREEN}(y/n/e)? ${NC}"; read answer; echo
+        cmd_string="pip3 install --no-input --upgrade bCNC"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string"
+            #cmd "pip3 install --no-input --upgrade bCNC"
+        fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -315,15 +334,34 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     printf "${grey}\tshotcut${NC}\n"
     printf "${grey}\tsublime-text${NC}\n"
     echo
-    echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
-    read answer
-    echo
+    echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"; read answer; echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        #cmd "sudo snap install gzdoom ckan"
-        printf "${BLUE}Installing ckan${NC}\n"; cmd "sudo snap install ckan"
-        printf "${BLUE}Installing shotcut${NC}\n"; cmd "sudo snap install --classic shotcut"
-        printf "${BLUE}Installing sublime-text${NC}\n"; cmd "sudo snap install --classic sublime-text"
-    fi
+        echo
+        printf "${BLUE}Installing ckan ${GREEN}(y/n/e)? ${NC}"; read answer; echo
+        cmd_string="sudo snap install ckan"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string"
+            #cmd "sudo snap install ckan"
+        fi
+        
+        echo
+        printf "${BLUE}Installing shotcut ${GREEN}(y/n/e)? ${NC}"; read answer; echo
+        cmd_string="sudo snap install --classic shotcut"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string"
+            #cmd "sudo snap install --classic shotcut"
+        fi
+        
+        echo
+        printf "${BLUE}Installing sublime-text ${GREEN}(y/n/e)? ${NC}"; read answer; echo
+        cmd_string="sudo snap install --classic sublime-text"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string"
+            #cmd "sudo snap install --classic sublime-text"
+        fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
     
@@ -333,12 +371,16 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo "${PURPLE}\tInstall Plasmoids${NC}"
     echo "${PURPLE}--------------------------------------------------------------------------${NC}"
     printf "${grey}\tplaces widget${NC}\n\n"
-    echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
-    read answer
-    echo
+    echo -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"; read answer; echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}Installing places widget${NC}\n"
-        cmd "plasmapkg2 -i ./Apps/places-widget-1.3.plasmoid"
+        echo
+        printf "${BLUE}Installing places widget ${GREEN}(y/n/e)? ${NC}"; read answer; echo
+        cmd_string="plasmapkg2 -i ./Apps/places-widget-1.3.plasmoid"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string"
+            #cmd "plasmapkg2 -i ./Apps/places-widget-1.3.plasmoid"
+        fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -473,9 +515,12 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     # ==================================================================
     echo -n "${BLUE}Add user to vboxusers ${GREEN}(y/n)? ${NC}"
     read answer
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}Adding $USER to vboxusers${NC}\n"
-        cmd "sudo usermod -a -G vboxusers $USER"
+    cmd_string="sudo usermod -a -G vboxusers $USER"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string"
+        #printf "${BLUE}Adding $USER to vboxusers${NC}\n"
+        #cmd "sudo usermod -a -G vboxusers $USER"
     fi
     
     # ==================================================================
@@ -484,9 +529,12 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo
     echo -n "${BLUE}Set samba password ${GREEN}(y/n)? ${NC}"
     read answer
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}Setting Samba share password for $USER: ${NC}\n"
-        cmd "sudo smbpasswd -a $USER"
+    cmd_string="sudo smbpasswd -a $USER"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string"
+        #printf "${BLUE}Setting Samba share password for $USER: ${NC}\n"
+        #cmd "sudo smbpasswd -a $USER"
     fi
     
     # ==================================================================
@@ -495,30 +543,17 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo
     echo -n "${BLUE}Check for libGL.so links ${GREEN}(y/n)? ${NC}"
     read answer
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        # Just do it, if it exists then it will fail and who cares
-        #if [ -d "/usr/lib/i386-linux-gnu" ]; then
-        #    if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ] && [ -f "/usr/lib/i386-linux-gnu/libGL.so.1" ] ; then
-        #        printf "${YELLOW}i386: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
-                cmd "sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
-        #    else
-        #        printf "${RED}i386: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
-        #    fi
-        #else
-        #    printf "${RED}i386: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
-        #fi
-        
-        # Just do it, if it exists then it will fail and who cares
-        #if [ -d "/usr/lib/x86_64-linux-gnu" ]; then
-        #    if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ] && [ -f "/usr/lib/x86_64-linux-gnu/libGL.so.1" ] ; then
-        #        printf "${YELLOW}x86_64: libGL.so doesn't exist, creating link to libGL.so.1${NC}\n"
-                cmd "sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
-        #    else
-        #        printf "${RED}x86_64: Failed! 'libGL.so' and/or 'libGL.so.1' don't exist.${NC}\n"
-        #    fi
-        #else
-        #    printf "${RED}x86_64: Error! Folder '/usr/lib/x86_64-linux-gnu' doesn't exist!${NC}\n"
-        #fi
+    cmd_string1="sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
+    cmd_string2="sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then
+        read -p "${yellow}Edit command 1/2: ${NC}" -e -i $cmd_string1 cmd_string1;
+        read -p "${yellow}Edit command 2/2: ${NC}" -e -i $cmd_string2 cmd_string2;
+    fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string1"
+        cmd "$cmd_string2"
+        #cmd "sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
+        #cmd "sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
     fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -533,7 +568,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -n "${BLUE}Continue ${GREEN}(y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        #printf "${BLUE}Creating NFS shares Downloads(rw) and $USER(ro): ${NC}\n"
         printf "${BLUE}Creating NFS shares: ${NC}\n"
         
         iprange="192.168.0.0/16"
