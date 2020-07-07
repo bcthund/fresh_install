@@ -17,23 +17,23 @@
 # CYAN='\033[1;36m'
 # NC='\033[0m'
 
-grey='\e[37;0m'
+grey='\e[37m'
 GREY='\e[37;1m'
-red='\e[31;0m'
+red='\e[31m'
 RED='\e[31;1m'
-green='\e[32;0m'
+green='\e[32m'
 GREEN='\e[32;1m'
-yellow='\e[33;0m'
+yellow='\e[33m'
 YELLOW='\e[33;1m'
-purple='\e[35;0m'
+purple='\e[35m'
 PURPLE='\e[35;1m'
-white='\e[37;0m'
+white='\e[37m'
 WHITE='\e[37;1m'
-blue='\e[34;0m'
+blue='\e[34m'
 BLUE='\e[34;1m'
-cyan='\e[36;0m'
+cyan='\e[36m'
 CYAN='\e[36;1m'
-NC='\e[39;0m'
+NC='\e[39m'
 #INTRO='\e[30m\e[44m'   # Sample foreground/background
 
 # echo -e
@@ -256,10 +256,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e;
     cmd_string="sudo apt update && sudo apt -y dist-upgrade"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then
-        cmd "read -p '${yellow}Edit command: ${NC}' -ei '${cmd_string}' cmd_string"
-        read -p '${yellow}Edit command: ${NC}' -ei '${cmd_string}' cmd_string
-    fi
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string"
         #cmd "sudo apt update"
@@ -290,8 +287,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
     cmd_string2="sudo dpkg-reconfigure libdvd-pkg"
     if [ "$answer" != "${answer#[Ee]}" ] ;then
-        read -p "${yellow}Edit command 1/2: ${NC}" -e -i $cmd_string1 cmd_string1
-        read -p "${yellow}Edit command 2/2: ${NC}" -e -i $cmd_string2 cmd_string2
+        read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string1}" cmd_string2;
     fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string1"
@@ -314,7 +311,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e
         printf "${BLUE}Installing x-tile ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
         cmd_string="sudo apt-add-repository -y ppa:giuspen/ppa && sudo apt -y install x-tile"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
             #cmd "sudo apt-add-repository -y ppa:giuspen/ppa"
@@ -338,7 +335,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e
         printf "${BLUE}Installing bCNC ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
         cmd_string="pip3 install --no-input --upgrade bCNC"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
             #cmd "pip3 install --no-input --upgrade bCNC"
@@ -361,7 +358,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e
         printf "${BLUE}Installing ckan ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
         cmd_string="sudo snap install ckan"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
             cmd "sudo snap install ckan"
@@ -370,7 +367,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e
         printf "${BLUE}Installing shotcut ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
         cmd_string="sudo snap install --classic shotcut"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
             cmd "sudo snap install --classic shotcut"
@@ -379,7 +376,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e
         printf "${BLUE}Installing sublime-text ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
         cmd_string="sudo snap install --classic sublime-text"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
             cmd "sudo snap install --classic sublime-text"
@@ -399,7 +396,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e
         printf "${BLUE}Installing places widget ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
         cmd_string="plasmapkg2 -i ./Apps/places-widget-1.3.plasmoid"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
             #cmd "plasmapkg2 -i ./Apps/places-widget-1.3.plasmoid"
@@ -539,7 +536,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e -n "${BLUE}Add user to vboxusers ${GREEN}(y/n)? ${NC}"
     read answer
     cmd_string="sudo usermod -a -G vboxusers $USER"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string"
         #printf "${BLUE}Adding $USER to vboxusers${NC}\n"
@@ -553,7 +550,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e -n "${BLUE}Set samba password ${GREEN}(y/n)? ${NC}"
     read answer
     cmd_string="sudo smbpasswd -a $USER"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string"
         #printf "${BLUE}Setting Samba share password for $USER: ${NC}\n"
@@ -569,8 +566,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     cmd_string1="sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
     cmd_string2="sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
     if [ "$answer" != "${answer#[Ee]}" ] ;then
-        read -p "${yellow}Edit command 1/2: ${NC}" -e -i $cmd_string1 cmd_string1;
-        read -p "${yellow}Edit command 2/2: ${NC}" -e -i $cmd_string2 cmd_string2;
+        read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
     fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string1"
