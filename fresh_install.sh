@@ -220,7 +220,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         # Create Backups First
         if [ -d "/home/$USER/Documents" ] ;then   cmd "mv /home/$USER/Documents /home/$USER/Documents.bak";     fi
-        #if [ -d "/home/$USER/Downloads" ] ;then   cmd "mv /home/$USER/Downloads /home/$USER/Downloads.bak";     fi
         if [ -d "/home/$USER/Music"     ] ;then   cmd "mv /home/$USER/Music /home/$USER/Music.bak";             fi
         if [ -d "/home/$USER/Pictures"  ] ;then   cmd "mv /home/$USER/Pictures /home/$USER/Pictures.bak";       fi
         if [ -d "/home/$USER/Templates" ] ;then   cmd "mv /home/$USER/Templates /home/$USER/Templates.bak";     fi
@@ -342,7 +341,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
-            #cmd "sudo snap install ckan"
+            cmd "sudo snap install ckan"
         fi
         
         echo
@@ -351,7 +350,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
-            #cmd "sudo snap install --classic shotcut"
+            cmd "sudo snap install --classic shotcut"
         fi
         
         echo
@@ -360,8 +359,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "${yellow}Edit command: ${NC}" -e -i $cmd_string cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
-            #cmd "sudo snap install --classic sublime-text"
+            cmd "sudo snap install --classic sublime-text"
         fi
+    fi
     if [ "$GOTOSTEP" = true ]; then echo "${BLUE}Finished${NC}\n"; exit; fi
 
     
@@ -625,7 +625,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         read answer
         if [ "$answer" != "${answer#[Yy]}" ] ;then
             echo
-            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}";
+            read answer;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
                 cmd "sed -i 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
             fi
             cmd "echo '' | sudo tee -a /etc/fstab"
@@ -676,7 +678,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         read answer
         if [ "$answer" != "${answer#[Yy]}" ] ;then
             echo
-            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}";
+            read answer;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
                 cmd "sed -i 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
             fi
             cmd "echo '' | sudo tee -a /etc/fstab"
