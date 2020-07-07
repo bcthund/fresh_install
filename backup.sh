@@ -275,6 +275,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasmanotifyrc ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasmarc ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kwinrc ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kdeglobals ./Migration_$USER/root/"
         fi
 
     # Login scripts (.bashr/.profile) (BACKUP)

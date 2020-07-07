@@ -243,7 +243,6 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Power Management (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.config/powermanagementprofilesrc /home/$USER/.config/powermanagementprofilesrc.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/powermanagementprofilesrc /home/$USER/.config/"
         fi
 
@@ -252,7 +251,6 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Global Shortcuts (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.config/kglobalshortcutsrc /home/$USER/.config/kglobalshortcutsrc.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/kglobalshortcutsrc /home/$USER/.config/"
         fi
 
@@ -261,17 +259,11 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Plasma Settings (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/"
-            
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.config/plasmanotifyrc /home/$USER/.config/plasmanotifyrc.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/plasmanotifyrc /home/$USER/.config/"
-            
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.config/plasmarc /home/$USER/.config/plasmarc.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/plasmarc /home/$USER/.config/"
-            
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.config/kwinrc /home/$USER/.config/kwinrc.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/kwinrc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.config/kdeglobals /home/$USER/.config/"
         fi
 
     # Login scripts (.bashr/.profile) (BACKUP)
@@ -279,10 +271,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Login Scripts (.bashrc/.profile)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.bashrc /home/$USER/.bashrc.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.bashrc /home/$USER/"
-            
-            #cmd "sudo rsync -a --info=progress2 --delete /home/$USER/.profile /home/$USER/.profile.bak"
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.profile /home/$USER/"
         fi
     fi
