@@ -117,6 +117,7 @@ do
         echo -e "                        backup     perform a system backup"
         echo -e "                        download   download/update install scripts, apps, source installs. Always exits"
         echo -e "                        symlinks   install symlinks from a system backup"
+        echo -e "                        nosnap     remove snap packages from system (not implemented)"
         echo -e "                        upgrade    perform a system upgrade, and purge apport if desired"
         echo -e "                        packages   install apt packages including some dependencies for other steps"
         echo -e "                        pip        install pip3 packages"
@@ -322,6 +323,30 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    # TODO: Snaps causing issues, get rid of them. Will need to double check apt install list for dependency issues
+    #nosnap:
+    #echo -e "${PURPLE}==========================================================================${NC}"
+    #echo -e "${PURPLE}\tRemove Snap and block${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    ##echo -e "${PURPLE}NOTES${NC}"
+    ##echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e;
+    #cmd_string="sudo apt update && sudo apt -y dist-upgrade"
+    #if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+    #if [ "$answer" != "${answer#[YyEe]}" ] ;then
+    #    cmd "$cmd_string"
+    #    #cmd "sudo apt update"
+    #    #cmd "sudo apt -y dist-upgrade"
+    #    echo -e
+    #    echo -e -n "${BLUE}Purge Apport ${GREEN}(y/n)? ${NC}"
+    #    read answer
+    #    echo -e
+    #    if [ "$answer" != "${answer#[Yy]}" ] ;then
+    #        cmd "sudo apt -y purge apport"
+    #    fi
+    #fi
+    #if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
     upgrade:
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tPerform dist-upgrade and purge apport (will ask)${NC}"
@@ -376,7 +401,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     printf "${grey}tilix                       thunderbird                 ubuntu-restricted-extras    valgrind${NC}\n"
     printf "${grey}veusz                       vim                         vlc                         vlc-plugin-access-extra${NC}\n"
     printf "${grey}vlc-plugin-fluidsynth       vlc-plugin-samba            vlc-plugin-skins2           vlc-plugin-visualization${NC}\n"
-    printf "${grey}warzone2100                 whois                       winff                       wireshark${NC}\n"
+    printf "${grey}warzone2100                 whois                       wine                        wine32${NC}\n"
+    printf "${grey}wine64                      winetricks                  winff                       wireshark${NC}\n"
     printf "${grey}xrdp                        xterm${NC}\n"
     echo -e "${grey}* Answer yes again to apt if it successfully prepares to install packeges.${NC}"
     echo -e "${grey}* Take caution, if apt has errors then abort the script with ctrl+c and resolve errors manually.${NC}"
@@ -393,6 +419,31 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string1"
         cmd "$cmd_string2"
+    fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
+    nvidia:
+    echo -e
+    echo -e "${PURPLE}==========================================================================${NC}"
+    echo -e "${PURPLE}\tInstall NVIDIA in-testing drivers${NC}"
+    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    echo -e "${purple}This will install the latest drivers that are still in testing${NC}"
+    echo -e "${purple}for nvidia graphics cards. This will purge any current nvidia${NC}"
+    echo -e "${purple}files and install ${NC}"
+    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    cmd_string1="sudo add remove --purge nvidia-*"
+    cmd_string2="sudo add-apt-repository ppa:graphics-drivers/ppa"
+    cmd_string3="sudo apt install "
+    printf "${BLUE}Install nvidia-430 drivers ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+    if [ "$answer" != "${answer#[Ee]}" ] ;then
+        read -p "$(echo -e ${yellow}Edit command 1/3: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        read -p "$(echo -e ${yellow}Edit command 2/3: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+        read -p "$(echo -e ${yellow}Edit command 3/3: ${NC})" -e -i "${cmd_string3}" cmd_string3;
+    fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string1"
+        cmd "$cmd_string2"
+        cmd "$cmd_string3"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
@@ -441,6 +492,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
 
+    # TODO: Snaps causing issues, get rid of them. See nosnap section above.
     snap:
     echo -e
     echo -e "${PURPLE}==========================================================================${NC}"
@@ -660,212 +712,232 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     #echo -e "${PURPLE}NOTES${NC}"
     #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    printf "${grey}  Force numlock on${NC}\n"
+    printf "${grey}  Configure wine${NC}\n"
+    printf "${grey}  Configure XRDP (not implemented, using nomachine)${NC}\n"
+    printf "${grey}  Configure VirtualBox${NC}\n"
+    printf "${grey}  Configure Wireshark${NC}\n"
+    printf "${grey}  Set Samba password${NC}\n"
+    printf "${grey}  Check for missing libGL.so links${NC}\n"
+    printf "${grey}  Create and mount common NFS shares${NC}\n"
+    echo -e -n "${BLUE}Proceed ${GREEN}(y/n/a)? ${NC}"; read answer; echo -e
+    if [ "$answer" != "${answer#[YyAa]}" ] ;then
+        if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
     
-    echo -e
-    echo -e "${BLUE}Force numlock on at startup${NC}"
-    echo -e -n "${GREEN} (y/n/e)? ${NC}"
-    read answer
-    cmd_string1="sudo touch /etc/rc.local"
-    cmd_string2="sudo sed -i 's|^exit 0.*$|# Numlock enable\n[ -x /usr/bin/numlockx ] \&\& numlockx on\n\nexit 0|' /etc/rc.local"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then
-        read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-        read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-    fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string1"
-    fi
-    
-    # ==================================================================
-    #   Add user to vboxusers (should give USB permission)
-    # ==================================================================
-    echo -e "${BLUE}Add groups for virtualbox usb/tty access${NC}"
-    echo -e "${grey}\t- vboxusers${NC}"
-    echo -e "${grey}\t- dialout${NC}"
-    echo -e -n "${GREEN}Continue (y/n)? ${NC}"
-    read answer
-    cmd_string1="sudo usermod -a -G vboxusers,dialout $USER"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string1"
-    fi
-    
-    # ==================================================================
-    #   Add user to wireshark group
-    # ==================================================================
-    echo -e -n "${BLUE}Add user to wireshark group${NC}"
-    echo -e -n "${GREEN} (y/n)? ${NC}"
-    read answer
-    cmd_string1="sudo usermod -a -G wireshark $USER"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string1"
-    fi
-    
-    # ==================================================================
-    #   Set Samba share password
-    # ==================================================================
-    echo -e
-    echo -e -n "${BLUE}Set samba password ${GREEN}(y/n)? ${NC}"
-    read answer
-    cmd_string="sudo smbpasswd -a $USER"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string"
-    fi
-    
-    # ==================================================================
-    #   Ensure libGL.so exists
-    # ==================================================================
-    echo -e
-    echo -e -n "${BLUE}Check for libGL.so links ${GREEN}(y/n)? ${NC}"
-    read answer
-    cmd_string1="sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
-    cmd_string2="sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then
-        read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-        read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-    fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ]; then cmd "$cmd_string1"; fi
-        if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ]; then cmd "$cmd_string2"; fi
-    fi
-    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
-    
-    nfs:
-    # ==================================================================
-    #   Create User and Downloads NFS shares
-    # ==================================================================
-    echo -e
-    echo -e "${BLUE}Create standard NFS shares:${NC}"
-    echo -e "${grey}  /home/$USER (ro)${NC}"
-    echo -e "${grey}  /home/$USER/Downloads (rw)${NC}"
-    echo -e -n "${BLUE}Continue ${GREEN}(y/n)? ${NC}"
-    read answer
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${BLUE}Creating NFS shares: ${NC}\n"
-        
-        iprange="192.168.0.0/16"
         echo -e
-        echo -e -n "${YELLOW}Do you want to change the default ip range of '$iprange' ${GREEN}(y/n)? ${NC}"
-        read answer
-        if [ "$answer" != "${answer#[Yy]}" ] ;then
-            echo -e -n "${YELLOW}Enter ip range: ${GREEN}"
-            read iprange
-            echo -e -n "${NC}"
+        echo -e "${BLUE}Force numlock on at startup${NC}"
+        cmd_string1="sudo touch /etc/rc.local"
+        cmd_string2="sudo sed -i 's|^exit 0.*$|# Numlock enable\n[ -x /usr/bin/numlockx ] \&\& numlockx on\n\nexit 0|' /etc/rc.local"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then
+            read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+        fi
+        if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+            cmd "$cmd_string1"
+        fi
+
+        cmd_string1="winecfg"
+        cmd_string2="winetricks corefonts"
+        echo -e "${BLUE}Configure Wine${NC}"
+        echo -e "${grey}  - Executes: ${cmd_String1} to create preliminary config, user must exit${NC}"
+        echo -e "${grey}  - Executes: ${cmd_String2}${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Ee]}" ]; then
+            read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+        fi
+        if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+            cmd "$cmd_string1"
         fi
         
-        # Export directory
-            echo -e
-            printf "${YELLOW}Erase existing exports (this will erase entire contents of the exports file)${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "sudo truncate -s 0 /etc/exports"
-            fi
-            cmd "echo -e '' | sudo tee -a /etc/exports"
-            cmd "echo -e '# Exports added by fresh_install.sh' | sudo tee -a /etc/exports"
-            cmd "echo -e '/home/$USER                ${iprange}(ro,sync,no_subtree_check,fsid=root)' | sudo tee -a /etc/exports"
-            cmd "echo -e '/home/$USER/Downloads      ${iprange}(rw,no_root_squash,sync,no_subtree_check,crossmnt)' | sudo tee -a /etc/exports"
-
-        # Restart NFS service
-            cmd "sudo exportfs -arv"
-
-        # Ensure firewall access if enabled
-            cmd "sudo ufw allow from ${iprange} to any port nfs"
-    fi
-
-    # ==================================================================
-    #   Mount User and Downloads shares
-    # ==================================================================
-    echo -e
-    echo -e "${BLUE}Do you want to mount:${NC}"
-    echo -e "${grey}  /home/<user>${NC}"
-    echo -e "${grey}  /home/<user>/Downloads${NC}"
-    echo -e -n "${BLUE}shares from another pc (you will need the IP and username) ${GREEN}(y/n)? ${NC}"
-    read answer
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${YELLOW}What is the IP of the target? ${NC}"
-        read remoteip
-        printf "${YELLOW}What is the username of the target? ${NC}"
-        read remoteuser
-
-        # Create mount points
-            cmd "sudo mkdir -p /nfs/${remoteip}/Downloads"
-            cmd "sudo mkdir -p /nfs/${remoteip}/${remoteuser}"
-
-        # Mount shares
-            cmd "sudo mount ${remoteip}:/home/${remoteuser} /nfs/${remoteip}/${remoteuser}"
-            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Downloads /nfs/${remoteip}/Downloads"
+        # Not really necessary with nomachine and a little buggy anyways but here for possible future
+        #echo -e "${BLUE}Configure XRDP${NC}"
+        #echo -e -n "${GREEN} (y/n)? ${NC}"
+        #read answer
+        #cmd_string1="???"
+        #cmd_string1="???"
+        #if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
+        #if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+        #    cmd "$cmd_string1"
+        #fi
         
-        echo -e
-        printf "${BLUE}Make permanant ${GREEN}(y/n)?${NC}"
-        read answer
-        if [ "$answer" != "${answer#[Yy]}" ] ;then
-            echo -e
-            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}";
-            read answer;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "sed -i 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
-            fi
-            cmd "echo -e '' | sudo tee -a /etc/fstab"
-            cmd "echo -e '#FISTD_S: Standard (do not modify)' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/home/${remoteuser}           /nfs/${remoteip}/${remoteuser}   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/home/${remoteuser}/Downloads /nfs/${remoteip}/Downloads       nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '#FISTD_E' | sudo tee -a /etc/fstab"
+        echo -e "${BLUE}Add groups for virtualbox usb/tty access${NC}"
+        echo -e "${grey}\t- vboxusers${NC}"
+        echo -e "${grey}\t- dialout${NC}"
+        cmd_string1="sudo usermod -a -G vboxusers,dialout $USER"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
+        if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+            cmd "$cmd_string1"
         fi
-    fi
-    
-    # ==================================================================
-    #   Create NFS shares to media server
-    # ==================================================================
-    echo -e
-    echo -e "${BLUE}Do you want to mount media server shares:${NC}"
-    echo -e "${grey}\t- /mnt/Database${NC}"
-    echo -e "${grey}\t- /home/<user>/Documents${NC}"
-    echo -e "${grey}\t- /home/<user>/Projects${NC}"
-    echo -e "${grey}\t- /home/<user>/Videos${NC}"
-    echo -e "${grey}\t- /home/<user>/Music${NC}"
-    echo -e "${grey}\t- /home/<user>/Pictures${NC}"
-    echo -e -n "${GREEN}Continue (y/n)? ${NC}"
-    read answer
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        printf "${YELLOW}What is the IP of the target? ${NC}"
-        read remoteip
-        printf "${YELLOW}What is the username of the target? ${NC}"
-        read remoteuser
-
-        # Create mount points
-            cmd "sudo mkdir -p /nfs/${remoteip}/Database"
-            cmd "sudo mkdir -p /nfs/${remoteip}/Documents"
-            cmd "sudo mkdir -p /nfs/${remoteip}/Projects"
-            cmd "sudo mkdir -p /nfs/${remoteip}/Videos"
-            cmd "sudo mkdir -p /nfs/${remoteip}/Music"
-            cmd "sudo mkdir -p /nfs/${remoteip}/Pictures"
-
-        # Mount shares
-            cmd "sudo mount ${remoteip}:/mnt/Database /nfs/${remoteip}/Database"
-            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Documents /nfs/${remoteip}/Documents"
-            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Projects /nfs/${remoteip}/Projects"
-            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Videos /nfs/${remoteip}/Videos"
-            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Music /nfs/${remoteip}/Music"
-            cmd "sudo mount ${remoteip}:/home/${remoteuser}/Pictures /nfs/${remoteip}/Pictures"
+        
+        echo -e -n "${BLUE}Add user to wireshark group${NC}"
+        cmd_string1="sudo usermod -a -G wireshark $USER"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
+        if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+            cmd "$cmd_string1"
+        fi
         
         echo -e
-        printf "${BLUE}Make permanant ${GREEN}(y/n)?${NC}"
-        read answer
-        if [ "$answer" != "${answer#[Yy]}" ] ;then
+        echo -e -n "${BLUE}Set samba password${NC}"
+        cmd_string="sudo smbpasswd -a $USER"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+        if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+            cmd "$cmd_string"
+        fi
+        
+        echo -e
+        echo -e -n "${BLUE}Check for libGL.so links${NC}"
+        cmd_string1="sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
+        cmd_string2="sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Ee]}" ] ;then
+            read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+        fi
+        if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+            if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ]; then cmd "$cmd_string1"; fi
+            if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ]; then cmd "$cmd_string2"; fi
+        fi
+        if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+        
+        nfs:
+        # ==================================================================
+        #   Create User and Downloads NFS shares
+        # ==================================================================
+        echo -e
+        echo -e "${BLUE}Create standard NFS shares:${NC}"
+        echo -e "${grey}  /home/$USER (ro)${NC}"
+        echo -e "${grey}  /home/$USER/Downloads (rw)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            printf "${BLUE}Creating NFS shares: ${NC}\n"
+            
+            iprange="192.168.0.0/16"
             echo -e
-            printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script) ${GREEN}(y/n)?${NC}";
-            read answer;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "sed -i 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
+            echo -e -n "${YELLOW}Use the default ip range of '$iprange'${NC}"
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$answer2" != "${answer2#[Nn]}" ] ;then
+                echo -e -n "${YELLOW}Enter ip range: ${GREEN}"
+                read iprange
+                echo -e -n "${NC}"
             fi
-            cmd "echo -e '' | sudo tee -a /etc/fstab"
-            cmd "echo -e '#FIDS_S: Datasaerver (do not modify)' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/mnt/Database                 /nfs/${remoteip}/Database  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/home/${remoteuser}/Documents /nfs/${remoteip}/Documents nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/home/${remoteuser}/Projects  /nfs/${remoteip}/Projects  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/home/${remoteuser}/Videos    /nfs/${remoteip}/Videos    nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/home/${remoteuser}/Music     /nfs/${remoteip}/Music     nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '${remoteip}:/home/${remoteuser}/Pictures  /nfs/${remoteip}/Pictures  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
-            cmd "echo -e '#FIDS_E' | sudo tee -a /etc/fstab"
+            
+            # Export directory
+                echo -e
+                printf "${YELLOW}Erase existing exports (this will erase entire contents of the exports file)${GREEN}(y/n)?${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+                    cmd "sudo truncate -s 0 /etc/exports"
+                fi
+                cmd "echo -e '' | sudo tee -a /etc/exports"
+                cmd "echo -e '# Exports added by fresh_install.sh' | sudo tee -a /etc/exports"
+                cmd "echo -e '/home/$USER                ${iprange}(ro,sync,no_subtree_check,fsid=root)' | sudo tee -a /etc/exports"
+                cmd "echo -e '/home/$USER/Downloads      ${iprange}(rw,no_root_squash,sync,no_subtree_check,crossmnt)' | sudo tee -a /etc/exports"
+
+            # Restart NFS service
+                cmd "sudo exportfs -arv"
+
+            # Ensure firewall access if enabled
+                cmd "sudo ufw allow from ${iprange} to any port nfs"
+        fi
+
+        # ==================================================================
+        #   Mount User and Downloads shares
+        # ==================================================================
+        echo -e
+        echo -e "${BLUE}Do you want to mount:${NC}"
+        echo -e "${grey}  /home/<user>${NC}"
+        echo -e "${grey}  /home/<user>/Downloads${NC}"
+        echo -e -n "${BLUE}shares from another pc (you will need the IP and username)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            printf "${YELLOW}What is the IP of the target? ${NC}"
+            read remoteip
+            printf "${YELLOW}What is the username of the target? ${NC}"
+            read remoteuser
+
+            # Create mount points
+                cmd "sudo mkdir -p /nfs/${remoteip}/Downloads"
+                cmd "sudo mkdir -p /nfs/${remoteip}/${remoteuser}"
+
+            # Mount shares
+                cmd "sudo mount ${remoteip}:/home/${remoteuser} /nfs/${remoteip}/${remoteuser}"
+                cmd "sudo mount ${remoteip}:/home/${remoteuser}/Downloads /nfs/${remoteip}/Downloads"
+            
+            echo -e
+            printf "${BLUE}Make permanant${NC}"
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+                echo -e
+                printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script)${NC}";
+                if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+                if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+                    cmd "sed -i 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
+                fi
+                cmd "echo -e '' | sudo tee -a /etc/fstab"
+                cmd "echo -e '#FISTD_S: Standard (do not modify)' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/home/${remoteuser}           /nfs/${remoteip}/${remoteuser}   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/home/${remoteuser}/Downloads /nfs/${remoteip}/Downloads       nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '#FISTD_E' | sudo tee -a /etc/fstab"
+            fi
+        fi
+        
+        # ==================================================================
+        #   Create NFS shares to media server
+        # ==================================================================
+        echo -e
+        echo -e "${BLUE}Do you want to mount media server shares:${NC}"
+        echo -e "${grey}\t- /mnt/Database${NC}"
+        echo -e "${grey}\t- /home/<user>/Documents${NC}"
+        echo -e "${grey}\t- /home/<user>/Projects${NC}"
+        echo -e "${grey}\t- /home/<user>/Videos${NC}"
+        echo -e "${grey}\t- /home/<user>/Music${NC}"
+        echo -e "${grey}\t- /home/<user>/Pictures${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            printf "${YELLOW}What is the IP of the target? ${NC}"
+            read remoteip
+            printf "${YELLOW}What is the username of the target? ${NC}"
+            read remoteuser
+
+            # Create mount points
+                cmd "sudo mkdir -p /nfs/${remoteip}/Database"
+                cmd "sudo mkdir -p /nfs/${remoteip}/Documents"
+                cmd "sudo mkdir -p /nfs/${remoteip}/Projects"
+                cmd "sudo mkdir -p /nfs/${remoteip}/Videos"
+                cmd "sudo mkdir -p /nfs/${remoteip}/Music"
+                cmd "sudo mkdir -p /nfs/${remoteip}/Pictures"
+
+            # Mount shares
+                cmd "sudo mount ${remoteip}:/mnt/Database /nfs/${remoteip}/Database"
+                cmd "sudo mount ${remoteip}:/home/${remoteuser}/Documents /nfs/${remoteip}/Documents"
+                cmd "sudo mount ${remoteip}:/home/${remoteuser}/Projects /nfs/${remoteip}/Projects"
+                cmd "sudo mount ${remoteip}:/home/${remoteuser}/Videos /nfs/${remoteip}/Videos"
+                cmd "sudo mount ${remoteip}:/home/${remoteuser}/Music /nfs/${remoteip}/Music"
+                cmd "sudo mount ${remoteip}:/home/${remoteuser}/Pictures /nfs/${remoteip}/Pictures"
+            
+            echo -e
+            printf "${BLUE}Make permanant${NC}"
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+                echo -e
+                printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script)${NC}";
+                if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+                if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+                    cmd "sed -i 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
+                fi
+                cmd "echo -e '' | sudo tee -a /etc/fstab"
+                cmd "echo -e '#FIDS_S: Datasaerver (do not modify)' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/mnt/Database                 /nfs/${remoteip}/Database  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/home/${remoteuser}/Documents /nfs/${remoteip}/Documents nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/home/${remoteuser}/Projects  /nfs/${remoteip}/Projects  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/home/${remoteuser}/Videos    /nfs/${remoteip}/Videos    nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/home/${remoteuser}/Music     /nfs/${remoteip}/Music     nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '${remoteip}:/home/${remoteuser}/Pictures  /nfs/${remoteip}/Pictures  nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0' | sudo tee -a /etc/fstab"
+                cmd "echo -e '#FIDS_E' | sudo tee -a /etc/fstab"
+            fi
         fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
