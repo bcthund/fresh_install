@@ -161,6 +161,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     printf "${BLUE}fresh install scripts (will update all scripts)${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/fresh_install.git"
         cmd "rsync -a ./fresh_install/*.sh ./"
         cmd "rm -rf ./fresh_install"
@@ -173,8 +174,9 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     printf "${BLUE}gzdoom${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/gzdoom_installer.git"
-        cmd "rm -rf ./gzdoom_installer/.git"
+        cmd "rm -rf ./gzdoom_installer/.git*"
         cmd "rm ./gzdoom_installer/*.md"
         printf "${BLUE}Addons (Will also install pip3 and gdown)${NC}"
         if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
@@ -197,8 +199,9 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     printf "${BLUE}knossos${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/knossos_installer.git"
-        cmd "rm -rf ./knossos_installer/.git"
+        cmd "rm -rf ./knossos_installer/.git*"
         cmd "rm ./knossos_installer/*.md"
         #cmd "mv ./knossos_installer/* ./"
         cmd "rsync -a ./knossos_installer/ ./"
@@ -210,8 +213,9 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     printf "${BLUE}qucs${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/qucs_installer.git"
-        cmd "rm -rf ./qucs_installer/.git"
+        cmd "rm -rf ./qucs_installer/.git*"
         cmd "rm ./qucs_installer/*.md"
         #cmd "mv ./qucs_installer/* ./"
         cmd "rsync -a ./qucs_installer/ ./"
@@ -223,8 +227,9 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     printf "${BLUE}valkyrie${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+        if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/valkyrie_installer.git"
-        cmd "rm -rf ./valkyrie_installer/.git"
+        cmd "rm -rf ./valkyrie_installer/.git*"
         cmd "rm ./valkyrie_installer/*.md"
         #cmd "mv ./valkyrie_installer/* ./"
         cmd "rsync -a ./valkyrie_installer/ ./"
