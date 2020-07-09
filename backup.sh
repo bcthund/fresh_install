@@ -470,7 +470,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo apt install pigz pv"
             #cmd "sudo tar -czvpf Migration_$USER.tar.gz ./Migration_$USER"
-            cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -czvpf ./Migration_$USER.tar.gz ./Migration_$USER/"
+            cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cvpf ./Migration_$USER.tar.gz ./Migration_$USER/"
             cmd "sudo rm -rf ./Migration_$USER"
         fi
     
