@@ -141,7 +141,7 @@ echo -e "${grey}  Global shortcuts${NC}"
 echo -e "${grey}  Plasma settings${NC}"
 echo -e "${grey}  Login scripts${NC}"
 echo -e -n "${BLUE}Proceed? (y/n/a)? ${NC}"
-if [ "$ANSWERALL" = false ] read answer
+if [ "$ANSWERALL" = false ]; then read answer; fi
 echo -e
 if [ "$answer" != "${answer#[AaYy]}" ] ;then
     # Yes to All?
