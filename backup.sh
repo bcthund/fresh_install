@@ -21,6 +21,8 @@ NC='\e[39;0m'
 DEBUG=false
 VERBOSE=false
 ANSWERALL=false
+BACKUP_DIR="./Migration_$USER"
+ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
 FLAGS=""
 OTHER_ARGUMENTS=""
 
@@ -58,6 +60,8 @@ do
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
         echo -e "  -y, --yes             answer yes to all"
+        echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
+        echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e
@@ -92,6 +96,16 @@ do
         exit
         shift # Remove from processing
         ;;
+        --dir=*)
+        BACKUP_DIR="$(echo ${arg#*=} | sed 's:/*$::')"
+        FLAGS="$FLAGS--dir=${BACKUP_DIR} "
+        shift # Remove from processing
+        ;;
+        --archive=*)
+        ARCHIVE_FILE="${arg#*=}"
+        FLAGS="$FLAGS--archive=${ARCHIVE_FILE} "
+        shift # Remove from processing
+        ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
         echo -e "${RED}Unknown argument: $1${NC}"
@@ -123,11 +137,11 @@ fi
 echo -e
 echo -e "${PURPLE}==========================================================================${NC}"
 echo -e "${PURPLE}\tPerforming Backup${NC}"
-echo -e "${PURPLE}--------------------------------------------------------------------------${purple}"
-echo -e "  Note: It is recommended to perform the backup locally and not directly"
-echo -e "        to external media such as USB. If the device has ACL enabled then"
-echo -e "        file permissions and ownership may not be preserved. The compressed"
-echo -e "        backup is safe to transfer."
+echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+echo -e "${purple}  Note: It is recommended to perform the backup locally and not directly"
+echo -e "${purple}        to external media such as USB. If the device has ACL enabled then"
+echo -e "${purple}        file permissions and ownership may not be preserved. The compressed"
+echo -e "${purple}        backup is safe to transfer."
 echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
 echo -e "${grey}  Drive Layout Reference"
 echo -e "${grey}  Desktop${NC}"
@@ -161,26 +175,26 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
 
     # Check Directory
-        if [ -d "./Migration_$USER" ] ;then
+        if [ -d "${BACKUP_DIR}" ] ;then
             timestamp=$(date +%s)
-            echo -e "${red}Error! Directory './Migration_$USER' exists.${NC}"
-            echo -e -n "${BLUE}Moving './Migration_$USER' to './Migration_${USER}_${timestamp}'...${NC}" 
+            echo -e "${red}Error! Directory '${BACKUP_DIR}' exists.${NC}"
+            echo -e -n "${BLUE}Moving '${BACKUP_DIR}' to './Migration_${USER}_${timestamp}'...${NC}" 
             cmd "mv ./Migration_${USER} ./Migration_${USER}_${timestamp}"
             echo -e "${BLUE}DONE${NC}"
         fi
         
     # Create Directory
-        echo -e -n "${BLUE}Creating directory './Migration_$USER'${NC}\n"
-        cmd "mkdir -pv ./Migration_$USER/root/"
-        cmd "mkdir -pv ./Migration_$USER/symlinks/"
+        echo -e -n "${BLUE}Creating directory '${BACKUP_DIR}'${NC}\n"
+        cmd "mkdir -pv ${BACKUP_DIR}/root/"
+        cmd "mkdir -pv ${BACKUP_DIR}/symlinks/"
 
     layout:
     # Drive Layout Reference
         echo -e
-        echo -e "${BLUE}Drive Layout Reference (Saved to ./Migration_$USER/drive_layout.txt)${NC}"
+        echo -e "${BLUE}Drive Layout Reference (Saved to ${BACKUP_DIR}/drive_layout.txt)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "lsblk -e7 >> ./Migration_$USER/drive_layout.txt"
+            cmd "lsblk -e7 >> ${BACKUP_DIR}/drive_layout.txt"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -190,7 +204,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Desktop${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/Desktop/ ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/Desktop/ ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -200,7 +214,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Menu Entries${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/applications/ ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/applications/ ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -210,7 +224,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}User Icons${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/icons/ ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/icons/ ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -220,7 +234,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Keyring${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/kwalletd/ ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/kwalletd/ ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -230,7 +244,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}NoMachine (NX)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /usr/NX/etc/server.cfg ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /usr/NX/etc/server.cfg ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -240,7 +254,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Network Connections and VPNs${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/ ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/ ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -250,8 +264,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Warzone 2100${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /usr/share/games/warzone2100/sequences.wz ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.warzone2100-3.2 ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /usr/share/games/warzone2100/sequences.wz ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.warzone2100-3.2 ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -261,7 +275,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Knossos${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/knossos ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/knossos ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -271,7 +285,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}RawTherapee${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/RawTherapee ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/RawTherapee ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -281,10 +295,10 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}BricsCAD${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/BricsCAD ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /var/bricsys/ ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /opt/bricsys/bricscad/v20/RenderMaterialStatic ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /opt/bricsys/communicator ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/BricsCAD ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /var/bricsys/ ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /opt/bricsys/bricscad/v20/RenderMaterialStatic ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /opt/bricsys/communicator ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -294,7 +308,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}DosBox${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.dosbox ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.dosbox ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -304,7 +318,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Frictional Games${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.frictionalgames ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.frictionalgames ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -314,7 +328,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}ThunderBird${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/ ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/ ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -324,7 +338,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}KiCAD${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kicad ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kicad ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -334,7 +348,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}gzdoom${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/gzdoom ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/gzdoom ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -344,7 +358,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Audacious${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/audacious ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/audacious ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -354,7 +368,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}VLC${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/vlc ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/vlc ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -364,8 +378,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Eclipse${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/org.eclipse.ui.ide.prefs ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/Projects/Eclipse/.metadata ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/org.eclipse.ui.ide.prefs ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/Projects/Eclipse/.metadata ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -375,8 +389,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}KAte${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katerc ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katesyntaxhighlightingrc ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katerc ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katesyntaxhighlightingrc ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -386,7 +400,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Power Management${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/powermanagementprofilesrc ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/powermanagementprofilesrc ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -396,7 +410,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Global Shortcuts${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kglobalshortcutsrc ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kglobalshortcutsrc ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -406,11 +420,11 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Plasma Settings${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasmanotifyrc ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasmarc ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kwinrc ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kdeglobals ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasmanotifyrc ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/plasmarc ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kwinrc ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kdeglobals ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -420,8 +434,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Login Scripts${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.bashrc ./Migration_$USER/root/"
-            cmd "sudo rsync -aR --info=progress2 /home/$USER/.profile ./Migration_$USER/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.bashrc ${BACKUP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.profile ${BACKUP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -431,7 +445,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Symlinks${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cp_if_link(){ [ ! -L "$1" ] || cmd "rsync -aR --info=progress2 $1 ./Migration_$USER/symlinks/"; }
+            cp_if_link(){ [ ! -L "$1" ] || cmd "rsync -aR --info=progress2 $1 ${BACKUP_DIR}/symlinks/"; }
             cp_if_link /home/$USER/Documents
             cp_if_link /home/$USER/Downloads
             cp_if_link /home/$USER/Music
@@ -471,9 +485,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
             if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
             #cmd "sudo apt install pigz pv"
-            #cmd "sudo tar -czvpf Migration_$USER.tar.gz ./Migration_$USER"
-            cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cpf ./Migration_$USER.tar.gz ./Migration_$USER/"
-            cmd "sudo rm -rf ./Migration_$USER"
+            #cmd "sudo tar -czvpf Migration_$USER.tar.gz ${BACKUP_DIR}"
+            cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cpf ${ARCHIVE_FILE}.tar.gz ${BACKUP_DIR}/"
+            cmd "sudo rm -rf ${BACKUP_DIR}"
         fi
     
     # NOTE: This last condition is slightly different to prevent final 'fi' from complaining after doing a jumpto()

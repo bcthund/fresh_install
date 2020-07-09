@@ -61,6 +61,8 @@ DEBUG=false
 VERBOSE=false
 GOTOSTEP=false
 GOTOCONTINUE=false
+BACKUP_DIR="./Migration_$USER"
+ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
 GOTO=""
 FLAGS=""
 OTHER_ARGUMENTS=""
@@ -83,13 +85,15 @@ do
         echo -e "Usage: $0 <options>"
         echo -e
         echo -e "This script is intended to be run on an existing installation to backup some important user"\
-             "data or software settings. The script is then intended to be run on a fresh installation"\
-             "(hence the name of the script) to reinstall typical applications and restore the backups."
+                "data or software settings. The script is then intended to be run on a fresh installation"\
+                "(hence the name of the script) to reinstall typical applications and restore the backups."
         echo -e
         echo -e "Options:"
         echo -e "  -h, --help            show this help message and exit"
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
+        echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
+        echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e
@@ -111,6 +115,16 @@ do
         echo -e "                        restore    perform a system restore from a previous backup"
         echo -e "${NC}"
         exit
+        shift # Remove from processing
+        ;;
+        --dir=*)
+        BACKUP_DIR="$(echo ${arg#*=} | sed 's:/*$::')"
+        FLAGS="$FLAGS--dir=${BACKUP_DIR} "
+        shift # Remove from processing
+        ;;
+        --archive=*)
+        ARCHIVE_FILE="${arg#*=}"
+        FLAGS="$FLAGS--archive=${ARCHIVE_FILE} "
         shift # Remove from processing
         ;;
         --step=*)
@@ -212,48 +226,41 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
     if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
-    #cmd_string1="sudo apt install pigz pv"
-    #cmd_string2="sudo tar --same-owner -xvf ./Migration_$USER.tar.gz"
-    #cmd_string2="tar --use-compress-program='pigz --best --recursive | pv' -cf archive.tar.gz ./Migration_$USER/"
-    #cmd_string2="sudo tar --same-owner -I pigz -xvf ./Migration_$USER.tar.gz -C ./"
     cmd_string2="pv ./Migration_$USER.tar.gz | sudo tar --same-owner -I pigz -x -C ./"
     
     if [ -f "./Migration_$USER.tar.gz" ]; then
-        if [ ! -d "./Migration_$USER/"]; then
-            cmd "$cmd_string1"
+        if [ ! -d "${BACKUP_DIR}/" ]; then
             cmd "$cmd_string2"
         else
-            echo -e -n "${YELLOW}Backup directory exists, overwrite with compressed backup ${GREEN}(y/n)? ${NC}"; read answer; echo -e;
+            echo -e -n "${YELLOW}Backup directory exists, remove before uncompress${GREEN} (y/n)? ${NC}"; read answer; echo -e;
             if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "$cmd_string1"
-                cmd "$cmd_string2"
-            fi
-    else
-        if [ ! -d "./Migration_$USER/"]; then
-            echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-                cmd "$cmd_string1"
-                cmd "$cmd_string2"
-            else
-                printf "${RED}Error! I don't have a backup directory to work with!${NC}"
-                exit
-            fi
-        else
-            echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the './Migration_$USER/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "$cmd_string1"
+                cmd "sudo rm -rf ${BACKUP_DIR}/"
                 cmd "$cmd_string2"
             fi
         fi
-    fi
-    
-    
-    echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e;
-    
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string"
+    else
+        if [ ! -d "${BACKUP_DIR}/"]; then
+            echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
+                read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+                cmd "$cmd_string2"
+            else
+                # TODO: Allow backup directory to be specified
+                #echo -e -n "${YELLOW}Do you want to specify a backup directory manually${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+                #if [ "$answer" != "${answer#[Yy]}" ] ;then
+                #    read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+                #    cmd "$cmd_string2"
+                #else
+                    printf "${RED}Error! I don't have a backup directory to work with!${NC}"
+                    exit
+                #fi
+            fi
+        else
+            echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the '${BACKUP_DIR}/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
+                cmd "$cmd_string2"
+            fi
+        fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -301,7 +308,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ -d "/home/$USER/Videos"    ] ;then   cmd "mv /home/$USER/Videos /home/$USER/Videos.bak";           fi
         
         # Copy all symlinks
-        cmd "sudo rsync -aR --info=progress2 ./Migration_$USER/symlinks/ /"
+        cmd "sudo rsync -aR --info=progress2 ${BACKUP_DIR}/symlinks/ /"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
