@@ -468,7 +468,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Compress Backup${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo apt install pigz pv"
+            if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
+            if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
+            #cmd "sudo apt install pigz pv"
             #cmd "sudo tar -czvpf Migration_$USER.tar.gz ./Migration_$USER"
             cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cpf ./Migration_$USER.tar.gz ./Migration_$USER/"
             cmd "sudo rm -rf ./Migration_$USER"

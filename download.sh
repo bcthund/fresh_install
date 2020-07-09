@@ -179,8 +179,10 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
         printf "${BLUE}Addons (Will also install pip3 and gdown)${NC}"
         if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo apt -qy install python3-pip"
-            cmd "pip3 install gdown"
+            if ! command -v pip3 &> /dev/null; then cmd "sudo apt -qy install python3-pip"; fi
+            if ! command -v gdown &> /dev/null; then cmd "pip3 install gdown"; fi
+            #cmd "sudo apt -qy install python3-pip"
+            #cmd "pip3 install gdown"
             dl "1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
             cmd "unzip -o Addons.zip -d ./gzdoom_installer/" 
             cmd "rm Addons.zip"
@@ -243,8 +245,10 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     echo -e "${grey}\t- Plasmoids${NC}"
     if [ "$mode" != "${mode#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-        cmd "sudo apt -qy install python3-pip"
-        cmd "pip3 install gdown"
+        if ! command -v pip3 &> /dev/null; then cmd "sudo apt -qy install python3-pip"; fi
+        if ! command -v gdown &> /dev/null; then cmd "pip3 install gdown"; fi
+        #cmd "sudo apt -qy install python3-pip"
+        #cmd "pip3 install gdown"
         dl "1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
         cmd "unzip -o Apps.zip"
         cmd "rm Apps.zip"

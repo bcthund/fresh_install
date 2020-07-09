@@ -210,8 +210,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tUncompress Backup${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    
-    cmd_string1="sudo apt install pigz pv"
+    if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
+    if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
+    #cmd_string1="sudo apt install pigz pv"
     #cmd_string2="sudo tar --same-owner -xvf ./Migration_$USER.tar.gz"
     #cmd_string2="tar --use-compress-program='pigz --best --recursive | pv' -cf archive.tar.gz ./Migration_$USER/"
     #cmd_string2="sudo tar --same-owner -I pigz -xvf ./Migration_$USER.tar.gz -C ./"
