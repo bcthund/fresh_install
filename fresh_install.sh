@@ -256,7 +256,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         fi
     else
         if [ ! -d "${BACKUP_DIR}/" ]; then
-            echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+            echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nYou should use the --dir and --archive flags for custom names and locations.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n)? ${NC}"; read answer; echo -e;
             if [ "$answer" != "${answer#[Yy]}" ] ;then
                 read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
                 cmd "$cmd_string2"
