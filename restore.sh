@@ -93,6 +93,14 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     # Yes to All?
     if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
 
+    # Desktop
+        echo -e
+        echo -e "${BLUE}Desktop${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/Desktop/ /home/$USER/Desktop/"
+        fi
+    
     # User app menu entries
         echo -e
         printf "${BLUE}Menu Entries${NC}"

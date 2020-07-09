@@ -108,6 +108,14 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         cmd "mkdir -pv ./Migration_$USER/root/"
         cmd "mkdir -pv ./Migration_$USER/symlinks/"
 
+    # Desktop
+        echo -e
+        echo -e "${BLUE}Desktop${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/Desktop/ ./Migration_$USER/root/"
+        fi
+        
     # User app menu entries
         echo -e
         echo -e "${BLUE}Menu Entries${NC}"
