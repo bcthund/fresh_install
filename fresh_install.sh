@@ -367,17 +367,17 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     printf "${grey}libsdl2-mixer-dev           libsdl2-net-dev             lmms                        mesa-utils${NC}\n"
     printf "${grey}neofetch                    net-tools                   network-manager-openconnect network-manager-openvpn${NC}\n"
     printf "${grey}network-manager-ssh         nfs-common                  nfs-kernel-server           nmap${NC}\n"
-    printf "${grey}octave                      openconnect                 openjdk-8-jre               openshot${NC}\n"
-    printf "${grey}openssh-server              openvpn                     pithos                      playonlinux${NC}\n"
-    printf "${grey}python3-pip                 qt5-default                 qtcreator                   qtdeclarative5-dev${NC}\n"
-    printf "${grey}rawtherapee                 remmina                     rename                      samba${NC}\n"
-    printf "${grey}scummvm                     smb4k                       solaar                      texlive-fonts-extra${NC}\n"
-    printf "${grey}texlive-fonts-recommended   texlive-xetex               texstudio                   tilix${NC}\n"
-    printf "${grey}thunderbird                 ubuntu-restricted-extras    valgrind                    veusz${NC}\n"
-    printf "${grey}vim                         vlc                         vlc-plugin-access-extra     vlc-plugin-fluidsynth${NC}\n"
-    printf "${grey}vlc-plugin-samba            vlc-plugin-skins2           vlc-plugin-visualization    warzone2100${NC}\n"
-    printf "${grey}whois                       winff                       wireshark                   xrdp${NC}\n"
-    printf "${grey}xterm${NC}\n"
+    printf "${grey}numlockx                    octave                      openconnect                 openjdk-8-jre${NC}\n"
+    printf "${grey}openshot                    openssh-server              openvpn                     pithos${NC}\n"
+    printf "${grey}playonlinux                 python3-pip                 qt5-default                 qtcreator${NC}\n"
+    printf "${grey}qtdeclarative5-dev          rawtherapee                 remmina                     rename${NC}\n"
+    printf "${grey}samba                       scummvm                     smb4k                       solaar${NC}\n"
+    printf "${grey}texlive-fonts-extra         texlive-fonts-recommended   texlive-xetex               texstudio${NC}\n"
+    printf "${grey}tilix                       thunderbird                 ubuntu-restricted-extras    valgrind${NC}\n"
+    printf "${grey}veusz                       vim                         vlc                         vlc-plugin-access-extra${NC}\n"
+    printf "${grey}vlc-plugin-fluidsynth       vlc-plugin-samba            vlc-plugin-skins2           vlc-plugin-visualization${NC}\n"
+    printf "${grey}warzone2100                 whois                       winff                       wireshark${NC}\n"
+    printf "${grey}xrdp                        xterm${NC}\n"
     echo -e "${grey}* Answer yes again to apt if it successfully prepares to install packeges.${NC}"
     echo -e "${grey}* Take caution, if apt has errors then abort the script with ctrl+c and resolve errors manually.${NC}"
     echo -e
@@ -660,6 +660,21 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     #echo -e "${PURPLE}NOTES${NC}"
     #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    
+    echo -e
+    echo -e "${BLUE}Force numlock on at startup${NC}"
+    echo -e -n "${GREEN} (y/n/e)? ${NC}"
+    read answer
+    cmd_string1="sudo touch /etc/rc.local"
+    cmd_string2="sudo sed -i 's|^exit 0.*$|# Numlock enable\n[ -x /usr/bin/numlockx ] \&\& numlockx on\n\nexit 0|' /etc/rc.local"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then
+        read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+    fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string1"
+    fi
+    
     # ==================================================================
     #   Add user to vboxusers (should give USB permission)
     # ==================================================================
@@ -675,7 +690,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     fi
     
     # ==================================================================
-    #   Add user to vboxusers (should give USB permission)
+    #   Add user to wireshark group
     # ==================================================================
     echo -e -n "${BLUE}Add user to wireshark group${NC}"
     echo -e -n "${GREEN} (y/n)? ${NC}"
