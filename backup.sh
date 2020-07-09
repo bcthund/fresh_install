@@ -1,21 +1,21 @@
 #!/bin/bash
-grey='\e[37m'
-GREY='\e[37m\e[1m'
-red='\e[31m'
-RED='\e[31m\e[1m'
-green='\e[32m'
-GREEN='\e[32m\e[1m'
-yellow='\e[33m'
-YELLOW='\e[33m\e[1m'
-purple='\e[35m'
-PURPLE='\e[35m\e[1m'
-white='\e[37m'
-WHITE='\e[37m\e[1m'
-blue='\e[34m'
-BLUE='\e[34m\e[1m'
-cyan='\e[36m'
-CYAN='\e[36m\e[1m'
-NC='\e[39m'
+grey='\e[0m\e[37m'
+GREY='\e[1m\e[90m'
+red='\e[0m\e[91m'
+RED='\e[1m\e[31m'
+green='\e[0m\e[92m'
+GREEN='\e[1m\e[32m'
+yellow='\e[0m\e[93m'
+YELLOW='\e[1m\e[33m'
+purple='\e[0m\e[95m'
+PURPLE='\e[1m\e[35m'
+white='\e[0m\e[37m'
+WHITE='\e[1m\e[37m'
+blue='\e[0m\e[94m'
+BLUE='\e[1m\e[34m'
+cyan='\e[0m\e[96m'
+CYAN='\e[1m\e[36m'
+NC='\e[0m\e[39m'
 
 # Setup command
 DEBUG=false
@@ -152,10 +152,10 @@ echo -e
 echo -e "${PURPLE}==========================================================================${NC}"
 echo -e "${PURPLE}\tPerforming Backup${NC}"
 echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-echo -e "${purple}  Note: It is recommended to perform the backup locally and not directly"
-echo -e "${purple}        to external media such as USB. If the device has ACL enabled then"
-echo -e "${purple}        file permissions and ownership may not be preserved. The compressed"
-echo -e "${purple}        backup is safe to transfer."
+echo -e "${purple}  Note: It is recommended to perform the backup locally and not directly${NC}"
+echo -e "${purple}        to external media such as USB. If the device has ACL enabled then${NC}"
+echo -e "${purple}        file permissions and ownership may not be preserved. The compressed${NC}"
+echo -e "${purple}        backup is safe to transfer.${NC}"
 echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
 echo -e "${grey}  Drive Layout Reference"
 echo -e "${grey}  Desktop${NC}"
