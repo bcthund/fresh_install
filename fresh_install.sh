@@ -127,6 +127,7 @@ do
         echo -e "                        config     perform some additional configuration, not including NFS shares"
         echo -e "                        nfs        setup some standard NFS shares and/or attach media server shares"
         echo -e "                        restore    perform a system restore from a previous backup"
+        echo -e "                        cleanup    runs apt autoremove for lingering packages"
         echo -e "${NC}"
         exit
         shift # Remove from processing
@@ -317,7 +318,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ -d "/home/$USER/Videos"    ] ;then   cmd "mv /home/$USER/Videos /home/$USER/Videos.bak";           fi
         
         # Copy all symlinks
-        cmd "sudo rsync -aR --info=progress2 ${BACKUP_DIR}/symlinks/ /"
+        cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/symlinks/home/$USER/ /home/$USER/"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -522,13 +523,16 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     printf "${grey}\t- Brother HL3040CN${NC}\n"
     printf "${grey}\t- Plex Media Player${NC}\n"
 
-    echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
+    echo -e -n "${BLUE}Proceed ${GREEN}(y/n/a)? ${NC}"
     read answer
     echo -e
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
+    if [ "$answer" != "${answer#[YyAa]}" ] ;then
+        if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
+    
         echo -e
         printf "${BLUE}VirtualBox v6.1.10 (deb)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/virtualbox-6.1_6.1.10-138449_Ubuntu_eoan_amd64.deb"
             cmd "sudo VBoxManage extpack install --replace ./Apps/Oracle_VM_VirtualBox_Extension_Pack-6.1.10.vbox-extpack"
             cmd "sudo VBoxManage extpack cleanup"
@@ -536,44 +540,51 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         
         echo -e
         printf "${BLUE}BricsCAD v20.2.08 (deb)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/BricsCAD-V20.2.08-1-en_US-amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}Camotics v1.2.0 (deb)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/camotics_1.2.0_amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}Chrome v83.0.4103 (deb)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/google-chrome-stable_current_amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}No Machine v6.11.2 (deb)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/nomachine_6.11.2_1_amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}Steam v20 (deb)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/steam_latest.deb"
         fi
         
         echo -e
         printf "${BLUE}Mutisystem (sh)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo chmod +x ./Apps/install-depot-multisystem.sh"
             cmd "sudo ./Apps/install-depot-multisystem.sh"
         fi
         
         echo -e
         printf "${BLUE}Eclipse v2020-06 (bin)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo chmod +x ./Apps/eclipse-installer/eclipse-inst"
             cmd "./Apps/eclipse-installer/eclipse-inst"
         fi
@@ -582,6 +593,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Printer (HL-3040CN)${NC}\n"
         printf "${YELLOW}NOTE: The install script has been modified, it did not allow directories with spaces in them and the version included here does.${NC}\n"
         echo -e -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo mkdir -p /var/spool/lpd/hl3040cn"
             cmd "cd ./Apps/brother/"
             cmd "sudo ./linux-brprinter-installer-2.2.2-1"
             cmd "cd '${working_dir}'"
@@ -589,13 +601,16 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         
         echo -e
         printf "${BLUE}Plex Media Player v2.58.0 (AppImage)${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             install_dir="/home/$USER/Programs/PlexMP"
             echo -e
             printf "${BLUE}Where do you want to install to:${NC}\n"
-            printf "${YELLOW}  1) ~/Programs/PlexMP/ (default)${NC}\n"
-            printf "${YELLOW}  2) Other (user write permission assumed)${NC}\n"
-            echo -e -n "${GREEN}Option? ${NC}"; read answer; if [ "$answer" != "${answer#[2]}" ] ;then
+            printf "${YELLOW}  0) ~/Programs/PlexMP/ (default)${NC}\n"
+            printf "${YELLOW}  1) Other (user write permission assumed)${NC}\n"
+            
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Option? ${NC} "; read answer2; fi
+            if [ "$answer2" != "${answer2#[Yy1]}" ] ;then
                 printf "${BLUE}Directory: ${NC}"
                 read install_dir
             fi
@@ -648,12 +663,24 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     # ==================================================================
     #   Add user to vboxusers (should give USB permission)
     # ==================================================================
-    echo -e -n "${BLUE}Add groups for virtualbox usb/tty access${NC}"
+    echo -e "${BLUE}Add groups for virtualbox usb/tty access${NC}"
     echo -e "${grey}\t- vboxusers${NC}"
     echo -e "${grey}\t- dialout${NC}"
     echo -e -n "${GREEN}Continue (y/n)? ${NC}"
     read answer
     cmd_string1="sudo usermod -a -G vboxusers,dialout $USER"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string1"
+    fi
+    
+    # ==================================================================
+    #   Add user to vboxusers (should give USB permission)
+    # ==================================================================
+    echo -e -n "${BLUE}Add user to wireshark group${NC}"
+    echo -e -n "${GREEN} (y/n)? ${NC}"
+    read answer
+    cmd_string1="sudo usermod -a -G wireshark $USER"
     if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string1"
@@ -684,8 +711,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
     fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string1"
-        cmd "$cmd_string2"
+        if [ ! -f "/usr/lib/i386-linux-gnu/libGL.so" ]; then cmd "$cmd_string1"; fi
+        if [ ! -f "/usr/lib/x86_64-linux-gnu/libGL.so" ]; then cmd "$cmd_string2"; fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -827,6 +854,21 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
+    cleanup:
+    echo -e
+    echo -e "${PURPLE}==========================================================================${NC}"
+    echo -e "${PURPLE}\tAutoremove packages${NC}"
+    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    cmd_string1="sudo apt autoremove"
+    echo -e
+    printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer; fi
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string1"
+    fi
     
     # ==================================================================
     #   Restore Backup
