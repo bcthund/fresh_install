@@ -202,6 +202,8 @@ echo -e "${INTRO}Management, etc).                                              
 echo -e "${INTRO}                                                                       ${NC}"
 #echo -e "${grey}${NC}"
 echo -e
+echo -e "${YELLOW}Using backup directory: '${BACKUP_DIR}'${NC}"
+echo -e "${YELLOW}Using archive: '${ARCHIVE_FILE}'${NC}"
 echo -e -n "${BLUE}Do you want to (B)ackup, (R)estore, or (D)ownload installers? ${NC}"
 read mode
 if [ "$mode" != "${mode#[Bb]}" ] ;then

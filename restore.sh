@@ -57,6 +57,8 @@ do
         echo -e "  -y, --yes             answer yes to all"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
+        echo -e "                           Note: Archive is used in fresh_install.sh, not here."
+        echo -e "                                 This is here just in case it is needed in the future."
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e
@@ -155,6 +157,9 @@ echo -e "${grey}  Power management${NC}"
 echo -e "${grey}  Global shortcuts${NC}"
 echo -e "${grey}  Plasma settings${NC}"
 echo -e "${grey}  Login scripts${NC}"
+echo -e
+echo -e "${YELLOW}Using backup directory: '${BACKUP_DIR}'${NC}"
+echo -e "${YELLOW}Using archive: '${ARCHIVE_FILE}'${NC}"
 echo -e -n "${BLUE}Proceed? (y/n/a)? ${NC}"
 if [ "$ANSWERALL" = false ]; then read answer; fi
 echo -e

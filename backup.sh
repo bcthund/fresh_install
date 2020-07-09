@@ -168,7 +168,8 @@ echo -e "${grey}  Global shortcuts${NC}"
 echo -e "${grey}  Plasma settings${NC}"
 echo -e "${grey}  Login scripts${NC}"
 echo -e
-echo -e "${YELLOW}Backing up to ${BACKUP_DIR}, and archiving to ${ARCHIVE_FILE}${NC}"
+echo -e "${YELLOW}Using backup directory: '${BACKUP_DIR}'${NC}"
+echo -e "${YELLOW}Using archive: '${ARCHIVE_FILE}'${NC}"
 echo -e -n "${BLUE}Proceed? (y/n/a)? ${NC}"
 if [ "$ANSWERALL" = false ]; then read answer; fi
 echo -e
