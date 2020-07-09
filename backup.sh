@@ -67,6 +67,10 @@ echo -e "${PURPLE}==============================================================
 echo -e "${PURPLE}\tPerforming Backup${NC}"
 echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
 echo -e "${grey}\tuser application menu entries${NC}"
+echo -e "${grey}\tDrive Layout Reference"
+echo -e "${grey}\tDesktop${NC}"
+echo -e "${grey}\tUser Applications${NC}"
+echo -e "${grey}\tUser Icons${NC}"
 echo -e "${grey}\tkeyring${NC}"
 echo -e "${grey}\tnomachine${NC}"
 echo -e "${grey}\tvpn settings${NC}"
@@ -108,6 +112,14 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         cmd "mkdir -pv ./Migration_$USER/root/"
         cmd "mkdir -pv ./Migration_$USER/symlinks/"
 
+    # Drive Layout Reference
+        echo -e
+        echo -e "${BLUE}Drive Layout Reference (Saved to ./Migration_$USER/drive_layout.txt)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "lsblk -e7 >> ./Migration_$USER/drive_layout.txt"
+        fi
+        
     # Desktop
         echo -e
         echo -e "${BLUE}Desktop${NC}"
