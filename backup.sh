@@ -471,7 +471,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo apt install pigz pv"
             #cmd "sudo tar -czvpf Migration_$USER.tar.gz ./Migration_$USER"
             cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -czvpf ./Migration_$USER.tar.gz ./Migration_$USER/"
-            cmd "rm -rf ./Migration_$USER"
+            cmd "sudo rm -rf ./Migration_$USER"
         fi
     
     # NOTE: This last condition is slightly different to prevent final 'fi' from complaining after doing a jumpto()
