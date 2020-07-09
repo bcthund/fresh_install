@@ -120,6 +120,8 @@ do
         echo -e "                        nosnap     remove snap packages from system (not implemented)"
         echo -e "                        upgrade    perform a system upgrade, and purge apport if desired"
         echo -e "                        packages   install apt packages including some dependencies for other steps"
+        echo -e "                        nvidia     install latest nvidia driver (430) (not implemented)"
+        echo -e "                        ppa        install packages requiring additional PPAs"
         echo -e "                        pip        install pip3 packages"
         echo -e "                        snap       install snap packages"
         echo -e "                        plasmoid   install plasma plasmoids"
@@ -423,28 +425,28 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
     nvidia:
-    echo -e
-    echo -e "${PURPLE}==========================================================================${NC}"
-    echo -e "${PURPLE}\tInstall NVIDIA in-testing drivers${NC}"
-    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    echo -e "${purple}This will install the latest drivers that are still in testing${NC}"
-    echo -e "${purple}for nvidia graphics cards. This will purge any current nvidia${NC}"
-    echo -e "${purple}files and install ${NC}"
-    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    cmd_string1="sudo add remove --purge nvidia-*"
-    cmd_string2="sudo add-apt-repository ppa:graphics-drivers/ppa"
-    cmd_string3="sudo apt install "
-    printf "${BLUE}Install nvidia-430 drivers ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
-    if [ "$answer" != "${answer#[Ee]}" ] ;then
-        read -p "$(echo -e ${yellow}Edit command 1/3: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-        read -p "$(echo -e ${yellow}Edit command 2/3: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-        read -p "$(echo -e ${yellow}Edit command 3/3: ${NC})" -e -i "${cmd_string3}" cmd_string3;
-    fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string1"
-        cmd "$cmd_string2"
-        cmd "$cmd_string3"
-    fi
+#     echo -e
+#     echo -e "${PURPLE}==========================================================================${NC}"
+#     echo -e "${PURPLE}\tInstall NVIDIA in-testing drivers${NC}"
+#     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+#     echo -e "${purple}This will install the latest drivers that are still in testing${NC}"
+#     echo -e "${purple}for nvidia graphics cards. This will purge any current nvidia${NC}"
+#     echo -e "${purple}files and install ${NC}"
+#     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+#     cmd_string1="sudo add remove --purge nvidia-*"
+#     cmd_string2="sudo add-apt-repository ppa:graphics-drivers/ppa"
+#     cmd_string3="sudo apt install "
+#     printf "${BLUE}Install nvidia-430 drivers ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+#     if [ "$answer" != "${answer#[Ee]}" ] ;then
+#         read -p "$(echo -e ${yellow}Edit command 1/3: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+#         read -p "$(echo -e ${yellow}Edit command 2/3: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+#         read -p "$(echo -e ${yellow}Edit command 3/3: ${NC})" -e -i "${cmd_string3}" cmd_string3;
+#     fi
+#     if [ "$answer" != "${answer#[YyEe]}" ] ;then
+#         cmd "$cmd_string1"
+#         cmd "$cmd_string2"
+#         cmd "$cmd_string3"
+#     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
    
