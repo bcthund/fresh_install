@@ -20,6 +20,7 @@ NC='\e[39;0m'
 # Setup command
 DEBUG=false
 VERBOSE=false
+ANSWERALL=false
 FLAGS=""
 OTHER_ARGUMENTS=""
 
@@ -29,12 +30,17 @@ do
         -d|--debug)
         DEBUG=true
         FLAGS="$FLAGS-d "
-        shift # Remove --debug from processing
+        shift # Remove from processing
         ;;
         -v|--verbose)
         VERBOSE=true
         FLAGS="$FLAGS-v "
-        shift # Remove --verbose from processing
+        shift # Remove from processing
+        ;;
+        -y|--yes)
+        ANSWERALL=true
+        FLAGS="$FLAGS-y "
+        shift # Remove from processing
         ;;
         -h|--help)
         echo -e "${WHITE}"
@@ -44,6 +50,37 @@ do
         echo -e "  -h, --help            show this help message and exit"
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
+        echo -e "  -y, --yes             answer yes to all"
+        echo -e "  --step=STEP           jump to an install step then exit when complete"
+        echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
+        echo -e
+        echo -e "Available STEP Options:"
+        echo -e "                        layout"
+        echo -e "                        desktop"
+        echo -e "                        menuentries"
+        echo -e "                        icons"
+        echo -e "                        keyring"
+        echo -e "                        nomachine"
+        echo -e "                        network"
+        echo -e "                        warzone2100"
+        echo -e "                        knossos"
+        echo -e "                        rawtherapee"
+        echo -e "                        bricscad"
+        echo -e "                        dosbox"
+        echo -e "                        friction"
+        echo -e "                        thunderbird"
+        echo -e "                        kicad"
+        echo -e "                        gzdoom"
+        echo -e "                        audacious"
+        echo -e "                        vlc"
+        echo -e "                        eclipse"
+        echo -e "                        kate"
+        echo -e "                        power"
+        echo -e "                        shortcuts"
+        echo -e "                        plasma"
+        echo -e "                        login"
+        echo -e "                        symlinks"
+        echo -e "                        compress"
         echo -e "${NC}"
         exit
         shift # Remove from processing
@@ -61,6 +98,23 @@ cmd(){
     if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo -e ">> ${WHITE}$1${NC}"; fi;
     if [ "$DEBUG" = false ]; then eval $1; fi;
 }
+
+jumpto(){
+    label=$1
+    cmd=$(sed -n "/$label:/{:a;n;p;ba};" $0 | grep -v ':$')
+    eval "$cmd"
+    exit
+}
+start=${1:-"start"}
+jumpto $start
+start:
+
+if [ "$GOTOSTEP" = true ] || [ "$GOTOCONTINUE" = true ]; then
+    if [ "$ANSWER" = true ] ;
+    then answer="a"; answer2="y";
+    else answer="y"; fi
+    jumpto $GOTO
+fi
 
 echo -e
 echo -e "${PURPLE}==========================================================================${NC}"
@@ -111,6 +165,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         cmd "mkdir -pv ./Migration_$USER/root/"
         cmd "mkdir -pv ./Migration_$USER/symlinks/"
 
+    layout:
     # Drive Layout Reference
         echo -e
         echo -e "${BLUE}Drive Layout Reference (Saved to ./Migration_$USER/drive_layout.txt)${NC}"
@@ -118,7 +173,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "lsblk -e7 >> ./Migration_$USER/drive_layout.txt"
         fi
-        
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
+    desktop:
     # Desktop
         echo -e
         echo -e "${BLUE}Desktop${NC}"
@@ -126,7 +183,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/Desktop/ ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
+    menuentries:
     # User app menu entries
         echo -e
         echo -e "${BLUE}Menu Entries${NC}"
@@ -134,7 +193,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/applications/ ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
+    icons:
     # User Icons
         echo -e
         echo -e "${BLUE}User Icons${NC}"
@@ -142,7 +203,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/icons/ ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
+    keyring:
     # Keyring
         echo -e
         echo -e "${BLUE}Keyring${NC}"
@@ -150,7 +213,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/kwalletd/ ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    nomachine:
     # NoMachine (NX)
         echo -e
         echo -e "${BLUE}NoMachine (NX)${NC}"
@@ -158,7 +223,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /usr/NX/etc/server.cfg ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
+    network:
     # Network Connections and VPNs
         echo -e
         echo -e "${BLUE}Network Connections and VPNs${NC}"
@@ -166,7 +233,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/ ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    warzone2100:
     # Warzone 2100
         echo -e
         echo -e "${BLUE}Warzone 2100${NC}"
@@ -175,7 +244,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /usr/share/games/warzone2100/sequences.wz ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.warzone2100-3.2 ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    knossos:
     # Knossos
         echo -e
         echo -e "${BLUE}Knossos${NC}"
@@ -183,7 +254,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/knossos ./Migration_$USER/root/"
         fi
-
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+        
+    rawtherapee:
     # RawTherapee
         echo -e
         echo -e "${BLUE}RawTherapee${NC}"
@@ -191,7 +264,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/RawTherapee ./Migration_$USER/root/"
         fi
-
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+        
+    bricscad:
     # BricsCAD
         echo -e
         echo -e "${BLUE}BricsCAD${NC}"
@@ -202,7 +277,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /opt/bricsys/bricscad/v20/RenderMaterialStatic ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /opt/bricsys/communicator ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    dosbox:
     # DosBox
         echo -e
         echo -e "${BLUE}DosBox${NC}"
@@ -210,7 +287,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.dosbox ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    friction:
     # Frictional Games
         echo -e
         echo -e "${BLUE}Frictional Games${NC}"
@@ -218,7 +297,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.frictionalgames ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    thunderbird:
     # ThunderBird
         echo -e
         echo -e "${BLUE}ThunderBird${NC}"
@@ -226,7 +307,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.thunderbird/ ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    kicad:
     # KiCAD
         echo -e
         echo -e "${BLUE}KiCAD${NC}"
@@ -234,7 +317,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kicad ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    gzdoom:
     # gzdoom
         echo -e
         echo -e "${BLUE}gzdoom${NC}"
@@ -242,7 +327,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/gzdoom ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    audacious:
     # Audacious
         echo -e
         echo -e "${BLUE}Audacious${NC}"
@@ -250,7 +337,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/audacious ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    vlc:
     # VLC
         echo -e
         echo -e "${BLUE}VLC${NC}"
@@ -258,7 +347,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/vlc ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    eclipse:
     # Eclipse
         echo -e
         echo -e "${BLUE}Eclipse${NC}"
@@ -267,7 +358,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings/org.eclipse.ui.ide.prefs ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /home/$USER/Projects/Eclipse/.metadata ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    kate:
     # KATE
         echo -e
         echo -e "${BLUE}KAte${NC}"
@@ -276,7 +369,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katerc ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/katesyntaxhighlightingrc ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    power:
     # Power Management Profile (KDE) (BACKUP)
         echo -e
         echo -e "${BLUE}Power Management${NC}"
@@ -284,7 +379,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/powermanagementprofilesrc ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    shortcuts:
     # Global Shortcuts (KDE) (BACKUP)
         echo -e
         echo -e "${BLUE}Global Shortcuts${NC}"
@@ -292,7 +389,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kglobalshortcutsrc ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    plasma:
     # Plasma Settings (Panel, Notifications, Theme, Desktop Effects) (KDE) (BACKUP)
         echo -e
         echo -e "${BLUE}Plasma Settings${NC}"
@@ -304,7 +403,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kwinrc ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kdeglobals ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    login:
     # Login scripts (.bashr/.profile) (BACKUP)
         echo -e
         echo -e "${BLUE}Login Scripts${NC}"
@@ -313,7 +414,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.bashrc ./Migration_$USER/root/"
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.profile ./Migration_$USER/root/"
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
+    symlinks:
     # symlinks (predetermined list)
         echo -e
         echo -e "${BLUE}Symlinks${NC}"
@@ -321,10 +424,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cp_if_link(){ [ ! -L "$1" ] || cmd "rsync -aR --info=progress2 $1 ./Migration_$USER/symlinks/"; }
             cp_if_link /home/$USER/Documents
-            #cp_if_link /home/$USER/Downloads
+            cp_if_link /home/$USER/Downloads
             cp_if_link /home/$USER/Music
             cp_if_link /home/$USER/Pictures
-            cp_if_link /home/$USER/Downloads
             cp_if_link /home/$USER/Templates
             cp_if_link /home/$USER/Videos
             cp_if_link /home/$USER/.bricscad
@@ -340,6 +442,27 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cp_if_link /home/$USER/Projects
             cp_if_link /home/$USER/.local/share/Steam
         fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
+    compress:
+    # Compress directory
+        echo -e
+        echo -e "${PURPLE}==========================================================================${NC}"
+        echo -e "${PURPLE}\tCompress Backup${NC}"
+        echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+        echo -e "${PURPLE}Helps maintain permissions, will remove backup folder after complete.${NC}"
+        echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+        echo -e
+        echo -e "${BLUE}Compress Backup${NC}"
+        echo -e -n "${GREEN} (y/n)? ${NC}"
+        read answer
+        if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "tar -czvpf Migration_$USER.tar.gz ./Migration_$USER"
+            cmd "rm -rf ./Migration_$USER"
+        fi
+    
+    # NOTE: This last condition is slightly different to prevent final 'fi' from complaining after doing a jumpto()
+    if [ "$GOTOSTEP" = true ] || [ "$GOTOCONTINUE" = true ]; then exit; fi
 fi
 
 

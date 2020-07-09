@@ -94,20 +94,21 @@ do
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e
         echo -e "Available STEP Options:"
-        echo -e "                        start     same as starting without a STEP option"
-        echo -e "                        backup    perform a system backup"
-        echo -e "                        download  download/update install scripts, apps, source installs. Always exits"
-        echo -e "                        symlinks  install symlinks from a system backup"
-        echo -e "                        upgrade   perform a system upgrade, and purge apport if desired"
-        echo -e "                        packages  install apt packages including some dependencies for other steps"
-        echo -e "                        pip       install pip3 packages"
-        echo -e "                        snap      install snap packages"
-        echo -e "                        plasmoid  install plasma plasmoids"
-        echo -e "                        downloads install downloaded applications"
-        echo -e "                        source    install applications from source"
-        echo -e "                        config    perform some additional configuration, not including NFS shares"
-        echo -e "                        nfs       setup some standard NFS shares and/or attach media server shares"
-        echo -e "                        restore   perform a system restore from a previous backup"
+        echo -e "                        start      same as starting without a STEP option"
+        echo -e "                        uncompress extract the contents of a backup"
+        echo -e "                        backup     perform a system backup"
+        echo -e "                        download   download/update install scripts, apps, source installs. Always exits"
+        echo -e "                        symlinks   install symlinks from a system backup"
+        echo -e "                        upgrade    perform a system upgrade, and purge apport if desired"
+        echo -e "                        packages   install apt packages including some dependencies for other steps"
+        echo -e "                        pip        install pip3 packages"
+        echo -e "                        snap       install snap packages"
+        echo -e "                        plasmoid   install plasma plasmoids"
+        echo -e "                        downloads  install downloaded applications"
+        echo -e "                        source     install applications from source"
+        echo -e "                        config     perform some additional configuration, not including NFS shares"
+        echo -e "                        nfs        setup some standard NFS shares and/or attach media server shares"
+        echo -e "                        restore    perform a system restore from a previous backup"
         echo -e "${NC}"
         exit
         shift # Remove from processing
@@ -205,11 +206,53 @@ elif [ "$mode" != "${mode#[Dd]}" ] ;then
     exit
     #if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 elif [ "$mode" != "${mode#[Rr]}" ] ;then
+    uncompress:
+    echo -e "${PURPLE}==========================================================================${NC}"
+    echo -e "${PURPLE}\tUncompress Backup${NC}"
+    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    cmd_string="sudo tar --same-owner -xvf ./Migration_$USER.tar.gz"
+    if [ -f "./Migration_$USER.tar.gz" ]; then
+        if [ ! -d "./Migration_$USER/"]; then
+            cmd "$cmd_string"
+        else
+            echo -e -n "${YELLOW}Backup directory exists, overwrite with compressed backup ${GREEN}(y/n)? ${NC}"; read answer; echo -e;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
+                cmd "$cmd_string"
+            fi
+    else
+        if [ ! -d "./Migration_$USER/"]; then
+            echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
+                read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string;
+                cmd "$cmd_string"
+            else
+                printf "${RED}Error! I don't have a backup directory to work with!${NC}"
+                exit
+            fi
+        else
+            echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the './Migration_$USER/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
+                cmd "$cmd_string"
+            fi
+        fi
+    fi
+    
+    
+    echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e;
+    
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        cmd "$cmd_string"
+    fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+
     symlinks:
     echo -e
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tCreate Folder Links${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     echo -e "${grey}WARNING! The following folders will be backed up if they already exist,${NC}"
     echo -e "${grey}         and you will need to check if it is safe to remove them. On a${NC}"
     echo -e "${grey}         fresh install these should normally all be empty.${NC}"
@@ -255,6 +298,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tPerform dist-upgrade and purge apport (will ask)${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e;
     cmd_string="sudo apt update && sudo apt -y dist-upgrade"
     if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
@@ -329,6 +374,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstall PPA Packages${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     printf "${grey}\tx-tile${NC}\n\n"
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
@@ -349,6 +396,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstall PIP Packages${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     printf "${grey}\tbCNC${NC}\n\n"
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
@@ -369,6 +418,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstall Snap packages${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     printf "${grey}\tckan${NC}\n"
     printf "${grey}\tshotcut${NC}\n"
     printf "${grey}\tsublime-text${NC}\n"
@@ -410,6 +461,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstall Plasmoids${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     printf "${grey}\tplaces widget${NC}\n\n"
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"; read answer; echo -e
     if [ "$answer" != "${answer#[Yy]}" ] ;then
@@ -430,6 +483,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstal Downloaded Apps${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     printf "${grey}\t- virtualbox + extension pack${NC}\n"
     printf "${grey}\t- bricscad${NC}\n"
     printf "${grey}\t- camotics${NC}\n"
@@ -533,6 +588,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstall from Source${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     echo -e
     echo -e "${BLUE}Do you want to install programs from source?${NC}"
     echo -e "${grey}\t- gzdoom${NC}"
@@ -559,6 +616,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tAdditional Configuration${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     # ==================================================================
     #   Add user to vboxusers (should give USB permission)
     # ==================================================================
@@ -742,7 +801,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
-    
     # ==================================================================
     #   Restore Backup
     # ==================================================================
@@ -761,6 +819,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "              - Add Modelines"
     echo -e "${PURPLE}==========================================================================${NC}"
     
+    # NOTE: This last condition is slightly different to prevent final 'else/fi' from complaining after doing a jumpto()
     if [ "$GOTOSTEP" = true ] || [ "$GOTOCONTINUE" = true ]; then exit; fi
 else
     echo -e "${RED}Invalid option: ${mode}"
