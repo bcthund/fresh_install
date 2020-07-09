@@ -46,6 +46,11 @@ do
         echo -e "${WHITE}"
         echo -e "Usage: $0.sh <options>"
         echo -e
+        echo -e "Note: It is recommended to perform the backup locally and not directly"
+        echo -e "      to external media such as USB. If the device has ACL enabled then"
+        echo -e "      file permissions and ownership may not be preserved. The compressed"
+        echo -e "      backup is safe to transfer."
+        echo -e
         echo -e "Options:"
         echo -e "  -h, --help            show this help message and exit"
         echo -e "  -v, --verbose         print commands being run before running them"
@@ -119,6 +124,11 @@ fi
 echo -e
 echo -e "${PURPLE}==========================================================================${NC}"
 echo -e "${PURPLE}\tPerforming Backup${NC}"
+echo -e "${PURPLE}--------------------------------------------------------------------------${purple}"
+echo -e "  Note: It is recommended to perform the backup locally and not directly"
+echo -e "        to external media such as USB. If the device has ACL enabled then"
+echo -e "        file permissions and ownership may not be preserved. The compressed"
+echo -e "        backup is safe to transfer."
 echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
 echo -e "${grey}  Drive Layout Reference"
 echo -e "${grey}  Desktop${NC}"
