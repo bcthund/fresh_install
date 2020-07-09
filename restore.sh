@@ -392,6 +392,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Plasma Settings (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/gtk-3.0/settings.ini /home/$USER/.config/gtk-3.0/"
             cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/"
             cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/plasmanotifyrc /home/$USER/.config/"
             cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/plasmarc /home/$USER/.config/"
