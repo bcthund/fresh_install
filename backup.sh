@@ -499,7 +499,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             echo -e
             echo -e "${BLUE}Compress Backup${NC}"
             
-            if [ "$answer" != "${answer#[Yy]}" ] && [ "$COMPRESS" = false  ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$COMPRESS" = false  ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] || [ "$COMPRESS" = true ] ;then
                 if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
                 if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
