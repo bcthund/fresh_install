@@ -403,7 +403,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${purple}for nvidia graphics cards. This will purge any current nvidia${NC}"
         echo -e "${purple}files and install ${NC}"
         echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-        cmd_string1="sudo add remove --purge nvidia-* && sudo apt autoremove"
+        cmd_string1="sudo apt-get remove --purge nvidia-* && sudo apt autoremove"
         cmd_string2="sudo add-apt-repository ppa:graphics-drivers/ppa"
         cmd_string3="sudo apt install nvidia-driver-440"
         printf "${BLUE}Install nvidia-440 drivers ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
