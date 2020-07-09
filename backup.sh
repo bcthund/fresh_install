@@ -39,6 +39,8 @@ do
         ;;
         -y|--yes)
         ANSWERALL=true
+        answer="a";
+        answer2="y";
         FLAGS="$FLAGS-y "
         shift # Remove from processing
         ;;
@@ -115,9 +117,6 @@ jumpto $start
 start:
 
 if [ "$GOTOSTEP" = true ] || [ "$GOTOCONTINUE" = true ]; then
-    if [ "$ANSWER" = true ] ;
-    then answer="a"; answer2="y";
-    else answer="y"; fi
     jumpto $GOTO
 fi
 
@@ -155,7 +154,7 @@ echo -e "${grey}  Global shortcuts${NC}"
 echo -e "${grey}  Plasma settings${NC}"
 echo -e "${grey}  Login scripts${NC}"
 echo -e -n "${BLUE}Proceed? (y/n/a)? ${NC}"
-read answer
+if [ "$ANSWERALL" = false ] read answer
 echo -e
 if [ "$answer" != "${answer#[AaYy]}" ] ;then
     # Yes to All?
