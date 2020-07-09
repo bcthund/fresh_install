@@ -20,6 +20,7 @@ NC='\e[39;0m'
 # Setup command
 DEBUG=false
 VERBOSE=false
+ANSWERALL=false
 FLAGS=""
 OTHER_ARGUMENTS=""
 
