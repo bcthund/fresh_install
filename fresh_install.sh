@@ -214,7 +214,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${grey}         and you will need to check if it is safe to remove them. On a${NC}"
     echo -e "${grey}         fresh install these should normally all be empty.${NC}"
     echo -e "${grey}\t- ~/Documents${NC}"
-    #echo -e "${grey}\t- ~/Downloads${NC}"
+    echo -e "${grey}\t- ~/Downloads${NC}"
     echo -e "${grey}\t- ~/Music${NC}"
     echo -e "${grey}\t- ~/Pictures${NC}"
     echo -e "${grey}\t- ~/Templates${NC}"
@@ -240,6 +240,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         # Create Backups First
         if [ -d "/home/$USER/Documents" ] ;then   cmd "mv /home/$USER/Documents /home/$USER/Documents.bak";     fi
+        if [ -d "/home/$USER/Documents" ] ;then   cmd "mv /home/$USER/Downloads /home/$USER/Downloads.bak";     fi
         if [ -d "/home/$USER/Music"     ] ;then   cmd "mv /home/$USER/Music /home/$USER/Music.bak";             fi
         if [ -d "/home/$USER/Pictures"  ] ;then   cmd "mv /home/$USER/Pictures /home/$USER/Pictures.bak";       fi
         if [ -d "/home/$USER/Templates" ] ;then   cmd "mv /home/$USER/Templates /home/$USER/Templates.bak";     fi
@@ -274,17 +275,43 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
 
     packages:
     echo -e
-    echo -e "${PURPLE}==========================================================================${NC}"
+    echo -e "${PURPLE}====================================================================================================${NC}"
     echo -e "${PURPLE}\tInstall Standard Packages${NC}"
-    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    printf "${grey}\tarandr\n\taudacious\n\taudacity\n\tbaobab\n\tblender\n\tbrasero\n\tcecilia\n\tchromium-browser\n\tcifs-utils\n\tdevede\n\tdia\n\tdosbox\n\teasytag\n\texfat-utils\n\text4magic\n\tfluidsynth\n\tfontforge\n\tfreecad\n\tg++-8\n\tghex\n\tgimp\n\tgimp-gmic\n\tgimp-plugin-registry\n\tgit\n\tgit-lfs\n\tglade\n\tglmark2\n\tgmic\n\tgpick\n\thardinfo\n\tinkscape\n\tinxi\n\tiptraf\n\tkdevelop\n\tkicad\n\tkicad-footprints\n\tkicad-packages3d\n\tkicad-symbols\n\tkicad-templates\n\tkompare\n\tkrita\n\tlibssl-dev\n\tlibuv1-dev\n\tlibnode64\n\tlibnode-dev\n\tlibdvd-pkg\n\tlibdvdnav4\n\tlibdvdread7\n\tlibnoise-dev\n\tlibsdl2-dev\n\tlibsdl2-image-dev\n\tlibsdl2-mixer-dev\n\tlibsdl2-net-dev\n\tlmms\n\tmesa-utils\n\tneofetch\n\tnet-tools\n\tnetwork-manager-openconnect\n\tnetwork-manager-openvpn\n\tnetwork-manager-ssh\n\tnfs-common\n\tnfs-kernel-server\n\tnmap\n\toctave\n\topenconnect\n\topenjdk-8-jre\n\topenshot\n\topenssh-server\n\topenvpn\n\tpithos\n\tplayonlinux\n\tpython3-pip\n\tqt5-default\n\tqtcreator\n\tqtdeclarative5-dev\n\trawtherapee\n\tremmina\n\trename\n\tsamba\n\tscummvm\n\tsmb4k\n\tsolaar\n\ttexlive-fonts-extra\n\ttexlive-fonts-recommended\n\ttexlive-xetex\n\ttexstudio\n\ttilix\n\tthunderbird\n\tubuntu-restricted-extras\n\tvalgrind\n\tveusz\n\tvim\n\tvirtualbox\n\tvlc\n\tvlc-plugin-access-extra\n\tvlc-plugin-fluidsynth\n\tvlc-plugin-samba\n\tvlc-plugin-skins2\n\tvlc-plugin-visualization\n\twarzone2100\n\twhois\n\twinff\n\twireshark\n\txrdp\n\txterm\n\t${NC}\n"
+    echo -e "${PURPLE}----------------------------------------------------------------------------------------------------${NC}"
+    printf "${grey}arandr                      audacious                   audacity                    baobab${NC}\n"
+    printf "${grey}blender                     brasero                     cecilia                     chromium-browser${NC}\n"
+    printf "${grey}cifs-utils                  devede                      dia                         dosbox${NC}\n"
+    printf "${grey}easytag                     exfat-utils                 text4magic                  fluidsynth${NC}\n"
+    printf "${grey}fontforge                   freecad                     g++-8                       ghex${NC}\n"
+    printf "${grey}gimp                        gimp-gmic                   gimp-plugin-registry        git${NC}\n"
+    printf "${grey}git-lfs                     glade                       glmark2                     gmic${NC}\n"
+    printf "${grey}gnome-disk-utility          gpick                       hardinfo                    inkscape${NC}\n"
+    printf "${grey}inxi                        iptraf                      kdevelop                    kicad${NC}\n"
+    printf "${grey}kicad-footprints            kicad-packages3d            kicad-symbols               kicad-templates${NC}\n"
+    printf "${grey}kompare                     krita                       libssl-dev                  libuv1-dev${NC}\n"
+    printf "${grey}libnode64                   libnode-dev                 libdvd-pkg                  libdvdnav4${NC}\n"
+    printf "${grey}libdvdread7                 libnoise-dev                libsdl2-dev                 libsdl2-image-dev${NC}\n"
+    printf "${grey}libsdl2-mixer-dev           libsdl2-net-dev             lmms                        mesa-utils${NC}\n"
+    printf "${grey}neofetch                    net-tools                   network-manager-openconnect network-manager-openvpn${NC}\n"
+    printf "${grey}network-manager-ssh         nfs-common                  nfs-kernel-server           nmap${NC}\n"
+    printf "${grey}octave                      openconnect                 openjdk-8-jre               openshot${NC}\n"
+    printf "${grey}openssh-server              openvpn                     pithos                      playonlinux${NC}\n"
+    printf "${grey}python3-pip                 qt5-default                 qtcreator                   qtdeclarative5-dev${NC}\n"
+    printf "${grey}rawtherapee                 remmina                     rename                      samba${NC}\n"
+    printf "${grey}scummvm                     smb4k                       solaar                      texlive-fonts-extra${NC}\n"
+    printf "${grey}texlive-fonts-recommended   texlive-xetex               texstudio                   tilix${NC}\n"
+    printf "${grey}thunderbird                 ubuntu-restricted-extras    valgrind                    veusz${NC}\n"
+    printf "${grey}vim                         vlc                         vlc-plugin-access-extra     vlc-plugin-fluidsynth${NC}\n"
+    printf "${grey}vlc-plugin-samba            vlc-plugin-skins2           vlc-plugin-visualization    warzone2100${NC}\n"
+    printf "${grey}whois                       winff                       wireshark                   xrdp${NC}\n"
+    printf "${grey}xterm${NC}\n"
     echo -e "${grey}* Answer yes again to apt if it successfully prepares to install packeges.${NC}"
     echo -e "${grey}* Take caution, if apt has errors then abort the script with ctrl+c and resolve errors manually.${NC}"
     echo -e
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"
     read answer
     echo -e
-    cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
+    cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gnome-disk-utility gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
     cmd_string2="sudo dpkg-reconfigure libdvd-pkg"
     if [ "$answer" != "${answer#[Ee]}" ] ;then
         read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
@@ -293,8 +320,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string1"
         cmd "$cmd_string2"
-        #cmd "sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim virtualbox vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common && sudo dpkg-reconfigure libdvd-pkg"
-        #cmd "sudo dpkg-reconfigure libdvd-pkg"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
@@ -314,10 +339,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
-            #cmd "sudo apt-add-repository -y ppa:giuspen/ppa"
-            #cmd "sudo apt -y install x-tile"
-            #printf "${BLUE}Installing Knossos:${NC}\n"
-            #cmd "sudo apt -y install knossos"              # Currently not supported
         fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
@@ -338,7 +359,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string"
-            #cmd "pip3 install --no-input --upgrade bCNC"
         fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
@@ -410,6 +430,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstal Downloaded Apps${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    printf "${grey}\t- virtualbox + extension pack${NC}\n"
     printf "${grey}\t- bricscad${NC}\n"
     printf "${grey}\t- camotics${NC}\n"
     printf "${grey}\t- chrome${NC}\n"
@@ -423,6 +444,14 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     read answer
     echo -e
     if [ "$answer" != "${answer#[Yy]}" ] ;then
+        echo -e
+        printf "${BLUE}VirtualBox v6.1.10 (deb)${NC}"
+        echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/virtualbox-6.1_6.1.10-138449_Ubuntu_eoan_amd64.deb"
+            cmd "sudo VBoxManage extpack install --replace ./Apps/Oracle_VM_VirtualBox_Extension_Pack-6.1.10.vbox-extpack"
+            cmd "sudo VBoxManage extpack cleanup"
+        fi
+        
         echo -e
         printf "${BLUE}BricsCAD v20.2.08 (deb)${NC}"
         echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
@@ -533,14 +562,15 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     # ==================================================================
     #   Add user to vboxusers (should give USB permission)
     # ==================================================================
-    echo -e -n "${BLUE}Add user to vboxusers ${GREEN}(y/n)? ${NC}"
+    echo -e -n "${BLUE}Add groups for virtualbox usb/tty access${NC}"
+    echo -e "${grey}\t- vboxusers${NC}"
+    echo -e "${grey}\t- dialout${NC}"
+    echo -e -n "${GREEN}Continue (y/n)? ${NC}"
     read answer
-    cmd_string="sudo usermod -a -G vboxusers $USER"
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+    cmd_string1="sudo usermod -a -G vboxusers,dialout $USER"
+    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string"
-        #printf "${BLUE}Adding $USER to vboxusers${NC}\n"
-        #cmd "sudo usermod -a -G vboxusers $USER"
+        cmd "$cmd_string1"
     fi
     
     # ==================================================================
@@ -553,8 +583,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string"
-        #printf "${BLUE}Setting Samba share password for $USER: ${NC}\n"
-        #cmd "sudo smbpasswd -a $USER"
     fi
     
     # ==================================================================
@@ -572,8 +600,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
         cmd "$cmd_string1"
         cmd "$cmd_string2"
-        #cmd "sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
-        #cmd "sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -770,6 +796,7 @@ fi
 #glade
 #glmark2
 #gmic
+#gnome-disk-utility
 #gpick
 #hardinfo
 #inkscape
@@ -834,7 +861,6 @@ fi
 #valgrind
 #veusz
 #vim
-#virtualbox
 #vlc
 #vlc-plugin-access-extra
 #vlc-plugin-fluidsynth

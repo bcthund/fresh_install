@@ -116,6 +116,14 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/applications/ ./Migration_$USER/root/"
         fi
         
+    # User Icons
+        echo -e
+        echo -e "${BLUE}User Icons${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.local/share/icons/ ./Migration_$USER/root/"
+        fi
+        
     # Keyring
         echo -e
         echo -e "${BLUE}Keyring${NC}"
@@ -132,9 +140,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /usr/NX/etc/server.cfg ./Migration_$USER/root/"
         fi
         
-    # VPN
+    # Network Connections and VPNs
         echo -e
-        echo -e "${BLUE}VPNs${NC}"
+        echo -e "${BLUE}Network Connections and VPNs${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/ ./Migration_$USER/root/"
@@ -297,6 +305,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             #cp_if_link /home/$USER/Downloads
             cp_if_link /home/$USER/Music
             cp_if_link /home/$USER/Pictures
+            cp_if_link /home/$USER/Downloads
             cp_if_link /home/$USER/Templates
             cp_if_link /home/$USER/Videos
             cp_if_link /home/$USER/.bricscad

@@ -101,6 +101,14 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.local/share/applications/ /home/$USER/.local/share/applications/"
         fi
     
+    # User Icons
+        echo -e
+        echo -e "${BLUE}User Icons${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo rsync -a --info=progress2 --delete ./Migration_$USER/root/home/$USER/.local/share/icons/ /home/$USER/.local/share/icons/"
+        fi
+    
     # Keyring
         echo -e
         printf "${BLUE}Keyring${NC}"
