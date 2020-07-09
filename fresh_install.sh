@@ -63,6 +63,7 @@ GOTOSTEP=false
 GOTOCONTINUE=false
 BACKUP_DIR="./Migration_$USER"
 ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
+IN_TESTING=false
 GOTO=""
 FLAGS=""
 OTHER_ARGUMENTS=""
@@ -90,6 +91,11 @@ do
         FLAGS="$FLAGS-x "
         shift # Remove from processing
         ;;
+        --in-testing)
+        IN_TESTING=true
+        FLAGS="$FLAGS--in-testing "
+        shift # Remove from processing
+        ;;
         -h|--help)
         echo -e "${WHITE}"
         echo -e "Usage: $0 <options>"
@@ -106,6 +112,7 @@ do
         echo -e "                        Restore: the backup is compressed (hint)"
         echo -e "  -x                    Backup: do not compress backup folder"
         echo -e "                        Restore: the backup is not compressed (hint)"
+        echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
@@ -117,10 +124,10 @@ do
         echo -e "                        backup     perform a system backup"
         echo -e "                        download   download/update install scripts, apps, source installs. Always exits"
         echo -e "                        symlinks   install symlinks from a system backup"
-        echo -e "                        nosnap     remove snap packages from system (not implemented)"
+        echo -e "                        nosnap     remove snap packages from system (in testing)"
         echo -e "                        upgrade    perform a system upgrade, and purge apport if desired"
+        echo -e "                        nvidia     install latest nvidia driver (440) (in testing)"
         echo -e "                        packages   install apt packages including some dependencies for other steps"
-        echo -e "                        nvidia     install latest nvidia driver (430) (not implemented)"
         echo -e "                        ppa        install packages requiring additional PPAs"
         echo -e "                        pip        install pip3 packages"
         echo -e "                        snap       install snap packages"
@@ -326,28 +333,41 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
     # TODO: Snaps causing issues, get rid of them. Will need to double check apt install list for dependency issues
-    #nosnap:
-    #echo -e "${PURPLE}==========================================================================${NC}"
-    #echo -e "${PURPLE}\tRemove Snap and block${NC}"
-    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    ##echo -e "${PURPLE}NOTES${NC}"
-    ##echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    #echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e;
-    #cmd_string="sudo apt update && sudo apt -y dist-upgrade"
-    #if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
-    #if [ "$answer" != "${answer#[YyEe]}" ] ;then
-    #    cmd "$cmd_string"
-    #    #cmd "sudo apt update"
-    #    #cmd "sudo apt -y dist-upgrade"
-    #    echo -e
-    #    echo -e -n "${BLUE}Purge Apport ${GREEN}(y/n)? ${NC}"
-    #    read answer
-    #    echo -e
-    #    if [ "$answer" != "${answer#[Yy]}" ] ;then
-    #        cmd "sudo apt -y purge apport"
-    #    fi
-    #fi
-    #if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    nosnap:
+    if [ "$IN_TESTING" = true ]; then
+        echo -e "${PURPLE}==========================================================================${NC}"
+        echo -e "${PURPLE}\tRemove Snap and block${NC}"
+        echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+        #echo -e "${PURPLE}NOTES${NC}"
+        #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+        echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e;
+        cmd_string1="sudo apt purge snapd"
+        cmd_string2="sudo rm -vrf /home/$USER/snap"
+        cmd_string3="sudo systemctl stop snapd"
+        cmd_string4="sudo rm -vrf /snap /var/snap /var/lib/snapd /var/cache/snapd /usr/lib/snapd"
+        cmd_string5="sudo apt-mark hold snapd"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then
+            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            printf "${grey}  Command 3: ${cmd_string3}${NC}\n"
+            printf "${grey}  Command 4: ${cmd_string4}${NC}\n"
+            printf "${grey}  Command 5: ${cmd_string5}${NC}\n"
+            echo
+            read -p "$(echo -e ${yellow}Edit command 1/5: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/5: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+            read -p "$(echo -e ${yellow}Edit command 3/5: ${NC})" -e -i "${cmd_string3}" cmd_string3;
+            read -p "$(echo -e ${yellow}Edit command 4/5: ${NC})" -e -i "${cmd_string4}" cmd_string4;
+            read -p "$(echo -e ${yellow}Edit command 5/5: ${NC})" -e -i "${cmd_string5}" cmd_string5;
+        fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string1"
+            cmd "$cmd_string2"
+            cmd "$cmd_string3"
+            cmd "$cmd_string4"
+            cmd "$cmd_string5"
+        fi
+    fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
     upgrade:
     echo -e "${PURPLE}==========================================================================${NC}"
@@ -372,6 +392,38 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    
+    nvidia:
+    if [ "$IN_TESTING" = true ]; then
+        echo -e
+        echo -e "${PURPLE}==========================================================================${NC}"
+        echo -e "${PURPLE}\tInstall NVIDIA in-testing drivers${NC}"
+        echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+        echo -e "${purple}This will install the latest drivers that are still in testing${NC}"
+        echo -e "${purple}for nvidia graphics cards. This will purge any current nvidia${NC}"
+        echo -e "${purple}files and install ${NC}"
+        echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+        cmd_string1="sudo add remove --purge nvidia-* && sudo apt autoremove"
+        cmd_string2="sudo add-apt-repository ppa:graphics-drivers/ppa"
+        cmd_string3="sudo apt install nvidia-driver-440"
+        printf "${BLUE}Install nvidia-440 drivers ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+        if [ "$answer" != "${answer#[Ee]}" ] ;then
+            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            printf "${grey}  Command 3: ${cmd_string3}${NC}\n"
+            echo
+            read -p "$(echo -e ${yellow}Edit command 1/3: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/3: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+            read -p "$(echo -e ${yellow}Edit command 3/3: ${NC})" -e -i "${cmd_string3}" cmd_string3;
+        fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string1"
+            cmd "$cmd_string2"
+            cmd "$cmd_string3"
+        fi
+    fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
 
     packages:
     echo -e
@@ -415,6 +467,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gnome-disk-utility gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
     cmd_string2="sudo dpkg-reconfigure libdvd-pkg"
     if [ "$answer" != "${answer#[Ee]}" ] ;then
+        printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+        printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+        echo
         read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
         read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string1}" cmd_string2;
     fi
@@ -422,31 +477,6 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd "$cmd_string1"
         cmd "$cmd_string2"
     fi
-    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
-    
-    nvidia:
-#     echo -e
-#     echo -e "${PURPLE}==========================================================================${NC}"
-#     echo -e "${PURPLE}\tInstall NVIDIA in-testing drivers${NC}"
-#     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-#     echo -e "${purple}This will install the latest drivers that are still in testing${NC}"
-#     echo -e "${purple}for nvidia graphics cards. This will purge any current nvidia${NC}"
-#     echo -e "${purple}files and install ${NC}"
-#     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-#     cmd_string1="sudo add remove --purge nvidia-*"
-#     cmd_string2="sudo add-apt-repository ppa:graphics-drivers/ppa"
-#     cmd_string3="sudo apt install "
-#     printf "${BLUE}Install nvidia-430 drivers ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
-#     if [ "$answer" != "${answer#[Ee]}" ] ;then
-#         read -p "$(echo -e ${yellow}Edit command 1/3: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-#         read -p "$(echo -e ${yellow}Edit command 2/3: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-#         read -p "$(echo -e ${yellow}Edit command 3/3: ${NC})" -e -i "${cmd_string3}" cmd_string3;
-#     fi
-#     if [ "$answer" != "${answer#[YyEe]}" ] ;then
-#         cmd "$cmd_string1"
-#         cmd "$cmd_string2"
-#         cmd "$cmd_string3"
-#     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
    
@@ -732,6 +762,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd_string2="sudo sed -i 's|^exit 0.*$|# Numlock enable\n[ -x /usr/bin/numlockx ] \&\& numlockx on\n\nexit 0|' /etc/rc.local"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then
+            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            echo
             read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
             read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
         fi
@@ -746,6 +779,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${grey}  - Executes: ${cmd_String2}${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
         if [ "$answer" != "${answer#[Ee]}" ]; then
+            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            echo
             read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
             read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
         fi
@@ -797,6 +833,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd_string2="sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then
+            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            echo
             read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
             read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
         fi
