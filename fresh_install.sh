@@ -242,9 +242,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
     if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
-    cmd_string2="pv ./${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
+    cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
     
-    if [ -f "./${ARCHIVE_FILE}" ]; then
+    if [ -f "${ARCHIVE_FILE}" ]; then
         if [ ! -d "${BACKUP_DIR}/" ]; then
             cmd "$cmd_string2"
         else
