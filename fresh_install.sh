@@ -210,21 +210,30 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tUncompress Backup${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    cmd_string="sudo tar --same-owner -xvf ./Migration_$USER.tar.gz"
+    
+    cmd_string1="sudo apt install pigz pv"
+    #cmd_string2="sudo tar --same-owner -xvf ./Migration_$USER.tar.gz"
+    #cmd_string2="tar --use-compress-program='pigz --best --recursive | pv' -cf archive.tar.gz ./Migration_$USER/"
+    #cmd_string2="sudo tar --same-owner -I pigz -xvf ./Migration_$USER.tar.gz -C ./"
+    cmd_string2="pv ./Migration_$USER.tar.gz | sudo tar --same-owner -I pigz -x -C ./"
+    
     if [ -f "./Migration_$USER.tar.gz" ]; then
         if [ ! -d "./Migration_$USER/"]; then
-            cmd "$cmd_string"
+            cmd "$cmd_string1"
+            cmd "$cmd_string2"
         else
             echo -e -n "${YELLOW}Backup directory exists, overwrite with compressed backup ${GREEN}(y/n)? ${NC}"; read answer; echo -e;
             if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "$cmd_string"
+                cmd "$cmd_string1"
+                cmd "$cmd_string2"
             fi
     else
         if [ ! -d "./Migration_$USER/"]; then
             echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n)? ${NC}"; read answer; echo -e;
             if [ "$answer" != "${answer#[Yy]}" ] ;then
-                read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string;
-                cmd "$cmd_string"
+                read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+                cmd "$cmd_string1"
+                cmd "$cmd_string2"
             else
                 printf "${RED}Error! I don't have a backup directory to work with!${NC}"
                 exit
@@ -232,7 +241,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         else
             echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the './Migration_$USER/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
             if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "$cmd_string"
+                cmd "$cmd_string1"
+                cmd "$cmd_string2"
             fi
         fi
     fi

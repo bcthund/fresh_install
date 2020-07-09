@@ -459,14 +459,18 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${PURPLE}==========================================================================${NC}"
         echo -e "${PURPLE}\tCompress Backup${NC}"
         echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-        echo -e "${PURPLE}Helps maintain permissions, will remove backup folder after complete.${NC}"
+        echo -e "${purple}Helps maintain permissions, will remove backup folder after complete.${NC}"
+        echo -e 
+        echo -e "${purple}This will also install pigz for parallel processor usage, and pv to monitor${NC}"
+        echo -e "${purple}the speed.${NC}"
         echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
         echo -e
         echo -e "${BLUE}Compress Backup${NC}"
-        echo -e -n "${GREEN} (y/n)? ${NC}"
-        read answer
-        if [ "$answer" != "${answer#[Yy]}" ] ;then
-            cmd "tar -czvpf Migration_$USER.tar.gz ./Migration_$USER"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo apt install pigz pv"
+            #cmd "sudo tar -czvpf Migration_$USER.tar.gz ./Migration_$USER"
+            cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -czvpf ./Migration_$USER.tar.gz ./Migration_$USER/"
             cmd "rm -rf ./Migration_$USER"
         fi
     
