@@ -80,6 +80,16 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
+        -z|--zip)
+        COMPRESS=true
+        FLAGS="$FLAGS-z "
+        shift # Remove from processing
+        ;;
+        -x)
+        NOCOMPRESS=true
+        FLAGS="$FLAGS-x "
+        shift # Remove from processing
+        ;;
         -h|--help)
         echo -e "${WHITE}"
         echo -e "Usage: $0 <options>"
@@ -92,6 +102,10 @@ do
         echo -e "  -h, --help            show this help message and exit"
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
+        echo -e "  -z, --zip             Backup: compress the backup and remove backup folder"
+        echo -e "                        Restore: the backup is compressed (hint)"
+        echo -e "  -x                    Backup: do not compress backup folder"
+        echo -e "                        Restore: the backup is not compressed (hint)"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
@@ -228,9 +242,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
     if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
-    cmd_string2="pv ./Migration_$USER.tar.gz | sudo tar --same-owner -I pigz -x -C ./"
+    cmd_string2="pv ./${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
     
-    if [ -f "./Migration_$USER.tar.gz" ]; then
+    if [ -f "./${ARCHIVE_FILE}" ]; then
         if [ ! -d "${BACKUP_DIR}/" ]; then
             cmd "$cmd_string2"
         else
@@ -247,15 +261,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                 read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
                 cmd "$cmd_string2"
             else
-                # TODO: Allow backup directory to be specified
-                #echo -e -n "${YELLOW}Do you want to specify a backup directory manually${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-                #if [ "$answer" != "${answer#[Yy]}" ] ;then
-                #    read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-                #    cmd "$cmd_string2"
-                #else
-                    printf "${RED}Error! I don't have a backup directory to work with!${NC}"
-                    exit
-                #fi
+                printf "${RED}Error! I don't have a backup directory to work with!${NC}"
+                exit
             fi
         else
             echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the '${BACKUP_DIR}/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;

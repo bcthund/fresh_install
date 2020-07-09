@@ -21,6 +21,8 @@ NC='\e[39;0m'
 DEBUG=false
 VERBOSE=false
 ANSWERALL=false
+COMPRESS=false
+NOCOMPRESS=false
 BACKUP_DIR="./Migration_$USER"
 ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
 FLAGS=""
@@ -46,6 +48,16 @@ do
         FLAGS="$FLAGS-y "
         shift # Remove from processing
         ;;
+        -z|--zip)
+        COMPRESS=true
+        FLAGS="$FLAGS-z "
+        shift # Remove from processing
+        ;;
+        -x)
+        NOCOMPRESS=true
+        FLAGS="$FLAGS-x "
+        shift # Remove from processing
+        ;;
         -h|--help)
         echo -e "${WHITE}"
         echo -e "Usage: $0.sh <options>"
@@ -59,7 +71,9 @@ do
         echo -e "  -h, --help            show this help message and exit"
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
-        echo -e "  -y, --yes             answer yes to all"
+        echo -e "  -y, --yes             answer yes to all, except compress"
+        echo -e "  -z, --zip             compress the backup and remove backup folder"
+        echo -e "  -x                    do not compress backup folder"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
@@ -472,25 +486,28 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     
     compress:
     # Compress directory
-        echo -e
-        echo -e "${PURPLE}==========================================================================${NC}"
-        echo -e "${PURPLE}\tCompress Backup${NC}"
-        echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-        echo -e "${purple}Helps maintain permissions, will remove backup folder after complete.${NC}"
-        echo -e 
-        echo -e "${purple}This will also install pigz for parallel processor usage, and pv to monitor${NC}"
-        echo -e "${purple}the speed.${NC}"
-        echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-        echo -e
-        echo -e "${BLUE}Compress Backup${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
-        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
-            if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
-            #cmd "sudo apt install pigz pv"
-            #cmd "sudo tar -czvpf Migration_$USER.tar.gz ${BACKUP_DIR}"
-            cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cpf ${ARCHIVE_FILE}.tar.gz ${BACKUP_DIR}/"
-            cmd "sudo rm -rf ${BACKUP_DIR}"
+        if [ "$NOCOMPRESS" = false ]; then
+            echo -e
+            echo -e "${PURPLE}==========================================================================${NC}"
+            echo -e "${PURPLE}\tCompress Backup${NC}"
+            echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+            echo -e "${purple}Helps maintain permissions, will remove backup folder after complete.${NC}"
+            echo -e 
+            echo -e "${purple}This will also install pigz for parallel processor usage, and pv to monitor${NC}"
+            echo -e "${purple}the speed.${NC}"
+            echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+            echo -e
+            echo -e "${BLUE}Compress Backup${NC}"
+            
+            if [ "$answer" != "${answer#[Yy]}" ] && [ "$COMPRESS" = false  ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$answer2" != "${answer2#[Yy]}" ] || [ "$COMPRESS" = true ] ;then
+                if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
+                if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
+                #cmd "sudo apt install pigz pv"
+                #cmd "sudo tar -czvpf Migration_$USER.tar.gz ${BACKUP_DIR}"
+                cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cpf ${ARCHIVE_FILE} ${BACKUP_DIR}/"
+                cmd "sudo rm -rf ${BACKUP_DIR}"
+            fi
         fi
     
     # NOTE: This last condition is slightly different to prevent final 'fi' from complaining after doing a jumpto()
