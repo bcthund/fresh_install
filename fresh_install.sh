@@ -993,6 +993,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
+            echo -e
             cmd "$cmd_string"
         fi
         
@@ -1063,6 +1064,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e -n "${BLUE}shares from another pc (you will need the IP and username)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            echo -e
             printf "${YELLOW}What is the IP of the target? ${NC}"
             read remoteip
             printf "${YELLOW}What is the username of the target? ${NC}"
@@ -1084,7 +1086,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                 printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script)${NC}";
                 if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
                 if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-                    cmd "sed -i 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
+                    echo -e
+                    #cmd "sed -i 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
+                    cmd "sudo perl -i -p0e 's/#FISTD_S.*#FISTD_E\n//gms' /etc/fstab"
                 fi
                 cmd "echo -e '' | sudo tee -a /etc/fstab"
                 cmd "echo -e '#FISTD_S: Standard (do not modify)' | sudo tee -a /etc/fstab"
@@ -1107,6 +1111,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${grey}\t- /home/<user>/Pictures${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            echo -e
             printf "${YELLOW}What is the IP of the target? ${NC}"
             read remoteip
             printf "${YELLOW}What is the username of the target? ${NC}"
@@ -1136,7 +1141,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                 printf "${YELLOW}Erase existing mounts (this will look for existing mounts added with this script)${NC}";
                 if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
                 if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-                    cmd "sed -i 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
+                    echo -e
+                    #cmd "sed -i 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
+                    cmd "sudo perl -i -p0e 's/#FIDS_S.*#FIDS_E\n//gms' /etc/fstab"
                 fi
                 cmd "echo -e '' | sudo tee -a /etc/fstab"
                 cmd "echo -e '#FIDS_S: Datasaerver (do not modify)' | sudo tee -a /etc/fstab"
@@ -1161,9 +1168,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     cmd_string1="sudo apt autoremove"
     echo -e
-    printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer; fi
+    printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer;
     if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        echo -e
         cmd "$cmd_string1"
     fi
     
