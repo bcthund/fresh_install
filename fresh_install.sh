@@ -636,18 +636,34 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         #else
         #    cmd_string1="sudo add-apt-repository -y ppa:chromium-team/stable"
         #fi
-        cmd_string1="sudo add-apt-repository ppa:saiarcot895/chromium-beta"
-        cmd_string2="sudo apt -y install chromium-browser"
+        cmd_string1="sudo touch /etc/apt/preferences.d/saiarcot895-chromium-beta.pref"
+        cmd_string2="echo -e 'Package: *' | sudo tee -a /etc/apt/preferences.d/saiarcot895-chromium-beta.pref"
+        cmd_string3="echo -e 'Pin: release o=LP-PPA-saiarcot895-chromium-beta' | sudo tee -a /etc/apt/preferences.d/saiarcot895-chromium-beta.pref"
+        cmd_string4="echo -e 'Pin-Priority: 800' | sudo tee -a /etc/apt/preferences.d/saiarcot895-chromium-beta.pref"
+        cmd_string5="printf '%s\n' \n | sudo add-apt-repository ppa:saiarcot895/chromium-beta"
+        cmd_string6="sudo apt -y install chromium-browser"
         if [ "$answer" != "${answer#[Ee]}" ] ;then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            printf "${grey}  Command 3: ${cmd_string3}${NC}\n"
+            printf "${grey}  Command 4: ${cmd_string4}${NC}\n"
+            printf "${grey}  Command 5: ${cmd_string5}${NC}\n"
+            printf "${grey}  Command 6: ${cmd_string6}${NC}\n"
             echo -e        
-            read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-            read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+            read -p "$(echo -e ${yellow}Edit command 1/6: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/6: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+            read -p "$(echo -e ${yellow}Edit command 3/6: ${NC})" -e -i "${cmd_string3}" cmd_string3;
+            read -p "$(echo -e ${yellow}Edit command 4/6: ${NC})" -e -i "${cmd_string4}" cmd_string4;
+            read -p "$(echo -e ${yellow}Edit command 5/6: ${NC})" -e -i "${cmd_string5}" cmd_string5;
+            read -p "$(echo -e ${yellow}Edit command 6/6: ${NC})" -e -i "${cmd_string6}" cmd_string6;
         fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
             cmd "$cmd_string1"
             cmd "$cmd_string2"
+            cmd "$cmd_string3"
+            cmd "$cmd_string4"
+            cmd "$cmd_string5"
+            cmd "$cmd_string6"
         fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
