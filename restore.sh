@@ -102,6 +102,16 @@ do
         FLAGS="$FLAGS--archive=${ARCHIVE_FILE} "
         shift # Remove from processing
         ;;
+        --step=*)
+        GOTOSTEP=true
+        GOTO="${arg#*=}"
+        shift # Remove from processing
+        ;;
+        --continue=*)
+        GOTOCONTINUE=true
+        GOTO="${arg#*=}"
+        shift # Remove from processing
+        ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "
         echo -e "${RED}Unknown argument: $1${NC}"
