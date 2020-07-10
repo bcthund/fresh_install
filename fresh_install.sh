@@ -119,25 +119,25 @@ do
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e
         echo -e "Available STEP Options:"
-        echo -e "                        start      same as starting without a STEP option"
-        echo -e "                        uncompress extract the contents of a backup"
-        echo -e "                        backup     perform a system backup"
-        echo -e "                        download   download/update install scripts, apps, source installs. Always exits"
-        echo -e "                        symlinks   install symlinks from a system backup"
-        echo -e "                        nosnap     remove snap packages from system (in testing)"
-        echo -e "                        upgrade    perform a system upgrade, and purge apport if desired"
-        echo -e "                        nvidia     install latest nvidia driver (440) (in testing)"
-        echo -e "                        packages   install apt packages including some dependencies for other steps"
-        echo -e "                        ppas       install packages requiring additional PPAs"
-        echo -e "                        pip        install pip3 packages"
-        echo -e "                        snap       install snap packages"
-        echo -e "                        plasmoid   install plasma plasmoids"
-        echo -e "                        downloads  install downloaded applications"
-        echo -e "                        source     install applications from source"
-        echo -e "                        config     perform some additional configuration, not including NFS shares"
-        echo -e "                        nfs        setup some standard NFS shares and/or attach media server shares"
-        echo -e "                        restore    perform a system restore from a previous backup"
-        echo -e "                        cleanup    runs apt autoremove for lingering packages"
+        echo -e "                        start          same as starting without a STEP option"
+        echo -e "                        uncompress     extract the contents of a backup"
+        echo -e "                        backup         perform a system backup"
+        echo -e "                        download       download/update install scripts, apps, source installs. Always exits"
+        echo -e "                        symlinks       install symlinks from a system backup"
+        echo -e "                        nosnap         remove snap packages from system (in testing)"
+        echo -e "                        upgrade        perform a system upgrade, and purge apport if desired"
+        echo -e "                        nvidia         install latest nvidia driver (440) (in testing)"
+        echo -e "                        packages       install apt packages including some dependencies for other steps"
+        echo -e "                        ppa_package    install packages requiring additional PPAs"
+        echo -e "                        pip            install pip3 packages"
+        echo -e "                        snap           install snap packages"
+        echo -e "                        plasmoid       install plasma plasmoids"
+        echo -e "                        downloads      install downloaded applications"
+        echo -e "                        source         install applications from source"
+        echo -e "                        config         perform some additional configuration, not including NFS shares"
+        echo -e "                        nfs            setup some standard NFS shares and/or attach media server shares"
+        echo -e "                        restore        perform a system restore from a previous backup"
+        echo -e "                        cleanup        runs apt autoremove for lingering packages"
         echo -e "${NC}"
         exit
         shift # Remove from processing
@@ -601,7 +601,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
    
-    ppas:
+    ppa_package:
     echo -e
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstall PPA Packages${NC}"
