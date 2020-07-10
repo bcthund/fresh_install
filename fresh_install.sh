@@ -255,32 +255,38 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
     cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
     
-    if [ -f "${ARCHIVE_FILE}" ]; then
-        if [ ! -d "${BACKUP_DIR}/" ]; then
-            cmd "$cmd_string2"
-        else
-            echo -e -n "${YELLOW}Backup directory exists, remove before uncompress${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "sudo rm -rf ${BACKUP_DIR}/"
+    if [ "$DEBUG" = false ]; then
+        if [ -f "${ARCHIVE_FILE}" ]; then
+            if [ ! -d "${BACKUP_DIR}/" ]; then
                 cmd "$cmd_string2"
+            else
+                echo -e -n "${YELLOW}Backup directory exists, remove before uncompress${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+                if [ "$answer" != "${answer#[Yy]}" ] ;then
+                    cmd "sudo rm -rf ${BACKUP_DIR}/"
+                    cmd "$cmd_string2"
+                fi
+            fi
+        else
+            if [ ! -d "${BACKUP_DIR}/" ]; then
+                echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nYou should use the --dir and --archive flags for custom names and locations.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n/i)? ${NC}"; read answer; echo -e;
+                if [ "$answer" != "${answer#[Yy]}" ] ;then
+                    read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+                    cmd "$cmd_string2"
+                elif [ "$answer" != "${answer#[Ii]}" ] ;then
+                    printf "${RED}Ignoring, restore will likely fail.${NC}\n"
+                else
+                    printf "${RED}Error! I don't have a backup directory to work with!${NC}\n"
+                    exit
+                fi
+            else
+                echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the '${BACKUP_DIR}/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+                if [ "$answer" != "${answer#[Yy]}" ] ;then
+                    cmd "$cmd_string2"
+                fi
             fi
         fi
     else
-        if [ ! -d "${BACKUP_DIR}/" ]; then
-            echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nYou should use the --dir and --archive flags for custom names and locations.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-                cmd "$cmd_string2"
-            else
-                printf "${RED}Error! I don't have a backup directory to work with!${NC}"
-                exit
-            fi
-        else
-            echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the '${BACKUP_DIR}/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                cmd "$cmd_string2"
-            fi
-        fi
+        printf "${YELLOW}Backup archive check and uncompress skipped for debugging mode.${NC}\n"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -426,56 +432,164 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     
 
     packages:
+    PACKAGE_LIST=(  "arandr"
+                    "audacious"
+                    "audacity"
+                    "baobab"
+                    "blender"
+                    "brasero"
+                    "cecilia"
+                    "chromium-browser"
+                    "cifs-utils"
+                    "devede"
+                    "dia"
+                    "dosbox"
+                    "easytag"
+                    "exfat-utils"
+                    "ext4magic"
+                    "fluidsynth"
+                    "fontforge"
+                    "freecad"
+                    "g++-8"
+                    "ghex"
+                    "gimp"
+                    "gimp-gmic"
+                    "gimp-plugin-registry"
+                    "git"
+                    "git-lfs"
+                    "glade"
+                    "glmark2"
+                    "gmic"
+                    "gnome-disk-utility"
+                    "gpick"
+                    "hardinfo"
+                    "inkscape"
+                    "inxi"
+                    "iptraf"
+                    "kdevelop"
+                    "kicad"
+                    "kicad-footprints"
+                    "kicad-packages3d"
+                    "kicad-symbols"
+                    "kicad-templates"
+                    "kompare"
+                    "krita"
+                    "libssl-dev"
+                    "libuv1-dev"
+                    "libnode64"
+                    "libnode-dev"
+                    "libdvd-pkg"
+                    "libdvdnav4"
+                    "libdvdread7"
+                    "libnoise-dev"
+                    "libsdl2-dev"
+                    "libsdl2-image-dev"
+                    "libsdl2-mixer-dev"
+                    "libsdl2-net-dev"
+                    "lmms"
+                    "mesa-utils"
+                    "neofetch"
+                    "net-tools"
+                    "network-manager-openconnect"
+                    "network-manager-openvpn"
+                    "network-manager-ssh"
+                    "nfs-common"
+                    "nfs-kernel-server"
+                    "nmap"
+                    "numlockx"
+                    "octave"
+                    "openconnect"
+                    "openjdk-8-jre"
+                    "openshot"
+                    "openssh-server"
+                    "openvpn"
+                    "pithos"
+                    "playonlinux"
+                    "python"
+                    "python3-pip"
+                    "qt5-default"
+                    "qtcreator"
+                    "qtdeclarative5-dev"
+                    "rawtherapee"
+                    "remmina"
+                    "rename"
+                    "samba"
+                    "scummvm"
+                    "smb4k"
+                    "solaar"
+                    "texlive-fonts-extra"
+                    "texlive-fonts-recommended"
+                    "texlive-xetex"
+                    "texstudio"
+                    "tilix"
+                    "thunderbird"
+                    "ubuntu-restricted-extras"
+                    "valgrind"
+                    "veusz"
+                    "vim"
+                    "vlc"
+                    "vlc-plugin-access-extra"
+                    "vlc-plugin-fluidsynth"
+                    "vlc-plugin-samba"
+                    "vlc-plugin-skins2"
+                    "vlc-plugin-visualization"
+                    "warzone2100"
+                    "whois"
+                    "wine"
+                    "wine32"
+                    "wine64"
+                    "winetricks"
+                    "winff"
+                    "wireshark"
+                    "xrdp"
+                    "xterm"
+                    "zenity"
+                    "zenity-common")
     echo -e
     echo -e "${PURPLE}====================================================================================================${NC}"
     echo -e "${PURPLE}\tInstall Standard Packages${NC}"
     echo -e "${PURPLE}----------------------------------------------------------------------------------------------------${NC}"
-    printf "${grey}arandr                      audacious                   audacity                    baobab${NC}\n"
-    printf "${grey}blender                     brasero                     cecilia                     chromium-browser${NC}\n"
-    printf "${grey}cifs-utils                  devede                      dia                         dosbox${NC}\n"
-    printf "${grey}easytag                     exfat-utils                 text4magic                  fluidsynth${NC}\n"
-    printf "${grey}fontforge                   freecad                     g++-8                       ghex${NC}\n"
-    printf "${grey}gimp                        gimp-gmic                   gimp-plugin-registry        git${NC}\n"
-    printf "${grey}git-lfs                     glade                       glmark2                     gmic${NC}\n"
-    printf "${grey}gnome-disk-utility          gpick                       hardinfo                    inkscape${NC}\n"
-    printf "${grey}inxi                        iptraf                      kdevelop                    kicad${NC}\n"
-    printf "${grey}kicad-footprints            kicad-packages3d            kicad-symbols               kicad-templates${NC}\n"
-    printf "${grey}kompare                     krita                       libssl-dev                  libuv1-dev${NC}\n"
-    printf "${grey}libnode64                   libnode-dev                 libdvd-pkg                  libdvdnav4${NC}\n"
-    printf "${grey}libdvdread7                 libnoise-dev                libsdl2-dev                 libsdl2-image-dev${NC}\n"
-    printf "${grey}libsdl2-mixer-dev           libsdl2-net-dev             lmms                        mesa-utils${NC}\n"
-    printf "${grey}neofetch                    net-tools                   network-manager-openconnect network-manager-openvpn${NC}\n"
-    printf "${grey}network-manager-ssh         nfs-common                  nfs-kernel-server           nmap${NC}\n"
-    printf "${grey}numlockx                    octave                      openconnect                 openjdk-8-jre${NC}\n"
-    printf "${grey}openshot                    openssh-server              openvpn                     pithos${NC}\n"
-    printf "${grey}playonlinux                 python3-pip                 qt5-default                 qtcreator${NC}\n"
-    printf "${grey}qtdeclarative5-dev          rawtherapee                 remmina                     rename${NC}\n"
-    printf "${grey}samba                       scummvm                     smb4k                       solaar${NC}\n"
-    printf "${grey}texlive-fonts-extra         texlive-fonts-recommended   texlive-xetex               texstudio${NC}\n"
-    printf "${grey}tilix                       thunderbird                 ubuntu-restricted-extras    valgrind${NC}\n"
-    printf "${grey}veusz                       vim                         vlc                         vlc-plugin-access-extra${NC}\n"
-    printf "${grey}vlc-plugin-fluidsynth       vlc-plugin-samba            vlc-plugin-skins2           vlc-plugin-visualization${NC}\n"
-    printf "${grey}warzone2100                 whois                       wine                        wine32${NC}\n"
-    printf "${grey}wine64                      winetricks                  winff                       wireshark${NC}\n"
-    printf "${grey}xrdp                        xterm${NC}\n"
-    echo -e "${grey}* Answer yes again to apt if it successfully prepares to install packeges.${NC}"
-    echo -e "${grey}* Take caution, if apt has errors then abort the script with ctrl+c and resolve errors manually.${NC}"
+    
+    count=0
+    printf "  ";
+    cmd_string1="sudo apt install"
+    for package in ${PACKAGE_LIST[@]}; do
+        cmd_string1+=" ${package}"
+        while [ "${#package}" -lt 28 ]; do
+            package="$package "
+        done
+         package="${grey}${package}${NC}"
+         printf "$package"
+         count=$((count+1))
+         if [ $count -gt 4 ]; then
+             printf "\n  ";
+             count=0
+         fi
+    done
+    echo -e
+    echo -e
+    echo -e "${yellow}* Answer yes again to apt if it successfully prepares to install packeges.${NC}"
+    echo -e "${yellow}* Take caution, if apt has errors then abort the script with ctrl+c and resolve errors manually.${NC}"
     echo -e
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"
     read answer
     echo -e
-    cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gnome-disk-utility gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
-    cmd_string2="sudo dpkg-reconfigure libdvd-pkg"
+    #cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gnome-disk-utility gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
+    cmd_string2="sudo apt install -f"
+    cmd_string3="sudo dpkg-reconfigure libdvd-pkg"
     if [ "$answer" != "${answer#[Ee]}" ] ;then
         printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
         printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+        printf "${grey}  Command 3: ${cmd_string3}${NC}\n"
         echo
-        read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-        read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string1}" cmd_string2;
+        read -p "$(echo -e ${yellow}Edit command 1/3: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        read -p "$(echo -e ${yellow}Edit command 2/3: ${NC})" -e -i "${cmd_string1}" cmd_string2;
+        read -p "$(echo -e ${yellow}Edit command 3/3: ${NC})" -e -i "${cmd_string3}" cmd_string3;
     fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "$cmd_string1"
+        cmd "printf '%s\n' y | $cmd_string1"
         cmd "$cmd_string2"
+        cmd "$cmd_string3"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
@@ -618,7 +732,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/virtualbox-6.1_6.1.10-138449_Ubuntu_eoan_amd64.deb"
-            cmd "sudo VBoxManage extpack install --replace ./Apps/Oracle_VM_VirtualBox_Extension_Pack-6.1.10.vbox-extpack"
+            cmd "printf '%s\n' y | sudo VBoxManage extpack install --replace ./Apps/Oracle_VM_VirtualBox_Extension_Pack-6.1.10.vbox-extpack"
             cmd "sudo VBoxManage extpack cleanup"
         fi
         
@@ -661,6 +775,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         printf "${BLUE}Mutisystem (sh)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo apt install -y python python-is-python2 libsdl-ttf2.0-0 qemu qemu-kvm wmctrl xdotool fatresize gvfs-bin aptitude gtkdialog virtualbox-6.1"
+            cmd "sudo apt install -f"
             cmd "sudo chmod +x ./Apps/install-depot-multisystem.sh"
             cmd "sudo ./Apps/install-depot-multisystem.sh"
         fi
@@ -679,7 +795,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
             cmd "sudo mkdir -p /var/spool/lpd/hl3040cn"
             cmd "cd ./Apps/brother/"
-            cmd "sudo ./linux-brprinter-installer-2.2.2-1"
+            cmd "printf '%s\n' hl3040cn y y a n \n | sudo ./linux-brprinter-installer-2.2.2-1"
             cmd "cd '${working_dir}'"
         fi
         
