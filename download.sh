@@ -41,6 +41,13 @@ do
         FLAGS="$FLAGS-v "
         shift # Remove --verbose from processing
         ;;
+        -y|--yes)
+        ANSWERALL=true
+        answer="a";
+        answer2="y";
+        FLAGS="$FLAGS-y "
+        shift # Remove from processing
+        ;;
         -h|--help)
         echo -e "${WHITE}"
         echo -e "Usage: $0 <options>"
@@ -48,6 +55,7 @@ do
         echo -e "Options:"
         echo -e "  -h, --help            show this help message and exit"
         echo -e "  -v, --verbose         print commands being run before running them"
+        echo -e "  -y, --yes             answer yes to all"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         #echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
@@ -75,12 +83,12 @@ do
         --step=*)
         GOTOSTEP=true
         GOTO="${arg#*=}"
-        mode="y"
+        answer="y"
         shift # Remove from processing
         ;;
         --restart=*)
         RESTART=true
-        mode="${arg#*=}"
+        answer="${arg#*=}"
         shift # Remove --restart from processing
         ;;
         *)
@@ -110,8 +118,8 @@ jumpto $start
 start:
 
 if [ "$RESTART" = true ]; then
-    echo -e "${RED}NOTE: Script restarted using downloaded version. ($0 $FLAGS --restart=$mode)${NC}"
-    if [ "$mode" != "${mode#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
+    echo -e "${RED}NOTE: Script restarted using downloaded version. ($0 $FLAGS --restart=$answer)${NC}"
+    if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
     jumpto restart
 fi
 
@@ -146,50 +154,44 @@ echo -e "${grey}\t      - High res textures${NC}"
 echo -e "${grey}\t      - Remastered music${NC}"
 echo -e "${grey}\t      - Brutal Doom${NC}"
 echo -e "${grey}\t      - gzdoom.ini${NC}"
-#echo -e "${grey}\t- flatcam${NC}"
-#echo -e "${grey}\t\t- ${NC}"
-#echo -e "${grey}${NC}"
 echo -e
 echo -e -n "${BLUE}Do you want to download installs ${GREEN}(y/n/a)? ${NC}"
-read mode
+if [ "$ANSWERALL" = false ]; then read answer; fi
 #cmd "mkdir -p ./tmp/"
 #cmd "cd tmp"
-if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
-    if [ "$mode" != "${mode#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
+if [ "$answer" != "${answer#[Yy]}" ] || [ "$answer" != "${answer#[Aa]}" ] ;then
+    if [ "$answer" != "${answer#[Aa]}" ] ;then answer2="y"; else answer2=""; fi
 
     update:
     printf "${BLUE}fresh install scripts (will update all scripts)${NC}"
-    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/fresh_install.git"
         cmd "rsync -a ./fresh_install/*.sh ./"
         cmd "rm -rf ./fresh_install"
-        if [ "$GOTOSTEP" = false ]; then cmd "./download.sh $FLAGS --restart=$mode"; exit; fi
+        if [ "$GOTOSTEP" = false ]; then cmd "./download.sh $FLAGS --restart=$answer"; exit; fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
     restart:
     gzdoom:
     printf "${BLUE}gzdoom${NC}"
-    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/gzdoom_installer.git"
         cmd "rm -rf ./gzdoom_installer/.git*"
         cmd "rm ./gzdoom_installer/*.md"
         printf "${BLUE}Addons (Will also install pip3 and gdown)${NC}"
-        if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             if ! command -v pip3 &> /dev/null; then cmd "sudo apt -qy install python3-pip"; fi
             if ! command -v gdown &> /dev/null; then cmd "pip3 install gdown"; fi
-            #cmd "sudo apt -qy install python3-pip"
-            #cmd "pip3 install gdown"
             dl "1xYo4_OEfLFkCZ7vyHQTBPJ2yC10h0g5g"
             cmd "unzip -o Addons.zip -d ./gzdoom_installer/" 
             cmd "rm Addons.zip"
         fi
-        #cmd "mv ./gzdoom_installer/* ./"
         cmd "rsync -a ./gzdoom_installer/ ./"
         cmd "rm -rf ./gzdoom_installer"
     fi
@@ -197,13 +199,12 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     
     knossos:
     printf "${BLUE}knossos${NC}"
-    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/knossos_installer.git"
         cmd "rm -rf ./knossos_installer/.git*"
         cmd "rm ./knossos_installer/*.md"
-        #cmd "mv ./knossos_installer/* ./"
         cmd "rsync -a ./knossos_installer/ ./"
         cmd "rm -rf ./knossos_installer"
     fi
@@ -211,13 +212,12 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     
     qucs:
     printf "${BLUE}qucs${NC}"
-    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/qucs_installer.git"
         cmd "rm -rf ./qucs_installer/.git*"
         cmd "rm ./qucs_installer/*.md"
-        #cmd "mv ./qucs_installer/* ./"
         cmd "rsync -a ./qucs_installer/ ./"
         cmd "rm -rf ./qucs_installer"
     fi
@@ -225,13 +225,12 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     
     valkyrie:
     printf "${BLUE}valkyrie${NC}"
-    if [ "$mode" != "${mode#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         if ! command -v git &> /dev/null; then cmd "sudo apt -qy install git"; fi
         cmd "git clone https://github.com/bcthund/valkyrie_installer.git"
         cmd "rm -rf ./valkyrie_installer/.git*"
         cmd "rm ./valkyrie_installer/*.md"
-        #cmd "mv ./valkyrie_installer/* ./"
         cmd "rsync -a ./valkyrie_installer/ ./"
         cmd "rm -rf ./valkyrie_installer"
     fi
@@ -248,12 +247,10 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
     echo -e "${grey}\t- Steam${NC}"
     echo -e "${grey}\t- Eclipse v2020-06${NC}"
     echo -e "${grey}\t- Plasmoids${NC}"
-    if [ "$mode" != "${mode#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; else echo -e; fi
+    if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Continue (y/n)? ${NC} "; read answer2; else echo -e; fi
     if [ "$answer2" != "${answer2#[Yy]}" ] ;then
         if ! command -v pip3 &> /dev/null; then cmd "sudo apt -qy install python3-pip"; fi
         if ! command -v gdown &> /dev/null; then cmd "pip3 install gdown"; fi
-        #cmd "sudo apt -qy install python3-pip"
-        #cmd "pip3 install gdown"
         dl "1wcCso1e16rusFrnEZq035Xu-wKf99ZyH"
         cmd "unzip -o Apps.zip"
         cmd "rm Apps.zip"
@@ -269,7 +266,7 @@ if [ "$mode" != "${mode#[Yy]}" ] || [ "$mode" != "${mode#[Aa]}" ] ;then
 #cmd "cd ${working_dir}"
     
 #     printf "${BLUE}${NC}"
-#     echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$mode" != "${mode#[Yy]}" ] ;then
+#     echo -e -n "${GREEN} (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
 #         cmd ""
 #     fi
 if [ "$RESTART" = true ]; then exit; fi
