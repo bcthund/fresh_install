@@ -128,7 +128,7 @@ do
         echo -e "                        upgrade    perform a system upgrade, and purge apport if desired"
         echo -e "                        nvidia     install latest nvidia driver (440) (in testing)"
         echo -e "                        packages   install apt packages including some dependencies for other steps"
-        echo -e "                        ppa        install packages requiring additional PPAs"
+        echo -e "                        ppas       install packages requiring additional PPAs"
         echo -e "                        pip        install pip3 packages"
         echo -e "                        snap       install snap packages"
         echo -e "                        plasmoid   install plasma plasmoids"
@@ -601,7 +601,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
    
-    ppa:
+    ppas:
     echo -e
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tInstall PPA Packages${NC}"
