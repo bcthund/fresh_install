@@ -225,6 +225,13 @@ echo -e "${INTRO}section that is applied. All will apply everything. Backups are
 echo -e "${INTRO}made for system configuration files (Plasma, Shortcuts, Power          ${NC}"
 echo -e "${INTRO}Management, etc).                                                      ${NC}"
 echo -e "${INTRO}                                                                       ${NC}"
+echo -e "${INTRO}You may see up to 5 choices:                                           ${NC}"
+echo -e "${INTRO}  y   yes, perform the action                                          ${NC}"
+echo -e "${INTRO}  n   no, do not perform the action                                    ${NC}"
+echo -e "${INTRO}  a   all, perform all steps in this section                           ${NC}"
+echo -e "${INTRO}  e   edit, edit the command(s) and proceed                            ${NC}"
+echo -e "${INTRO}  b   beta, install beta software option (possibly unstable/buggy)     ${NC}"
+echo -e "${INTRO}                                                                       ${NC}"
 #echo -e "${grey}${NC}"
 echo -e
 echo -e "${YELLOW}Using backup directory: '${BACKUP_DIR}'${NC}"
@@ -439,7 +446,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "blender"
                     "brasero"
                     "cecilia"
-                    "chromium-browser"
+                    #"chromium-browser"
                     "cifs-utils"
                     "devede"
                     "dia"
@@ -601,16 +608,45 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     #echo -e "${PURPLE}NOTES${NC}"
     #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    printf "${grey}\tx-tile${NC}\n\n"
+    printf "${grey}  chromium-browser${NC}\n"
+    printf "${grey}  x-tile${NC}\n\n"
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         echo -e
         printf "${BLUE}Installing x-tile ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
-        cmd_string="sudo apt-add-repository -y ppa:giuspen/ppa && sudo apt -y install x-tile"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+        cmd_string1="sudo apt-add-repository -y ppa:giuspen/ppa"
+        cmd_string2="sudo apt -y install x-tile"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then
+            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            echo -e        
+            read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+        fi
         if [ "$answer" != "${answer#[YyEe]}" ] ;then
-            cmd "$cmd_string"
+            cmd "$cmd_string1"
+            cmd "$cmd_string2"
+        fi
+        
+        echo -e
+        printf "${BLUE}Installing chromium-browser ${GREEN}(y/n/e/b)? ${NC}"; read answer; echo -e
+        if [ "$answer" != "${answer#[Bb]}" ] ;then
+            cmd_string1="sudo add-apt-repository -y ppa:chromium-team/beta"
+        else
+            cmd_string1="sudo add-apt-repository -y ppa:chromium-team/stable"
+        fi
+        cmd_string2="sudo apt -y install chromium-browser"
+        if [ "$answer" != "${answer#[Ee]}" ] ;then
+            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+            echo -e        
+            read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+            read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+        fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            cmd "$cmd_string1"
+            cmd "$cmd_string2"
         fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
