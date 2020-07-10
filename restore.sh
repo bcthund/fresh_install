@@ -104,11 +104,13 @@ do
         ;;
         --step=*)
         GOTOSTEP=true
+        answer="y"
         GOTO="${arg#*=}"
         shift # Remove from processing
         ;;
         --continue=*)
         GOTOCONTINUE=true
+        answer="y"
         GOTO="${arg#*=}"
         shift # Remove from processing
         ;;
