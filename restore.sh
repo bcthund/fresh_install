@@ -173,7 +173,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}Desktop${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/Desktop/ /home/$USER/Desktop/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/Desktop/ /home/$USER/Desktop/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -183,7 +183,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Menu Entries${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.local/share/applications/ /home/$USER/.local/share/applications/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.local/share/applications/ /home/$USER/.local/share/applications/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -193,7 +193,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e "${BLUE}User Icons${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.local/share/icons/ /home/$USER/.local/share/icons/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.local/share/icons/ /home/$USER/.local/share/icons/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
@@ -203,7 +203,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Keyring${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.local/share/kwalletd /home/$USER/.local/share/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.local/share/kwalletd /home/$USER/.local/share/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -214,7 +214,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "mkdir -p /usr/NX/etc/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/usr/NX/etc/server.cfg /usr/NX/etc/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/usr/NX/etc/server.cfg /usr/NX/etc/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
         
@@ -224,7 +224,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}VPN${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/etc/NetworkManager/system-connections /etc/NetworkManager/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/etc/NetworkManager/system-connections /etc/NetworkManager/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -234,8 +234,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Warzone2100${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/usr/share/games/warzone2100 /usr/share/games/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.warzone2100-3.2 /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/usr/share/games/warzone2100 /usr/share/games/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.warzone2100-3.2 /home/$USER/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -245,7 +245,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Knossos${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/knossos /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/knossos /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -255,7 +255,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}RawTherapee${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/RawTherapee /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/RawTherapee /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -265,9 +265,9 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}BricsCAD${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/BricsCAD /home/$USER/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/var/bricsys /var/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/opt/bricsys /opt/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/BricsCAD /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/var/bricsys /var/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/opt/bricsys /opt/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -277,7 +277,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}DosBox${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.dosbox /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.dosbox /home/$USER/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -287,7 +287,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Frictional Games${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.frictionalgames /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.frictionalgames /home/$USER/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -297,7 +297,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}ThunderBird${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.thunderbird /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.thunderbird /home/$USER/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -307,7 +307,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}KiCAD${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/kicad /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/kicad /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -327,7 +327,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Audacious${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/audacious /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/audacious /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -337,7 +337,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}VLC${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/vlc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/vlc /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -348,10 +348,10 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "mkdir -p /home/$USER/Programs/cpp-2020-06/eclipse/configuration/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings /home/$USER/Programs/cpp-2020-06/eclipse/configuration/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/Programs/cpp-2020-06/eclipse/configuration/.settings /home/$USER/Programs/cpp-2020-06/eclipse/configuration/"
             
             cmd "mkdir -p /home/$USER/Projects/Eclipse/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/Projects/Eclipse/.metadata /home/$USER/Projects/Eclipse/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/Projects/Eclipse/.metadata /home/$USER/Projects/Eclipse/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -361,8 +361,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Kate${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/katerc /home/$USER/.config/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/katesyntaxhighlightingrc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/katerc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/katesyntaxhighlightingrc /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -372,7 +372,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Power Management (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/powermanagementprofilesrc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/powermanagementprofilesrc /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -382,7 +382,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Global Shortcuts (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/kglobalshortcutsrc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/kglobalshortcutsrc /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -392,12 +392,12 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Plasma Settings (KDE)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/gtk-3.0/settings.ini /home/$USER/.config/gtk-3.0/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/plasmanotifyrc /home/$USER/.config/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/plasmarc /home/$USER/.config/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/kwinrc /home/$USER/.config/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.config/kdeglobals /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/gtk-3.0/settings.ini /home/$USER/.config/gtk-3.0/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/plasma-org.kde.plasma.desktop-appletsrc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/plasmanotifyrc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/plasmarc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/kwinrc /home/$USER/.config/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.config/kdeglobals /home/$USER/.config/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -407,8 +407,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Login Scripts (.bashrc/.profile)${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.bashrc /home/$USER/"
-            cmd "sudo rsync -a --info=progress2 --delete ${BACKUP_DIR}/root/home/$USER/.profile /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.bashrc /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/root/home/$USER/.profile /home/$USER/"
         fi
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
