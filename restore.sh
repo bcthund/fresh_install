@@ -21,6 +21,7 @@ NC='\e[0m\e[39m'
 DEBUG=false
 VERBOSE=false
 ANSWERALL=false
+IN_TESTING=false
 BACKUP_DIR="./Migration_$USER"
 ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
 FLAGS=""
@@ -46,6 +47,11 @@ do
         FLAGS="$FLAGS-y "
         shift # Remove from processing
         ;;
+        --in-testing)
+        IN_TESTING=true
+        FLAGS="$FLAGS--in-testing "
+        shift # Remove from processing
+        ;;
         -h|--help)
         echo -e "${WHITE}"
         echo -e "Usage: $0.sh <options>"
@@ -55,6 +61,7 @@ do
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
         echo -e "  -y, --yes             answer yes to all"
+        echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "                           Note: Archive is used in fresh_install.sh, not here."

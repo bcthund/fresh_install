@@ -21,6 +21,7 @@ NC='\e[0m\e[39m'
 DEBUG=false
 VERBOSE=false
 ANSWERALL=false
+IN_TESTING=false
 COMPRESS=false
 NOCOMPRESS=false
 BACKUP_DIR="./Migration_$USER"
@@ -58,6 +59,11 @@ do
         FLAGS="$FLAGS-x "
         shift # Remove from processing
         ;;
+        --in-testing)
+        IN_TESTING=true
+        FLAGS="$FLAGS--in-testing "
+        shift # Remove from processing
+        ;;
         -h|--help)
         echo -e "${WHITE}"
         echo -e "Usage: $0.sh <options>"
@@ -74,6 +80,7 @@ do
         echo -e "  -y, --yes             answer yes to all, except compress"
         echo -e "  -z, --zip             compress the backup and remove backup folder"
         echo -e "  -x                    do not compress backup folder"
+        echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"

@@ -59,11 +59,11 @@ trap ctrl_c INT
 # Setup command
 DEBUG=false
 VERBOSE=false
+IN_TESTING=false
 GOTOSTEP=false
 GOTOCONTINUE=false
 BACKUP_DIR="./Migration_$USER"
 ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
-IN_TESTING=false
 GOTO=""
 FLAGS=""
 OTHER_ARGUMENTS=""

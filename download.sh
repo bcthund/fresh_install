@@ -23,6 +23,7 @@ VERBOSE=false
 GOTOSTEP=false
 GOTOCONTINUE=false
 ANSWERALL=false
+IN_TESTING=false
 GOTO=""
 RESTART=false
 #RESTARTMODE=""
@@ -49,6 +50,11 @@ do
         FLAGS="$FLAGS-y "
         shift # Remove from processing
         ;;
+        --in-testing)
+        IN_TESTING=true
+        FLAGS="$FLAGS--in-testing "
+        shift # Remove from processing
+        ;;
         -h|--help)
         echo -e "${WHITE}"
         echo -e "Usage: $0 <options>"
@@ -58,6 +64,7 @@ do
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -y, --yes             answer yes to all"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
+        echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         #echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e "  --restart=MODE        this is used to restart the script after downloading updated scripts"
