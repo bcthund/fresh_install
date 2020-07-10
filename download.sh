@@ -22,6 +22,7 @@ DEBUG=false
 VERBOSE=false
 GOTOSTEP=false
 GOTOCONTINUE=false
+ANSWERALL=false
 GOTO=""
 RESTART=false
 #RESTARTMODE=""
