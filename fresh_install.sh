@@ -630,12 +630,13 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         fi
         
         echo -e
-        printf "${BLUE}Installing chromium-browser ${GREEN}(y/n/e/b)? ${NC}"; read answer; echo -e
-        if [ "$answer" != "${answer#[Bb]}" ] ;then
-            cmd_string1="sudo add-apt-repository -y ppa:chromium-team/beta"
-        else
-            cmd_string1="sudo add-apt-repository -y ppa:chromium-team/stable"
-        fi
+        printf "${BLUE}Installing chromium-browser ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+        #if [ "$answer" != "${answer#[Bb]}" ] ;then
+        #    cmd_string1="sudo add-apt-repository -y ppa:chromium-team/beta"
+        #else
+        #    cmd_string1="sudo add-apt-repository -y ppa:chromium-team/stable"
+        #fi
+        cmd_string1="sudo add-apt-repository ppa:saiarcot895/chromium-beta"
         cmd_string2="sudo apt -y install chromium-browser"
         if [ "$answer" != "${answer#[Ee]}" ] ;then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
