@@ -522,7 +522,13 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
                 #cmd "sudo apt install pigz pv"
                 #cmd "sudo tar -czvpf Migration_$USER.tar.gz ${TMP_DIR}"
                 #cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cpf ${ARCHIVE_FILE} ${TMP_DIR}/"
-                cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' --transform 's/${TMP_DIR}/${BACKUP_DIR}/' -cpf ${ARCHIVE_FILE} ${TMP_DIR}/"
+                
+                ESCAPED_BACKUP_DIR=$(printf '%s\n' "$BACKUP_DIR" | sed -e 's/[\/&]/\\&/g')
+                ESCAPED_TMP_DIR=$(printf '%s\n' "$TMP_DIR" | sed -e 's/[\/&]/\\&/g')
+                
+                echo "sudo tar --use-compress-program='pigz --best --recursive | pv' --transform 's/${ESCAPED_TMP_DIR}/${ESCAPED_BACKUP_DIR}/' -cpf ${ARCHIVE_FILE} ${TMP_DIR}/"
+                
+                cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' --transform 's/${ESCAPED_TMP_DIR}/${ESCAPED_BACKUP_DIR}/' -cpf ${ARCHIVE_FILE} ${TMP_DIR}/"
                 cmd "sudo rm -rf ${TMP_DIR}"
             fi
         fi
