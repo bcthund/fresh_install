@@ -62,7 +62,8 @@ VERBOSE=false
 IN_TESTING=false
 GOTOSTEP=false
 GOTOCONTINUE=false
-BACKUP_DIR="./Migration_$USER"
+BACKUP_DIR="Migration_$USER"
+TMP_DIR=${BACKUP_DIR}
 ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
 GOTO=""
 FLAGS=""
@@ -114,6 +115,7 @@ do
         echo -e "                        Restore: the backup is not compressed (hint)"
         echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
+        echo -e "                          NOTE: This name must match the base directory in the archive"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
@@ -143,7 +145,8 @@ do
         shift # Remove from processing
         ;;
         --dir=*)
-        BACKUP_DIR="$(echo ${arg#*=} | sed 's:/*$::')"
+        BACKUP_DIR="$(echo ${arg#*=} | sed 's:/*$::')"          # Strip trailing /
+        BACKUP_DIR="$(echo ${BACKUP_DIR} | sed 's|^\./||')"     # Strip preceeding ./
         FLAGS="$FLAGS--dir=${BACKUP_DIR} "
         shift # Remove from processing
         ;;
@@ -170,6 +173,8 @@ do
         ;;
     esac
 done
+
+TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
 
 cmd(){
     if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo -e ">> ${WHITE}$1${NC}"; fi;
@@ -235,7 +240,8 @@ echo -e "${INTRO}                                                               
 #echo -e "${grey}${NC}"
 echo -e
 echo -e "${YELLOW}Using backup directory: '${BACKUP_DIR}'${NC}"
-echo -e "${YELLOW}Using archive: '${ARCHIVE_FILE}'${NC}"
+echo -e "${YELLOW}        Temp directory: '${TMP_DIR}'${NC}"
+echo -e "${YELLOW}         Using archive: '${ARCHIVE_FILE}'${NC}"
 echo -e -n "${BLUE}Do you want to (B)ackup, (R)estore, or (D)ownload installers? ${NC}"
 read mode
 if [ "$mode" != "${mode#[Bb]}" ] ;then
@@ -260,41 +266,48 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
     if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
-    cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
+    #cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
+    cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' -- transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
     
-    if [ "$DEBUG" = false ]; then
-        if [ -f "${ARCHIVE_FILE}" ]; then
-            if [ ! -d "${BACKUP_DIR}/" ]; then
-                cmd "$cmd_string2"
-            else
-                echo -e -n "${YELLOW}Backup directory exists, remove before uncompress${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-                if [ "$answer" != "${answer#[Yy]}" ] ;then
-                    cmd "sudo rm -rf ${BACKUP_DIR}/"
-                    cmd "$cmd_string2"
-                fi
-            fi
-        else
-            if [ ! -d "${BACKUP_DIR}/" ]; then
-                echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nYou should use the --dir and --archive flags for custom names and locations.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n/i)? ${NC}"; read answer; echo -e;
-                if [ "$answer" != "${answer#[Yy]}" ] ;then
-                    read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-                    cmd "$cmd_string2"
-                elif [ "$answer" != "${answer#[Ii]}" ] ;then
-                    printf "${RED}Ignoring, restore will likely fail.${NC}\n"
-                else
-                    printf "${RED}Error! I don't have a backup directory to work with!${NC}\n"
-                    exit
-                fi
-            else
-                echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the '${BACKUP_DIR}/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-                if [ "$answer" != "${answer#[Yy]}" ] ;then
-                    cmd "$cmd_string2"
-                fi
-            fi
-        fi
-    else
-        printf "${YELLOW}Backup archive check and uncompress skipped for debugging mode.${NC}\n"
-    fi
+    # Rename on unpack
+    #tar -zxf my-dir.tar.gz --transform s/my-dir/your-dir/
+    
+#     if [ "$DEBUG" = false ]; then
+#         if [ -f "${ARCHIVE_FILE}" ]; then
+#             if [ ! -d "${BACKUP_DIR}/" ]; then
+#                 cmd "$cmd_string2"
+#             else
+#                 echo -e -n "${YELLOW}Backup directory exists, remove before uncompress${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+#                 if [ "$answer" != "${answer#[Yy]}" ] ;then
+#                     cmd "sudo rm -rf ${BACKUP_DIR}/"
+#                     cmd "$cmd_string2"
+#                 fi
+#             fi
+#         else
+#             if [ ! -d "${BACKUP_DIR}/" ]; then
+#                 echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nYou should use the --dir and --archive flags for custom names and locations.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n/i)? ${NC}"; read answer; echo -e;
+#                 if [ "$answer" != "${answer#[Yy]}" ] ;then
+#                     read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+#                     cmd "$cmd_string2"
+#                 elif [ "$answer" != "${answer#[Ii]}" ] ;then
+#                     printf "${RED}Ignoring, restore will likely fail.${NC}\n"
+#                 else
+#                     printf "${RED}Error! I don't have a backup directory to work with!${NC}\n"
+#                     exit
+#                 fi
+#             else
+#                 echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the '${BACKUP_DIR}/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
+#                 if [ "$answer" != "${answer#[Yy]}" ] ;then
+#                     cmd "$cmd_string2"
+#                 fi
+#             fi
+#         fi
+#     else
+#         printf "${YELLOW}Backup archive check and uncompress skipped for debugging mode.${NC}\n"
+#     fi
+
+    
+
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
     symlinks:
