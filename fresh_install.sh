@@ -115,7 +115,6 @@ do
         echo -e "                        Restore: the backup is not compressed (hint)"
         echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
-        echo -e "                          NOTE: This name must match the base directory in the archive"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
@@ -269,6 +268,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     #cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' --transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
     
     TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
+    ctrl_c() { echo -e; cmd "rm -rf ${TMP_DIR}"; echo -e; exit 0; }
     echo -e "${YELLOW}Temp directory: '${TMP_DIR}'${NC}"
     cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR}'"
     cmd "$cmd_string1"
@@ -358,7 +358,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         if [ -d "/home/$USER/Videos"    ] ;then   cmd "mv /home/$USER/Videos /home/$USER/Videos.bak";           fi
         
         # Copy all symlinks
-        cmd "sudo rsync -a --info=progress2 ${BACKUP_DIR}/symlinks/home/$USER/ /home/$USER/"
+        cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/symlinks/home/$USER/ /home/$USER/"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -1176,29 +1176,37 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
-    cleanup:
-    echo -e
-    echo -e "${PURPLE}==========================================================================${NC}"
-    echo -e "${PURPLE}\tAutoremove packages${NC}"
-    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    #echo -e "${PURPLE}NOTES${NC}"
-    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    cmd_string1="sudo apt autoremove"
-    echo -e
-    printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer;
-    if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
-    if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        echo -e
-        cmd "$cmd_string1"
-    fi
-    
     # ==================================================================
     #   Restore Backup
     # ==================================================================
     restore:
-    eval "./restore.sh $FLAGS"
+    eval "./restore.sh $FLAGS --tmp='$TMP_DIR'"
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    cleanup:
+    echo -e
+    echo -e "${PURPLE}==========================================================================${NC}"
+    echo -e "${PURPLE}\tCleanup${NC}"
+    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #echo -e "${PURPLE}NOTES${NC}"
+    #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    echo -e "${grey}  apt autoremove${NC}"
+    echo -e "${grey}  remove '${TMP_DIR}'${NC}"
+    
+    cmd_string1="sudo apt autoremove"
+    cmd_String2="rm -rf ${TMP_DIR}"
+    echo -e
+    printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer;
+    if [ "$answer" != "${answer#[Ee]}" ] ;then
+        read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+    fi
+    if [ "$answer" != "${answer#[YyEe]}" ] ;then
+        echo -e
+        cmd "$cmd_string1"
+        cmd "$cmd_string2"
+    fi
+    
     echo -e 
     echo -e "${PURPLE}==========================================================================${YELLOW}"
     echo -e "Downlaod only: None, unless DEB/script section failed"
