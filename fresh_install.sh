@@ -268,7 +268,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     #cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' --transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
     
     TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
-    ctrl_c() { echo -e; cmd "rm -rf ${TMP_DIR}"; echo -e; exit 0; }
+    ctrl_c() { echo -e; eval "rm -rf ${TMP_DIR}"; echo -e; exit 0; }
     echo -e "${YELLOW}Temp directory: '${TMP_DIR}'${NC}"
     cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR}'"
     cmd "$cmd_string1"
