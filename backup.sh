@@ -17,6 +17,10 @@ cyan='\e[0m\e[96m'
 CYAN='\e[1m\e[36m'
 NC='\e[0m\e[39m'
 
+# trap ctrl-c and call ctrl_c()
+ctrl_c() { echo -e; echo -e; exit 0; }
+trap ctrl_c INT
+
 # Setup command
 DEBUG=false
 VERBOSE=false
