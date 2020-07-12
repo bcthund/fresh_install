@@ -470,8 +470,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         echo -e
         printf "${BLUE}Remove tmp directory${NC}"
         cmd_string1="rm -rf ${TMP_DIR}"
-        echo -e
         printf "${GREEN} (y/n/e)? ${NC}"; read answer;
+        echo -e
         if [ "$answer" != "${answer#[Ee]}" ] ;then
             read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1;
         fi
@@ -481,11 +481,14 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
     fi
 
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
