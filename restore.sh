@@ -96,8 +96,9 @@ do
         echo -e "                        shortcuts"
         echo -e "                        plasma"
         echo -e "                        login"
-        echo -e "                        symlinks"
-        echo -e "                        compress"
+        echo -e "                        cleanup"
+        #echo -e "                        symlinks"
+        #echo -e "                        compress"
         echo -e "${NC}"
         exit
         shift # Remove from processing
@@ -459,8 +460,21 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
-
-
+    cleanup:
+    if [ "$EXTRACT" = true ]; then
+        echo -e
+        printf "${BLUE}Remove tmp directory${NC}"
+        cmd_String1="rm -rf ${TMP_DIR}"
+        echo -e
+        printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer;
+        if [ "$answer" != "${answer#[Ee]}" ] ;then
+            read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+            echo -e
+            cmd "$cmd_string1"
+        fi
+    fi
 
 
 
