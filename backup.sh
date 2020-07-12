@@ -22,7 +22,7 @@ DEBUG=false
 VERBOSE=false
 ANSWERALL=false
 IN_TESTING=false
-COMPRESS=false
+COMPRESS=true
 NOCOMPRESS=false
 BACKUP_DIR="Migration_$USER"
 TMP_DIR=${BACKUP_DIR}
@@ -79,7 +79,7 @@ do
         echo -e "  -v, --verbose         print commands being run before running them"
         echo -e "  -d, --debug           print commands to be run but do not execute them"
         echo -e "  -y, --yes             answer yes to all, except compress"
-        echo -e "  -z, --zip             compress the backup and remove backup folder"
+        echo -e "  -z, --zip             compress the backup and remove backup folder (this is default behavior now)"
         echo -e "  -x                    do not compress backup folder, folder remains in tmp directory"
         echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
@@ -510,12 +510,12 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
             echo -e "${purple}the speed.${NC}"
             echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
             echo -e
-            echo -e "${BLUE}Compress Backup${NC}"
+            echo -e -n "${BLUE}Compress Backup${NC}"
             
             # TODO: Rename tmp directory on compress
             #tar -zxf my-dir.tar.gz --transform s/my-dir/your-dir/
             
-            if [ "$COMPRESS" = false  ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$COMPRESS" = false  ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] || [ "$COMPRESS" = true ] ;then
                 if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
                 if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
@@ -523,11 +523,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
                 #cmd "sudo tar -czvpf Migration_$USER.tar.gz ${TMP_DIR}"
                 #cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' -cpf ${ARCHIVE_FILE} ${TMP_DIR}/"
                 
-                
-                
-                echo "sudo tar --use-compress-program='pigz --best --recursive | pv' --transform 's/$(basename $TMP_DIR)/$(basename $BACKUP_DIR)/' -cpf ${ARCHIVE_FILE} ${TMP_DIR}/"
-                
-                cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' --transform 's/$(basename $TMP_DIR)/$(basename $BACKUP_DIR)/' -cpf ${ARCHIVE_FILE} ${TMP_DIR}/"
+                cmd "sudo tar --use-compress-program='pigz --best --recursive | pv' --transform 's/$(basename $TMP_DIR)/$(basename $BACKUP_DIR)/' -cpf '${ARCHIVE_FILE}' -C '${TMP_DIR}' ./"
                 cmd "sudo rm -rf ${TMP_DIR}"
             fi
         fi
