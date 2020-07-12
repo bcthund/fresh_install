@@ -469,7 +469,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     if [ "$EXTRACT" = true ]; then
         echo -e
         printf "${BLUE}Remove tmp directory${NC}"
-        cmd_String1="rm -rf ${TMP_DIR}"
+        cmd_string1="rm -rf ${TMP_DIR}"
         echo -e
         printf "${GREEN} (y/n/e)? ${NC}"; read answer;
         if [ "$answer" != "${answer#[Ee]}" ] ;then
