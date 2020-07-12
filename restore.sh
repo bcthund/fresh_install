@@ -366,7 +366,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     gzdoom:
     # gzdoom
         echo -e
-        printf "${BLUE}gzdoom${NC}\n"
+        printf "${BLUE}gzdoom${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/root/home/$USER/.config/gzdoom /home/$USER/.config/"
@@ -471,7 +471,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         printf "${BLUE}Remove tmp directory${NC}"
         cmd_String1="rm -rf ${TMP_DIR}"
         echo -e
-        printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer;
+        printf "${GREEN} (y/n/e)? ${NC}"; read answer;
         if [ "$answer" != "${answer#[Ee]}" ] ;then
             read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1;
         fi
