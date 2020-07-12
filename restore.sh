@@ -201,8 +201,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     extract:
         if [ "$EXTRACT" = true ]; then
             echo -e
-            echo -e -n "${BLUE}Extract Archive${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
+            printf "${BLUE}Extract Archive${NC}"
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
                 ctrl_c() { echo -e; cmd "rm -rf ${TMP_DIR}"; echo -e; exit 0; }
@@ -217,8 +217,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     desktop:
     # Desktop
         echo -e
-        echo -e "${BLUE}Desktop${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        printf "${BLUE}Desktop${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/root/home/$USER/Desktop/ /home/$USER/Desktop/"
         fi
@@ -237,8 +237,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     icons:
     # User Icons
         echo -e
-        echo -e "${BLUE}User Icons${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        printf "${BLUE}User Icons${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/root/home/$USER/.local/share/icons/ /home/$USER/.local/share/icons/"
         fi
