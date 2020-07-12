@@ -267,7 +267,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
     if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
     #cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
-    cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' -- transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
+    cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' -- transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
+    cmd "$cmd_string1"
     
     # Rename on unpack
     #tar -zxf my-dir.tar.gz --transform s/my-dir/your-dir/
