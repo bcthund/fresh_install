@@ -174,8 +174,6 @@ do
     esac
 done
 
-TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
-
 cmd(){
     if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo -e ">> ${WHITE}$1${NC}"; fi;
     if [ "$DEBUG" = false ]; then eval $1; fi;
@@ -240,7 +238,7 @@ echo -e "${INTRO}                                                               
 #echo -e "${grey}${NC}"
 echo -e
 echo -e "${YELLOW}Using backup directory: '${BACKUP_DIR}'${NC}"
-echo -e "${YELLOW}        Temp directory: '${TMP_DIR}'${NC}"
+#echo -e "${YELLOW}        Temp directory: '${TMP_DIR}'${NC}"
 echo -e "${YELLOW}         Using archive: '${ARCHIVE_FILE}'${NC}"
 echo -e -n "${BLUE}Do you want to (B)ackup, (R)estore, or (D)ownload installers? ${NC}"
 read mode
@@ -269,6 +267,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     #cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
     #cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' -- transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
     #cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' --transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
+    
+    TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
+    echo -e "${YELLOW}Temp directory: '${TMP_DIR}'${NC}"
     cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR}'"
     cmd "$cmd_string1"
     
