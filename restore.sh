@@ -201,8 +201,8 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
     extract:
         if [ "$EXTRACT" = true ]; then
             echo -e
-            echo -e "${BLUE}Extract Archive${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            echo -e -n "${BLUE}Extract Archive${NC}"
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo -e; fi
             if [ "$answer2" != "${answer2#[Yy]}" ] ;then
                 TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
                 ctrl_c() { echo -e; cmd "rm -rf ${TMP_DIR}"; echo -e; exit 0; }
