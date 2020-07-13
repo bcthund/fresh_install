@@ -17,7 +17,7 @@
 # CYAN='\033[1;36m'
 # NC='\033[0m'
 
-grey='\e[0m\e[37m'
+grey='\e[0m\e[90m'
 GREY='\e[1m\e[90m'
 red='\e[0m\e[91m'
 RED='\e[1m\e[31m'
@@ -36,19 +36,6 @@ CYAN='\e[1m\e[36m'
 NC='\e[0m\e[39m'
 #INTRO='\e[30m\e[44m'   # Sample foreground/background
 
-# echo -e
-# echo -e   "${grey}grey${NC}"
-# echo -e    "${red}red      ${RED}RED${NC}"
-# echo -e  "${green}green    ${GREEN}GREEN${NC}"
-# echo -e "${yellow}yellow   ${YELLOW}YELLOW${NC}"
-# echo -e "${purple}purple   ${PURPLE}PURPLE${NC}"
-# echo -e  "${white}white    ${WHITE}WHITE${NC}"
-# echo -e   "${blue}blue     ${BLUE}BLUE${NC}"
-# echo -e   "${cyan}cyan     ${CYAN}CYAN${NC}"
-# echo -e     "${NC}NC${NC}"
-# echo -e
-# echo -e
-
 # Save the working directory of the script
 working_dir=$PWD
 
@@ -60,6 +47,7 @@ trap ctrl_c INT
 DEBUG=false
 VERBOSE=false
 IN_TESTING=false
+EXTRACT=true
 GOTOSTEP=false
 GOTOCONTINUE=false
 BACKUP_DIR="Migration_$USER"
@@ -113,7 +101,8 @@ do
         echo -e "                        Restore: the backup is compressed (hint)"
         echo -e "  -x                    Backup: do not compress backup folder"
         echo -e "                        Restore: the backup is not compressed (hint)"
-        echo -e "  --in-testing          Enable use of in-testing features"
+        echo -e "  --in-testing          Enable use of in-testing features (nothing currently in testing)"
+        echo -e "  --tmp=DIRECTORY       do not extract archive, use this tmp directory"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
         echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
@@ -141,6 +130,12 @@ do
         echo -e "                        cleanup        runs apt autoremove for lingering packages"
         echo -e "${NC}"
         exit
+        shift # Remove from processing
+        ;;
+        --tmp=*)
+        EXTRACT=false
+        TMP_DIR="$(echo ${arg#*=} | sed 's:/*$::')"
+        FLAGS="$FLAGS--tmp=${TMP_DIR} "
         shift # Remove from processing
         ;;
         --dir=*)
@@ -172,6 +167,20 @@ do
         ;;
     esac
 done
+
+if [ "$DEBUG" = true ]; then
+    echo -e "PREDEFINED COLORS:"
+    echo -e
+    echo -e   "${grey}grey     ${GREY}GREY${NC}"
+    echo -e    "${red}red      ${RED}RED${NC}"
+    echo -e  "${green}green    ${GREEN}GREEN${NC}"
+    echo -e "${yellow}yellow   ${YELLOW}YELLOW${NC}"
+    echo -e "${purple}purple   ${PURPLE}PURPLE${NC}"
+    echo -e  "${white}white    ${WHITE}WHITE${NC}"
+    echo -e   "${blue}blue     ${BLUE}BLUE${NC}"
+    echo -e   "${cyan}cyan     ${CYAN}CYAN${NC}"
+    echo -e     "${NC}NC${NC}"
+fi
 
 cmd(){
     if [ "$VERBOSE" = true ] || [ "$DEBUG" = true ]; then echo -e ">> ${WHITE}$1${NC}"; fi;
@@ -237,7 +246,7 @@ echo -e "${INTRO}                                                               
 #echo -e "${grey}${NC}"
 echo -e
 echo -e "${YELLOW}Using backup directory: '${BACKUP_DIR}'${NC}"
-#echo -e "${YELLOW}        Temp directory: '${TMP_DIR}'${NC}"
+if [ "$EXTRACT" = false ]; then echo -e "${YELLOW}        Temp directory: '${TMP_DIR}'${NC}"; fi
 echo -e "${YELLOW}         Using archive: '${ARCHIVE_FILE}'${NC}"
 echo -e -n "${BLUE}Do you want to (B)ackup, (R)estore, or (D)ownload installers? ${NC}"
 read mode
@@ -261,57 +270,25 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tUncompress Backup${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
-    if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi
-    #cmd_string2="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C ./"
-    #cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' -- transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
-    #cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR%/*}' --transform 's/$(basename $BACKUP_DIR)/$(basename $TMP_DIR)/'"
     
-    TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
-    ctrl_c() { echo -e; eval "rm -rf ${TMP_DIR}"; echo -e; exit 0; }
-    echo -e "${YELLOW}Temp directory: '${TMP_DIR}'${NC}"
-    cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR}'"
-    cmd "$cmd_string1"
-    
-    # Rename on unpack
-    #tar -zxf my-dir.tar.gz --transform s/my-dir/your-dir/
-    
-#     if [ "$DEBUG" = false ]; then
-#         if [ -f "${ARCHIVE_FILE}" ]; then
-#             if [ ! -d "${BACKUP_DIR}/" ]; then
-#                 cmd "$cmd_string2"
-#             else
-#                 echo -e -n "${YELLOW}Backup directory exists, remove before uncompress${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-#                 if [ "$answer" != "${answer#[Yy]}" ] ;then
-#                     cmd "sudo rm -rf ${BACKUP_DIR}/"
-#                     cmd "$cmd_string2"
-#                 fi
-#             fi
-#         else
-#             if [ ! -d "${BACKUP_DIR}/" ]; then
-#                 echo -e -n "${YELLOW}No compressed backup found and no backup directory found.\nYou should use the --dir and --archive flags for custom names and locations.\nDo you want to edit the uncompress command for a custom backup name${GREEN} (y/n/i)? ${NC}"; read answer; echo -e;
-#                 if [ "$answer" != "${answer#[Yy]}" ] ;then
-#                     read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-#                     cmd "$cmd_string2"
-#                 elif [ "$answer" != "${answer#[Ii]}" ] ;then
-#                     printf "${RED}Ignoring, restore will likely fail.${NC}\n"
-#                 else
-#                     printf "${RED}Error! I don't have a backup directory to work with!${NC}\n"
-#                     exit
-#                 fi
-#             else
-#                 echo -e -n "${YELLOW}I couldn't find a compressed backup, but I found a backup directory.\nShould I use the '${BACKUP_DIR}/' directory${GREEN} (y/n)? ${NC}"; read answer; echo -e;
-#                 if [ "$answer" != "${answer#[Yy]}" ] ;then
-#                     cmd "$cmd_string2"
-#                 fi
-#             fi
-#         fi
-#     else
-#         printf "${YELLOW}Backup archive check and uncompress skipped for debugging mode.${NC}\n"
-#     fi
-
-    
-
+    if [ "$EXTRACT" = true ]; then
+        if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
+        if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi    
+        TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
+        ctrl_c() {
+            echo -e;
+            echo -e -n "${BLUE}Do you want to remove temporary files in '${TMP_DIR}' ${GREEN}(y/n)? ${NC}"; read -e -i "y" answer; echo;
+            if [ "$answer" != "${answer#[Yy]}" ] ;then
+                eval "sudo rm -rf ${TMP_DIR}";
+            fi
+            echo -e;
+            echo -e;
+            exit 0;
+        }
+        echo -e "${YELLOW}Temp directory: '${TMP_DIR}'${NC}"
+        cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR}'"
+        cmd "$cmd_string1"
+    fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
     symlinks:
@@ -364,7 +341,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
 
     # TODO: Snaps causing issues, get rid of them. Will need to double check apt install list for dependency issues
     nosnap:
-    if [ "$IN_TESTING" = true ]; then
+    #if [ "$IN_TESTING" = true ]; then
         echo -e "${PURPLE}==========================================================================${NC}"
         echo -e "${PURPLE}\tRemove Snap and block${NC}"
         echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
@@ -396,7 +373,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "$cmd_string4"
             cmd "$cmd_string5"
         fi
-    fi
+    #fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
     upgrade:
@@ -424,7 +401,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
 
     
     nvidia:
-    if [ "$IN_TESTING" = true ]; then
+    #if [ "$IN_TESTING" = true ]; then
         echo -e
         echo -e "${PURPLE}==========================================================================${NC}"
         echo -e "${PURPLE}\tInstall NVIDIA in-testing drivers${NC}"
@@ -451,7 +428,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "$cmd_string2"
             cmd "$cmd_string3"
         fi
-    fi
+    #fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
     
 
@@ -562,11 +539,15 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "wine"
                     "wine32"
                     "wine64"
+                    #"libwine"
+                    #"libwine:i386"
+                    "fonts-wine"
                     "winetricks"
                     "winff"
                     "wireshark"
                     "xrdp"
                     "xterm"
+                    "youtube-dl"
                     "zenity"
                     "zenity-common")
     echo -e
@@ -576,10 +557,10 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     
     count=0
     printf "  ";
-    cmd_string1="sudo apt install"
+    cmd_string4="sudo DEBIAN_FRONTEND=noninteractive apt install"
     for package in ${PACKAGE_LIST[@]}; do
-        cmd_string1+=" ${package}"
-        while [ "${#package}" -lt 28 ]; do
+        cmd_string4+=" ${package}"
+        while [ "${#package}" -lt 30 ]; do
             package="$package "
         done
          package="${grey}${package}${NC}"
@@ -598,22 +579,35 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n/e)? ${NC}"
     read answer
     echo -e
-    #cmd_string1="sudo apt install arandr audacious audacity baobab blender brasero cecilia chromium-browser cifs-utils devede dia dosbox easytag exfat-utils ext4magic fluidsynth fontforge freecad g++-8 ghex gimp gimp-gmic gimp-plugin-registry git git-lfs glade glmark2 gmic gnome-disk-utility gpick hardinfo inkscape inxi iptraf kdevelop kicad kicad-footprints kicad-packages3d kicad-symbols kicad-templates kompare krita libdvd-pkg libssl-dev libuv1-dev libnode64 libnode-dev libdvdnav4 libdvdread7 libnoise-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev lmms mesa-utils neofetch net-tools network-manager-openconnect network-manager-openvpn network-manager-ssh nfs-common nfs-kernel-server nmap octave openconnect openjdk-8-jre openshot openssh-server openvpn pithos playonlinux python3-pip qt5-default qtcreator qtdeclarative5-dev rawtherapee remmina rename samba scummvm smb4k solaar texlive-fonts-extra texlive-fonts-recommended texlive-xetex texstudio tilix thunderbird ubuntu-restricted-extras valgrind veusz vim vlc vlc-plugin-access-extra vlc-plugin-fluidsynth vlc-plugin-samba vlc-plugin-skins2 vlc-plugin-visualization warzone2100 whois winff wireshark xrdp xterm zenity zenity-common"
-    cmd_string2="sudo apt install -f"
-    cmd_string3="sudo dpkg-reconfigure libdvd-pkg"
+    
+    # Packages that complain if not installed separately (still listed in full package list)
+    cmd_string1="sudo dpkg --configure -a"
+    cmd_string2="sudo dpkg --add-architecture i386"
+    cmd_string3="sudo apt -y install wine wine32 wine64 fonts-wine winetricks"
+    cmd_string5="sudo DEBIAN_FRONTEND=noninteractive apt -f install"
+    cmd_string6="sudo dpkg-reconfigure libdvd-pkg"
     if [ "$answer" != "${answer#[Ee]}" ] ;then
         printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
         printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
         printf "${grey}  Command 3: ${cmd_string3}${NC}\n"
+        printf "${grey}  Command 4: ${cmd_string4}${NC}\n"
+        printf "${grey}  Command 5: ${cmd_string5}${NC}\n"
+        printf "${grey}  Command 6: ${cmd_string6}${NC}\n"
         echo
-        read -p "$(echo -e ${yellow}Edit command 1/3: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-        read -p "$(echo -e ${yellow}Edit command 2/3: ${NC})" -e -i "${cmd_string1}" cmd_string2;
-        read -p "$(echo -e ${yellow}Edit command 3/3: ${NC})" -e -i "${cmd_string3}" cmd_string3;
+        read -p "$(echo -e ${yellow}Edit command 1/6: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+        read -p "$(echo -e ${yellow}Edit command 2/6: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+        read -p "$(echo -e ${yellow}Edit command 3/6: ${NC})" -e -i "${cmd_string3}" cmd_string3;
+        read -p "$(echo -e ${yellow}Edit command 4/6: ${NC})" -e -i "${cmd_string4}" cmd_string4;
+        read -p "$(echo -e ${yellow}Edit command 5/6: ${NC})" -e -i "${cmd_string5}" cmd_string5;
+        read -p "$(echo -e ${yellow}Edit command 6/6: ${NC})" -e -i "${cmd_string6}" cmd_string6;
     fi
     if [ "$answer" != "${answer#[YyEe]}" ] ;then
-        cmd "printf '%s\n' y | $cmd_string1"
+        cmd "$cmd_string1"
         cmd "$cmd_string2"
         cmd "$cmd_string3"
+        cmd "printf '%s\n' y | $cmd_string4"
+        cmd "$cmd_string5"
+        cmd "$cmd_string6"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
    
@@ -625,26 +619,26 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     #echo -e "${PURPLE}NOTES${NC}"
     #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+    #printf "${grey}  x-tile${NC}\n\n"
     printf "${grey}  chromium-browser${NC}\n"
-    printf "${grey}  x-tile${NC}\n\n"
     echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"
     read answer
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        echo -e
-        printf "${BLUE}Installing x-tile ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
-        cmd_string1="sudo apt-add-repository -y ppa:giuspen/ppa"
-        cmd_string2="sudo apt -y install x-tile"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then
-            printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
-            printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
-            echo -e        
-            read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
-            read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
-        fi
-        if [ "$answer" != "${answer#[YyEe]}" ] ;then
-            cmd "$cmd_string1"
-            cmd "$cmd_string2"
-        fi
+#         echo -e
+#         printf "${BLUE}Installing x-tile ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+#         cmd_string1="sudo apt-add-repository -y ppa:giuspen/ppa"
+#         cmd_string2="sudo apt -y install x-tile"
+#         if [ "$answer" != "${answer#[Ee]}" ] ;then
+#             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
+#             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
+#             echo -e        
+#             read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
+#             read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
+#         fi
+#         if [ "$answer" != "${answer#[YyEe]}" ] ;then
+#             cmd "$cmd_string1"
+#             cmd "$cmd_string2"
+#         fi
         
         echo -e
         printf "${BLUE}Installing chromium-browser ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
@@ -710,45 +704,42 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
 
     # TODO: Snaps causing issues, get rid of them. See nosnap section above.
     snap:
-    echo -e
-    echo -e "${PURPLE}==========================================================================${NC}"
-    echo -e "${PURPLE}\tInstall Snap packages${NC}"
-    echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
+#     echo -e
+#     echo -e "${PURPLE}==========================================================================${NC}"
+#     echo -e "${PURPLE}\tInstall Snap packages${NC}"
+#     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
     #echo -e "${PURPLE}NOTES${NC}"
     #echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    printf "${grey}\tckan${NC}\n"
-    printf "${grey}\tshotcut${NC}\n"
-    printf "${grey}\tsublime-text${NC}\n"
-    echo -e
-    echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"; read answer; echo -e
-    if [ "$answer" != "${answer#[Yy]}" ] ;then
-        echo -e
-        printf "${BLUE}Installing ckan ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
-        cmd_string="sudo snap install ckan"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
-        if [ "$answer" != "${answer#[YyEe]}" ] ;then
-            cmd "$cmd_string"
-            cmd "sudo snap install ckan"
-        fi
+#     printf "${grey}\tckan${NC}\n"
+#     printf "${grey}\tshotcut${NC}\n"
+#     printf "${grey}\tsublime-text${NC}\n"
+#     echo -e
+#     echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"; read answer; echo -e
+#     if [ "$answer" != "${answer#[Yy]}" ] ;then
+#         echo -e
+#         printf "${BLUE}Installing ckan ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+#         cmd_string="sudo snap install ckan"
+#         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+#         if [ "$answer" != "${answer#[YyEe]}" ] ;then
+#             cmd "$cmd_string"
+#         fi
         
-        echo -e
-        printf "${BLUE}Installing shotcut ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
-        cmd_string="sudo snap install --classic shotcut"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
-        if [ "$answer" != "${answer#[YyEe]}" ] ;then
-            cmd "$cmd_string"
-            cmd "sudo snap install --classic shotcut"
-        fi
+#         echo -e
+#         printf "${BLUE}Installing shotcut ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+#         cmd_string="sudo snap install --classic shotcut"
+#         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+#         if [ "$answer" != "${answer#[YyEe]}" ] ;then
+#             cmd "$cmd_string"
+#         fi
         
-        echo -e
-        printf "${BLUE}Installing sublime-text ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
-        cmd_string="sudo snap install --classic sublime-text"
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
-        if [ "$answer" != "${answer#[YyEe]}" ] ;then
-            cmd "$cmd_string"
-            cmd "sudo snap install --classic sublime-text"
-        fi
-    fi
+#         echo -e
+#         printf "${BLUE}Installing sublime-text ${GREEN}(y/n/e)? ${NC}"; read answer; echo -e
+#         cmd_string="sudo snap install --classic sublime-text"
+#         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+#         if [ "$answer" != "${answer#[YyEe]}" ] ;then
+#             cmd "$cmd_string"
+#         fi
+#     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
     
@@ -861,8 +852,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         
         echo -e
         printf "${BLUE}Printer (HL-3040CN)${NC}\n"
-        printf "${YELLOW}NOTE: The install script has been modified, it did not allow directories with spaces in them and the version included here does.${NC}\n"
-        echo -e -n "${GREEN}Continue (y/n)? ${NC}"; read answer; if [ "$answer" != "${answer#[Yy]}" ] ;then
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo mkdir -p /var/spool/lpd/hl3040cn"
             cmd "cd ./Apps/brother/"
             cmd "printf '%s\n' hl3040cn y y a n \n | sudo ./linux-brprinter-installer-2.2.2-1"
@@ -946,7 +937,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${BLUE}Force numlock on at startup${NC}"
         cmd_string1="sudo touch /etc/rc.local"
         cmd_string2="sudo sed -i 's|^exit 0.*$|# Numlock enable\n[ -x /usr/bin/numlockx ] \&\& numlockx on\n\nexit 0|' /etc/rc.local"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
@@ -963,7 +954,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${BLUE}Configure Wine${NC}"
         echo -e "${grey}  - Executes: ${cmd_String1} to create preliminary config, user must exit${NC}"
         echo -e "${grey}  - Executes: ${cmd_String2}${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
         if [ "$answer" != "${answer#[Ee]}" ]; then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
@@ -990,24 +981,24 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${grey}\t- vboxusers${NC}"
         echo -e "${grey}\t- dialout${NC}"
         cmd_string1="sudo usermod -a -G vboxusers,dialout $USER"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
         if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
             cmd "$cmd_string1"
         fi
         
-        echo -e -n "${BLUE}Add user to wireshark group${NC}"
+        echo -e "${BLUE}Add user to wireshark group${NC}"
         cmd_string1="sudo usermod -a -G wireshark $USER"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
         if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
             cmd "$cmd_string1"
         fi
         
         echo -e
-        echo -e -n "${BLUE}Set samba password${NC}"
+        echo -e "${BLUE}Set samba password${NC}"
         cmd_string="sudo smbpasswd -a $USER"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
             echo -e
@@ -1018,7 +1009,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e -n "${BLUE}Check for libGL.so links${NC}"
         cmd_string1="sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
         cmd_string2="sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
         if [ "$answer" != "${answer#[Ee]}" ] ;then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
@@ -1040,14 +1031,14 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${BLUE}Create standard NFS shares:${NC}"
         echo -e "${grey}  /home/$USER (ro)${NC}"
         echo -e "${grey}  /home/$USER/Downloads (rw)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             printf "${BLUE}Creating NFS shares: ${NC}\n"
             
             iprange="192.168.0.0/16"
             echo -e
             echo -e -n "${YELLOW}Use the default ip range of '$iprange'${NC}"
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
             if [ "$answer2" != "${answer2#[Nn]}" ] ;then
                 echo -e -n "${YELLOW}Enter ip range: ${GREEN}"
                 read iprange
@@ -1194,7 +1185,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${grey}  remove '${TMP_DIR}'${NC}"
     
     cmd_string1="sudo apt autoremove"
-    cmd_String2="rm -rf ${TMP_DIR}"
+    cmd_string2="rm -rf ${TMP_DIR}"
     echo -e
     printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer;
     if [ "$answer" != "${answer#[Ee]}" ] ;then
@@ -1209,13 +1200,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     
     echo -e 
     echo -e "${PURPLE}==========================================================================${YELLOW}"
-    echo -e "Downlaod only: None, unless DEB/script section failed"
-    echo -e "         Todo:"
-    echo -e "          - Install Chrome-Plasma Integration"
-    echo -e "          - VirtualBox Extensions"
-    echo -e "          - NVidia Drivers"
-    echo -e "              - Generate xorg.conf"
-    echo -e "              - Add Modelines"
+    echo -e "TODO:"
+    echo -e "  - Install Chrome-Plasma Integration"
     echo -e "${PURPLE}==========================================================================${NC}"
     
     # NOTE: This last condition is slightly different to prevent final 'else/fi' from complaining after doing a jumpto()
