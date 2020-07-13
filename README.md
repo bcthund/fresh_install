@@ -23,24 +23,37 @@ Options:
   -h, --help            show this help message and exit
   -v, --verbose         print commands being run before running them
   -d, --debug           print commands to be run but do not execute them
+  -z, --zip             Backup: compress the backup and remove backup folder
+                        Restore: the backup is compressed (hint)
+  -x                    Backup: do not compress backup folder
+                        Restore: the backup is not compressed (hint)
+  --in-testing          Enable use of in-testing features (nothing currently in testing)
+  --tmp=DIRECTORY       do not extract archive, use this tmp directory
+  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'
+  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'
   --step=STEP           jump to an install step then exit when complete
   --continue=STEP       jump to an install step and continue to remaining steps
 
 Available STEP Options:
-                        start     same as starting without a STEP option
-                        backup    perform a system backup
-                        download  download/update install scripts, apps, source installs. Always exits
-                        symlinks  install symlinks from a system backup
-                        upgrade   perform a system upgrade, and purge apport if desired
-                        packages  install apt packages including some dependencies for other steps
-                        pip       install pip3 packages
-                        snap      install snap packages
-                        plasmoid  install plasma plasmoids
-                        downloads install downloaded applications
-                        source    install applications from source
-                        config    perform some additional configuration, not including NFS shares
-                        nfs       setup some standard NFS shares and/or attach media server shares
-                        restore   perform a system restore from a previous backup
+                        start          same as starting without a STEP option
+                        uncompress     extract the contents of a backup
+                        backup         perform a system backup
+                        download       download/update install scripts, apps, source installs. Always exits
+                        symlinks       install symlinks from a system backup
+                        nosnap         remove snap packages from system (in testing)
+                        upgrade        perform a system upgrade, and purge apport if desired
+                        nvidia         install latest nvidia driver (440) (in testing)
+                        packages       install apt packages including some dependencies for other steps
+                        ppa_package    install packages requiring additional PPAs
+                        pip            install pip3 packages
+                        snap           install snap packages
+                        plasmoid       install plasma plasmoids
+                        downloads      install downloaded applications
+                        source         install applications from source
+                        config         perform some additional configuration, not including NFS shares
+                        nfs            setup some standard NFS shares and/or attach media server shares
+                        restore        perform a system restore from a previous backup
+                        cleanup        runs apt autoremove for lingering packages
 </pre>
 
 ### downlaod.sh
@@ -50,8 +63,11 @@ Usage: download.sh &lt;options&gt;
 Options:
   -h, --help            show this help message and exit
   -v, --verbose         print commands being run before running them
+  -y, --yes             answer yes to all
   -d, --debug           print commands to be run but do not execute them
+  --in-testing          Enable use of in-testing features
   --step=STEP           jump to an install step then exit when complete
+  --continue=STEP       jump to an install step and continue to remaining steps
   --restart=MODE        this is used to restart the script after downloading updated scripts
                         and will skip the step asking to download updated scripts. Under normal
                         circumstances this should not be used.
@@ -79,6 +95,42 @@ Options:
   -h, --help            show this help message and exit
   -v, --verbose         print commands being run before running them
   -d, --debug           print commands to be run but do not execute them
+  -y, --yes             answer yes to all, except compress
+  -z, --zip             compress the backup and remove backup folder (this is default behavior now)
+  -x                    do not compress backup folder, folder remains in tmp directory
+  --in-testing          Enable use of in-testing features
+  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'
+  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'
+  --step=STEP           jump to an install step then exit when complete
+  --continue=STEP       jump to an install step and continue to remaining steps
+
+Available STEP Options:
+                        layout
+                        desktop
+                        menuentries
+                        icons
+                        keyring
+                        nomachine
+                        network
+                        warzone2100
+                        knossos
+                        rawtherapee
+                        bricscad
+                        dosbox
+                        friction
+                        thunderbird
+                        kicad
+                        gzdoom
+                        audacious
+                        vlc
+                        eclipse
+                        kate
+                        power
+                        shortcuts
+                        plasma
+                        login
+                        symlinks
+                        compress
 </pre>
 
 ### restore.sh
@@ -89,6 +141,42 @@ Options:
   -h, --help            show this help message and exit
   -v, --verbose         print commands being run before running them
   -d, --debug           print commands to be run but do not execute them
+  -y, --yes             answer yes to all
+  --in-testing          Enable use of in-testing features
+  --tmp=DIRECTORY       do not extract archive, use this tmp directory
+  --dir=DIRECTORY       specify the backup directory to override 'Migration_$USER'
+  --archive=FILE        specify the backup archive to override 'Migration_$USER.tar.gz'
+                           Note: Archive is used in fresh_install.sh, not here.
+                                 This is here just in case it is needed in the future.
+  --step=STEP           jump to an install step then exit when complete
+  --continue=STEP       jump to an install step and continue to remaining steps
+
+Available STEP Options:
+                        extract
+                        desktop
+                        menuentries
+                        icons
+                        keyring
+                        nomachine
+                        network
+                        warzone2100
+                        knossos
+                        rawtherapee
+                        bricscad
+                        dosbox
+                        friction
+                        thunderbird
+                        kicad
+                        gzdoom
+                        audacious
+                        vlc
+                        eclipse
+                        kate
+                        power
+                        shortcuts
+                        plasma
+                        login
+                        cleanup
 </pre>
 
 ## Drive Structure
