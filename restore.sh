@@ -27,6 +27,8 @@ VERBOSE=false
 ANSWERALL=false
 EXTRACT=true
 IN_TESTING=false
+GOTOSTEP=false
+GOTOCONTINUE=false
 BACKUP_DIR="Migration_$USER"
 TMP_DIR=${BACKUP_DIR}
 ARCHIVE_FILE="${BACKUP_DIR}.tar.gz"
@@ -69,14 +71,15 @@ do
         echo -e "  -y, --yes             answer yes to all"
         echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --tmp=DIRECTORY       do not extract archive, use this tmp directory"
-        echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
-        echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
+        echo -e "  --dir=DIRECTORY       specify the backup directory to override 'Migration_$USER'"
+        echo -e "  --archive=FILE        specify the backup archive to override 'Migration_$USER.tar.gz'"
         echo -e "                           Note: Archive is used in fresh_install.sh, not here."
         echo -e "                                 This is here just in case it is needed in the future."
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e
         echo -e "Available STEP Options:"
+        echo -e "                        extract"
         echo -e "                        desktop"
         echo -e "                        menuentries"
         echo -e "                        icons"
@@ -101,8 +104,6 @@ do
         echo -e "                        plasma"
         echo -e "                        login"
         echo -e "                        cleanup"
-        #echo -e "                        symlinks"
-        #echo -e "                        compress"
         echo -e "${NC}"
         exit
         shift # Remove from processing

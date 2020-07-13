@@ -24,9 +24,10 @@ GOTOSTEP=false
 GOTOCONTINUE=false
 ANSWERALL=false
 IN_TESTING=false
+GOTOSTEP=false
+GOTOCONTINUE=false
 GOTO=""
 RESTART=false
-#RESTARTMODE=""
 FLAGS=""
 OTHER_ARGUMENTS=""
 
@@ -66,7 +67,7 @@ do
         echo -e "  -d, --debug           print commands to be run but do not execute them"
         echo -e "  --in-testing          Enable use of in-testing features"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
-        #echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
+        echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e "  --restart=MODE        this is used to restart the script after downloading updated scripts"
         echo -e "                        and will skip the step asking to download updated scripts. Under normal"
         echo -e "                        circumstances this should not be used."
@@ -98,6 +99,18 @@ do
         RESTART=true
         answer="${arg#*=}"
         shift # Remove --restart from processing
+        ;;
+        --step=*)
+        GOTOSTEP=true
+        answer="y"
+        GOTO="${arg#*=}"
+        shift # Remove from processing
+        ;;
+        --continue=*)
+        GOTOCONTINUE=true
+        answer="y"
+        GOTO="${arg#*=}"
+        shift # Remove from processing
         ;;
         *)
         OTHER_ARGUMENTS="$OTHER_ARGUMENTS$1 "

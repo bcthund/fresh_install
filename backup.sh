@@ -26,6 +26,8 @@ DEBUG=false
 VERBOSE=false
 ANSWERALL=false
 IN_TESTING=false
+GOTOSTEP=false
+GOTOCONTINUE=false
 COMPRESS=true
 NOCOMPRESS=false
 BACKUP_DIR="Migration_$USER"
@@ -73,11 +75,6 @@ do
         echo -e "${WHITE}"
         echo -e "Usage: $0.sh <options>"
         echo -e
-        echo -e "Note: It is recommended to perform the backup locally and not directly"
-        echo -e "      to external media such as USB. If the device has ACL enabled then"
-        echo -e "      file permissions and ownership may not be preserved. The compressed"
-        echo -e "      backup is safe to transfer."
-        echo -e
         echo -e "Options:"
         echo -e "  -h, --help            show this help message and exit"
         echo -e "  -v, --verbose         print commands being run before running them"
@@ -86,8 +83,8 @@ do
         echo -e "  -z, --zip             compress the backup and remove backup folder (this is default behavior now)"
         echo -e "  -x                    do not compress backup folder, folder remains in tmp directory"
         echo -e "  --in-testing          Enable use of in-testing features"
-        echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
-        echo -e "  --archive=FILE        specify the backup archive to override './Migration_$USER.tar.gz'"
+        echo -e "  --dir=DIRECTORY       specify the backup directory to override 'Migration_$USER'"
+        echo -e "  --archive=FILE        specify the backup archive to override 'Migration_$USER.tar.gz'"
         echo -e "  --step=STEP           jump to an install step then exit when complete"
         echo -e "  --continue=STEP       jump to an install step and continue to remaining steps"
         echo -e
@@ -131,6 +128,18 @@ do
         --archive=*)
         ARCHIVE_FILE="${arg#*=}"
         FLAGS="$FLAGS--archive=${ARCHIVE_FILE} "
+        shift # Remove from processing
+        ;;
+        --step=*)
+        GOTOSTEP=true
+        answer="y"
+        GOTO="${arg#*=}"
+        shift # Remove from processing
+        ;;
+        --continue=*)
+        GOTOCONTINUE=true
+        answer="y"
+        GOTO="${arg#*=}"
         shift # Remove from processing
         ;;
         *)
