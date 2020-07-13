@@ -96,6 +96,7 @@ do
         echo -e "                        keyring"
         echo -e "                        nomachine"
         echo -e "                        network"
+        echo -e "                        virtualbox"
         echo -e "                        warzone2100"
         echo -e "                        knossos"
         echo -e "                        rawtherapee"
@@ -176,11 +177,6 @@ echo -e
 echo -e "${PURPLE}==========================================================================${NC}"
 echo -e "${PURPLE}\tPerforming Backup${NC}"
 echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-echo -e "${purple}  Note: It is recommended to perform the backup locally and not directly${NC}"
-echo -e "${purple}        to external media such as USB. If the device has ACL enabled then${NC}"
-echo -e "${purple}        file permissions and ownership may not be preserved. The compressed${NC}"
-echo -e "${purple}        backup is safe to transfer.${NC}"
-echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
 echo -e "${grey}  Drive Layout Reference"
 echo -e "${grey}  Desktop${NC}"
 echo -e "${grey}  User Application Menu Entries${NC}"
@@ -188,6 +184,7 @@ echo -e "${grey}  User Icons${NC}"
 echo -e "${grey}  Keyring${NC}"
 echo -e "${grey}  NoMachine${NC}"
 echo -e "${grey}  Network and VPN settings${NC}"
+echo -e "${grey}  VirtualBox${NC}"
 echo -e "${grey}  Warzone2100${NC}"
 echo -e "${grey}  Knossos${NC}"
 echo -e "${grey}  RawTherapee${NC}"
@@ -297,6 +294,16 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /etc/NetworkManager/system-connections/ ${TMP_DIR}/root/"
+        fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
+    virtualbox:
+    # Knossos
+        echo -e
+        echo -e "${BLUE}VirtualBox${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/VirtualBox/ ${TMP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 

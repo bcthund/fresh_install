@@ -86,6 +86,7 @@ do
         echo -e "                        keyring"
         echo -e "                        nomachine"
         echo -e "                        network"
+        echo -e "                        virtualbox"
         echo -e "                        warzone2100"
         echo -e "                        knossos"
         echo -e "                        rawtherapee"
@@ -281,6 +282,16 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
+    virtualbox:
+    # VirtualBox
+        echo -e
+        printf "${BLUE}VirtualBox${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/root/home/$USER/.config/VirtualBox /home/$USER/.config/"
+        fi
+    if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
+    
     warzone2100:
     # Warzone 2100
         echo -e
