@@ -77,6 +77,7 @@ do
         ;;
         -x)
         NOCOMPRESS=true
+        EXTRACT=false
         FLAGS="$FLAGS-x "
         shift # Remove from processing
         ;;
@@ -100,7 +101,7 @@ do
         echo -e "  -z, --zip             Backup: compress the backup and remove backup folder"
         echo -e "                        Restore: the backup is compressed (hint)"
         echo -e "  -x                    Backup: do not compress backup folder"
-        echo -e "                        Restore: the backup is not compressed (hint)"
+        echo -e "                        Restore: do not unzip, no tmp directory provided (some items wont work)"
         echo -e "  --in-testing          Enable use of in-testing features (nothing currently in testing)"
         echo -e "  --tmp=DIRECTORY       do not extract archive, use this tmp directory"
         echo -e "  --dir=DIRECTORY       specify the backup directory to override './Migration_$USER'"
@@ -270,24 +271,32 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${PURPLE}==========================================================================${NC}"
     echo -e "${PURPLE}\tUncompress Backup${NC}"
     echo -e "${PURPLE}--------------------------------------------------------------------------${NC}"
-    
     if [ "$EXTRACT" = true ]; then
-        if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
-        if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi    
-        TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
-        ctrl_c() {
-            echo -e;
-            echo -e -n "${BLUE}Do you want to remove temporary files in '${TMP_DIR}' ${GREEN}(y/n)? ${NC}"; read -e -i "y" answer; echo;
-            if [ "$answer" != "${answer#[Yy]}" ] ;then
-                eval "sudo rm -rf ${TMP_DIR}";
-            fi
-            echo -e;
-            echo -e;
-            exit 0;
-        }
-        echo -e "${YELLOW}Temp directory: '${TMP_DIR}'${NC}"
-        cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR}'"
-        cmd "$cmd_string1"
+        echo -e -n "${BLUE}Proceed ${GREEN}(y/n)? ${NC}"; read answer; echo -e;
+        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+        if [ "$answer" != "${answer#[YyEe]}" ] ;then
+    
+            if ! command -v pigz &> /dev/null; then cmd "sudo apt install pigz"; fi
+            if ! command -v pv &> /dev/null; then cmd "sudo apt install pv"; fi    
+            TMP_DIR=$(mktemp -d -t $BACKUP_DIR-XXXXXX)
+            ctrl_c() {
+                echo -e;
+                echo -e -n "${BLUE}Do you want to remove temporary files in '${TMP_DIR}' ${GREEN}(y/n)? ${NC}"; read -e -i "y" answer; echo;
+                if [ "$answer" != "${answer#[Yy]}" ] ;then
+                    eval "sudo rm -rf ${TMP_DIR}";
+                fi
+                echo -e;
+                echo -e;
+                exit 0;
+            }
+            echo -e "${YELLOW}Temp directory: '${TMP_DIR}'${NC}"
+            cmd_string1="pv ${ARCHIVE_FILE} | sudo tar --same-owner -I pigz -x -C '${TMP_DIR}'"
+            cmd "$cmd_string1"
+        fi
+    else
+        echo -e "${RED}Temp directory: '${TMP_DIR}'${NC}"
+        echo -e "${RED}If the Temp directory has not been set with --tmp then Restore${NC}"
+        echo -e "${RED}will not work, and symlinks won't be restored.${NC}"
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
@@ -790,7 +799,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     
         echo -e
         printf "${BLUE}VirtualBox v6.1.10 (deb)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/virtualbox-6.1_6.1.10-138449_Ubuntu_eoan_amd64.deb"
             cmd "printf '%s\n' y | sudo VBoxManage extpack install --replace ./Apps/Oracle_VM_VirtualBox_Extension_Pack-6.1.10.vbox-extpack"
@@ -799,42 +808,42 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         
         echo -e
         printf "${BLUE}BricsCAD v20.2.08 (deb)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/BricsCAD-V20.2.08-1-en_US-amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}Camotics v1.2.0 (deb)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/camotics_1.2.0_amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}Chrome v83.0.4103 (deb)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/google-chrome-stable_current_amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}No Machine v6.11.2 (deb)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/nomachine_6.11.2_1_amd64.deb"
         fi
         
         echo -e
         printf "${BLUE}Steam v20 (deb)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo dpkg -iG ./Apps/steam_latest.deb"
         fi
         
         echo -e
         printf "${BLUE}Mutisystem (sh)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo apt install -y python python-is-python2 libsdl-ttf2.0-0 qemu qemu-kvm wmctrl xdotool fatresize gvfs-bin aptitude gtkdialog virtualbox-6.1"
             cmd "sudo apt install -f"
@@ -844,15 +853,15 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         
         echo -e
         printf "${BLUE}Eclipse v2020-06 (bin)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo chmod +x ./Apps/eclipse-installer/eclipse-inst"
             cmd "./Apps/eclipse-installer/eclipse-inst"
         fi
         
         echo -e
-        printf "${BLUE}Printer (HL-3040CN)${NC}\n"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        printf "${BLUE}Printer (HL-3040CN)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo mkdir -p /var/spool/lpd/hl3040cn"
             cmd "cd ./Apps/brother/"
@@ -862,7 +871,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         
         echo -e
         printf "${BLUE}Plex Media Player v2.58.0 (AppImage)${NC}"
-        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             install_dir="/home/$USER/Programs/PlexMP"
             echo -e
@@ -870,7 +879,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             printf "${YELLOW}  0) ~/Programs/PlexMP/ (default)${NC}\n"
             printf "${YELLOW}  1) Other (user write permission assumed)${NC}\n"
             
-            if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Option? ${NC} "; read answer2; fi
+            if [ "$answer" != "${answer#[Yy]}" ] ;then printf "${GREEN}Option? ${NC} "; read answer2; else echo; fi
             if [ "$answer2" != "${answer2#[Yy1]}" ] ;then
                 printf "${BLUE}Directory: ${NC}"
                 read install_dir
