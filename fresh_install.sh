@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# TODO: Create source install script for VLC
+# TODO: Add a --log=<file> flag for logging all output (Still want to show on screen though)
+# TODO: Add ~/.config/vlc to backup/restore
+# TODO: 
+# TODO: 
+# TODO: 
+
+
 # grey='\033[1;30m'
 # red='\033[0;31m'
 # RED='\033[1;31m'
@@ -491,6 +499,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "libdvd-pkg"
                     "libdvdnav4"
                     "libdvdread7"
+                    "libimage-exiftool-perl"
                     "libnoise-dev"
                     "libsdl2-dev"
                     "libsdl2-image-dev"
@@ -529,6 +538,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "solaar"
                     "texlive-fonts-extra"
                     "texlive-fonts-recommended"
+                    "texlive-font-utils"
                     "texlive-xetex"
                     "texstudio"
                     "tilix"
