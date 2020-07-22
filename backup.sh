@@ -460,6 +460,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/kglobalshortcutsrc ${TMP_DIR}/root/"
+            cmd "sudo rsync -aR --info=progress2 /home/$USER/.config/khotkeysrc ${TMP_DIR}/root/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 

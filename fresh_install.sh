@@ -523,6 +523,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "openssh-server"
                     "openvpn"
                     "pithos"
+                    "playerctl"
                     "playonlinux"
                     "python"
                     "python3-pip"
