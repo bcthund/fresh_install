@@ -299,7 +299,7 @@ if [ "$answer" != "${answer#[AaYy]}" ] ;then
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
         if [ "$answer2" != "${answer2#[Yy]}" ] ;then
             cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/root/usr/share/games/warzone2100 /usr/share/games/"
-            cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/root/home/$USER/.warzone2100-3.2 /home/$USER/"
+            cmd "sudo rsync -a --info=progress2 ${TMP_DIR}/home/$USER/.local/share/warzone2100-3.3.0 /home/$USER/.local/share/"
         fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
