@@ -485,6 +485,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "inxi"
                     "iptraf"
                     "kdevelop"
+                    "keepassxc"
                     "kicad"
                     "kicad-footprints"
                     "kicad-packages3d"
@@ -958,7 +959,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd_string1="sudo touch /etc/rc.local"
         cmd_string2="sudo sed -i 's|^exit 0.*$|# Numlock enable\n[ -x /usr/bin/numlockx ] \&\& numlockx on\n\nexit 0|' /etc/rc.local"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
-        if [ "$answer" != "${answer#[Ee]}" ] ;then
+        if [ "$answer2" != "${answer2#[Ee]}" ] ;then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
             echo
@@ -975,7 +976,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${grey}  - Executes: ${cmd_String1} to create preliminary config, user must exit${NC}"
         echo -e "${grey}  - Executes: ${cmd_String2}${NC}"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
-        if [ "$answer" != "${answer#[Ee]}" ]; then
+        if [ "$answer2" != "${answer2#[Ee]}" ]; then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
             echo
@@ -1002,7 +1003,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${grey}\t- dialout${NC}"
         cmd_string1="sudo usermod -a -G vboxusers,dialout $USER"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
+        if [ "$answer2" != "${answer2#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
         if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
             cmd "$cmd_string1"
         fi
@@ -1010,7 +1011,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${BLUE}Add user to wireshark group${NC}"
         cmd_string1="sudo usermod -a -G wireshark $USER"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
+        if [ "$answer2" != "${answer2#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command 1: ${NC})" -e -i "${cmd_string1}" cmd_string1; fi
         if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
             cmd "$cmd_string1"
         fi
@@ -1019,7 +1020,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         echo -e "${BLUE}Set samba password${NC}"
         cmd_string="sudo smbpasswd -a $USER"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
-        if [ "$answer" != "${answer#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
+        if [ "$answer2" != "${answer2#[Ee]}" ] ;then read -p "$(echo -e ${yellow}Edit command: ${NC})" -e -i "${cmd_string}" cmd_string; fi
         if [ "$answer2" != "${answer2#[YyEe]}" ] ;then
             echo -e
             cmd "$cmd_string"
@@ -1030,7 +1031,7 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
         cmd_string1="sudo ln -s /usr/lib/i386-linux-gnu/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so"
         cmd_string2="sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so"
         if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n/e)? ${NC} "; read answer2; else echo; fi
-        if [ "$answer" != "${answer#[Ee]}" ] ;then
+        if [ "$answer2" != "${answer2#[Ee]}" ] ;then
             printf "${grey}  Command 1: ${cmd_string1}${NC}\n"
             printf "${grey}  Command 2: ${cmd_string2}${NC}\n"
             echo
@@ -1205,9 +1206,9 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
     echo -e "${grey}  remove '${TMP_DIR}'${NC}"
     
     cmd_string1="sudo apt autoremove"
-    cmd_string2="rm -rf ${TMP_DIR}"
+    cmd_string2="sudo rm -rf ${TMP_DIR}"
     echo -e
-    printf "${BLUE}${cmd_string1}${GREEN} (y/n/e)? ${NC}"; read answer;
+    printf "${GREEN}(y/n/e)? ${NC}"; read answer;
     if [ "$answer" != "${answer#[Ee]}" ] ;then
         read -p "$(echo -e ${yellow}Edit command 1/2: ${NC})" -e -i "${cmd_string1}" cmd_string1;
         read -p "$(echo -e ${yellow}Edit command 2/2: ${NC})" -e -i "${cmd_string2}" cmd_string2;
