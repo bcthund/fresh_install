@@ -573,7 +573,14 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "xterm"
                     "youtube-dl"
                     "zenity"
-                    "zenity-common")
+                    "zenity-common"
+                    # Virtual Machines (Requires VT-d)
+                    "qemu-kvm"
+                    "libvirt-clients"
+                    "libvirt-daemon-system"
+                    "bridge-utils"
+                    "virt-manager"
+                    "ovmf")
     echo -e
     echo -e "${PURPLE}====================================================================================================${NC}"
     echo -e "${PURPLE}\tInstall Standard Packages${NC}"
