@@ -3,7 +3,10 @@
 # TODO: Create source install script for VLC
 # TODO: Add a --log=<file> flag for logging all output (Still want to show on screen though)
 # TODO: Add ~/.config/vlc to backup/restore
-# TODO: 
+# TODO: KeePassXC Auto login
+#       - secret-tool store --label="KeePass" keepass KeePassDB
+#       - secret-tool lookup keepass KeePassDB
+#       - secret-tool lookup keepass <database_name> | keepassxc --pw-stdin <path-to-your-database>.kbdx
 # TODO: 
 # TODO: 
 
