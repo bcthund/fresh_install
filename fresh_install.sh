@@ -483,6 +483,8 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "gmic"
                     "gnome-disk-utility"
                     "gpick"
+                    "grsync"
+                    "grub-customizer"
                     "hardinfo"
                     "inkscape"
                     "inxi"
@@ -505,10 +507,12 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
                     "libdvdread7"
                     "libimage-exiftool-perl"
                     "libnoise-dev"
+                    "libreoffice-style-*"
                     "libsdl2-dev"
                     "libsdl2-image-dev"
                     "libsdl2-mixer-dev"
                     "libsdl2-net-dev"
+                    "libqt5sql5-mysql"
                     "lmms"
                     "mesa-utils"
                     "neofetch"
@@ -913,6 +917,56 @@ elif [ "$mode" != "${mode#[Rr]}" ] ;then
             cmd "rsync -a ./Apps/Plex_Media_Player_2.58.0.1076-38e019da_x64.AppImage ${install_dir}/"
             cmd "${install_dir}/Plex_Media_Player_2.58.0.1076-38e019da_x64.AppImage"
         fi
+        
+        echo -e
+        printf "${BLUE}InSync 3.3.5 (deb)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/insync_3.3.5.40925-focal_amd64.deb"
+        fi
+        
+        echo -e
+        printf "${BLUE}ProjectLibre 1.9.3 (deb)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/projectlibre_1.9.3-1.deb"
+        fi
+
+        echo -e
+        printf "${BLUE}Team Viewer 15.13.6 (deb)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/teamviewer_15.13.6_amd64.deb"
+        fi
+        
+        echo -e
+        printf "${BLUE}Ignition 8.1 (Not Implemented)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo ./Apps/ignition-8.1.1-linux-x64-installer.run --confirm --quiet --accept --keep"
+        fi
+        
+        echo -e
+        printf "${BLUE}KDE Image Manipulation (KIM) (Not Implemented)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "cd ./Apps/kim5-master/kim/"
+            cmd "sudo ./install.sh"
+            cmd "cd '${working_dir}'"
+        fi
+        
+        echo -e
+        printf "${BLUE}MySQL (MySQL Apt, server, connector, workbench, mariadb)${NC}"
+        if [ "$answer" != "${answer#[Yy]}" ] ;then printf " ${GREEN}(y/n)? ${NC} "; read answer2; else echo; fi
+        if [ "$answer2" != "${answer2#[Yy]}" ] ;then
+            cmd "sudo dpkg -iG ./Apps/mysql-apt-config_0.8.15-1_all.deb"
+            cmd "sudo DEBIAN_FRONTEND=noninteractive apt install mysql-server"
+            cmd "sudo dpkg -iG ./Apps/mysql-connector-java_8.0.22-1ubuntu20.04_all.deb"
+            cmd "sudo dpkg -iG ./Apps/mysql-workbench-community_8.0.21-1ubuntu20.04_amd64.deb"
+            cmd "sudo cp -f ./Apps/mariadb-java-client-2.6.2.jar /usr/share/java/mariadb-java-client.jar"
+
+        fi
+        
     fi
     if [ "$GOTOSTEP" = true ]; then echo -e "${BLUE}Finished${NC}\n"; exit; fi
 
